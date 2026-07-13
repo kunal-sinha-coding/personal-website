@@ -39,12 +39,15 @@
       margin-bottom: 3rem;
     }
 
-    .eyebrow {
-      margin: 0 0 0.75rem;
-      color: var(--accent);
-      font-size: 0.85rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
+    .profile-picture {
+      display: block;
+      width: clamp(140px, 24vw, 200px);
+      aspect-ratio: 1;
+      margin: 0 0 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 14px 30px var(--shadow);
     }
 
     h1 {
@@ -55,11 +58,19 @@
     }
 
     .intro {
-      max-width: 42rem;
+      max-width: 48rem;
       margin: 1rem 0 0;
       color: var(--muted);
       font-size: 1.05rem;
       line-height: 1.7;
+    }
+
+    .intro p {
+      margin: 0 0 1rem;
+    }
+
+    .intro p:last-child {
+      margin-bottom: 0;
     }
 
     .section-title {
@@ -116,11 +127,13 @@
 <body>
   <main class="wrap">
     <header class="hero">
-      <p class="eyebrow">Personal Website</p>
-      <h1>Kunal</h1>
-      <p class="intro">
-        A simple static homepage with a blog list. More posts can be added here over time.
-      </p>
+      <img class="profile-picture" src="header/profile-picture.jpg" alt="Kunal Sinha">
+      <h1>Kunal Sinha</h1>
+      <div class="intro">
+        <p>Welcome! I'm an ML engineer based out of San Francisco. This blog covers various topics in LLM post-training and evaluation I find important.</p>
+        <p>Currently, I am building AI Agents for financial audit and advisory at Fieldguide, where I focus on identifying and shipping improvements to our Agents' performance. Some projects include designing strong retrieval systems, running large-scale evaluation pipelines, and extracting preference signals from production data.</p>
+        <p>In 2025, I completed my Bachelors and Masters at Stanford University, where I did research with the NLP Group. I had the pleasure to work across multiple areas such as neural graph retrieval, chain-of-thought reasoning, and visual question answering, as well as some projects in computational linguistics.</p>
+      </div>
     </header>
 
     <section aria-labelledby="blog-posts-title">
