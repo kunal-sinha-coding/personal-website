@@ -39,11 +39,16 @@
       margin-bottom: 3rem;
     }
 
+    .identity {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
     .profile-picture {
       display: block;
-      width: clamp(140px, 24vw, 200px);
+      width: clamp(88px, 16vw, 120px);
       aspect-ratio: 1;
-      margin: 0 0 1.5rem;
       border: 1px solid var(--border);
       border-radius: 50%;
       object-fit: cover;
@@ -52,9 +57,9 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
     }
 
     .intro {
@@ -127,8 +132,10 @@
 <body>
   <main class="wrap">
     <header class="hero">
-      <img class="profile-picture" src="header/profile-picture.jpg" alt="Kunal Sinha">
-      <h1>Kunal Sinha</h1>
+      <div class="identity">
+        <img class="profile-picture" src="header/profile-picture.jpg" alt="Kunal Sinha">
+        <h1>Kunal Sinha</h1>
+      </div>
       <div class="intro">
         <p>Welcome! I'm an ML engineer based out of San Francisco. This blog covers various topics in LLM post-training and evaluation I find important.</p>
         <p>Currently, I am building AI Agents for financial audit and advisory at Fieldguide, where I focus on identifying and shipping improvements to our Agents' performance. Some projects include designing strong retrieval systems, running large-scale evaluation pipelines, and extracting preference signals from production data.</p>
