@@ -42,12 +42,12 @@
     .identity {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .profile-picture {
       display: block;
-      width: clamp(72px, 13vw, 96px);
+      width: clamp(88px, 16vw, 120px);
       aspect-ratio: 1;
       border: 1px solid var(--border);
       border-radius: 50%;
@@ -57,8 +57,8 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(1.65rem, 4vw, 2.5rem);
-      font-weight: 500;
+      font-size: clamp(1.9rem, 4.5vw, 2.85rem);
+      font-weight: 400;
       line-height: 1;
       letter-spacing: -0.03em;
     }
@@ -66,9 +66,9 @@
     .social-links {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem 0.9rem;
-      margin-top: 0.65rem;
-      font-size: 0.85rem;
+      gap: 0.45rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.92rem;
     }
 
     .social-links a {
@@ -164,11 +164,7 @@
           </nav>
         </div>
       </div>
-      <div class="intro">
-        <p>Welcome! I'm an ML engineer based out of San Francisco. This blog covers various topics in LLM post-training and evaluation I find important.</p>
-        <p>Currently, I am building AI Agents for financial audit and advisory at Fieldguide, where I focus on identifying and shipping improvements to our Agents' performance. Some projects include designing strong retrieval systems, running large-scale evaluation pipelines, and extracting preference signals from production data.</p>
-        <p>In 2025, I completed my Bachelors and Masters at Stanford University, where I did research with the NLP Group. I had the pleasure to work across multiple areas such as neural graph retrieval, chain-of-thought reasoning, and visual question answering, as well as some projects in computational linguistics.</p>
-      </div>
+      <div class="intro" id="personal-intro" aria-live="polite"></div>
     </header>
 
     <section aria-labelledby="blog-posts-title">
@@ -182,5 +178,29 @@
       </div>
     </section>
   </main>
+  <script>
+    const intro = document.querySelector("#personal-intro");
+
+    fetch("header/personal_intro.md")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Unable to load introduction (${response.status})`);
+        }
+
+        return response.text();
+      })
+      .then((markdown) => {
+        const paragraphs = markdown.trim().split(/\r?\n\s*\r?\n/);
+
+        paragraphs.forEach((text) => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent = text.replace(/\r?\n/g, " ");
+          intro.append(paragraph);
+        });
+      })
+      .catch(() => {
+        intro.textContent = "The personal introduction could not be loaded.";
+      });
+  </script>
 </body>
 </html>
