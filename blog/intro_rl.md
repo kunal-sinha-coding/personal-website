@@ -8,7 +8,7 @@ We'll start here by introducing the basics of reinforcement learning, then itera
 
 (Note: the post assumes familiarity with the basics of machine learning and deep learning, particularly with how neural networks are trained, including topics such as loss functions, gradient descent, backpropagation. It also assumes familiarity with supervised fine-tuning in LLMs. No prior knowledge of reinforcement learning is required).
 
-## 1. Why is SFT not enough?
+### 1. SFT
 
 Suppose we have prompts $x$ and high-quality responses $y$. SFT minimizes the usual negative log-likelihood:
 
@@ -32,7 +32,7 @@ $$
 
 This objective is simple and effective. It teaches the model the format, vocabulary, and behavior represented in the demonstrations. Most post-training pipelines still use SFT because it gives the model a strong starting policy.
 
-### Problem: imitation is not the same as optimization
+#### Problem: imitation is not the same as optimization
 
 SFT says, “Make this demonstrated response more likely.” It does not directly say, “Produce any response that solves the problem.”
 
@@ -56,9 +56,9 @@ The important distinction is between **showing** the model what to say and **eva
 
 That is where reinforcement learning comes in.
 
-## 2. An introduction to reinforcement learning
+### 2. Reinforcement learning
 
-### Solution: optimize evaluated outcomes
+#### Solution: optimize evaluated outcomes
 
 RL describes an agent that interacts with an environment. At time $t$, the agent observes a state $s_t$, chooses an action $a_t$, and eventually receives reward.
 
@@ -87,7 +87,7 @@ $$
 
 This objective no longer requires a single target response. The policy can receive credit for any sampled response that earns a high score.
 
-### Problem: rewards are not differentiable through sampling
+#### Problem: rewards are not differentiable through sampling
 
 SFT is optimized with gradient descent. We define a differentiable loss such as negative log-likelihood, compute its gradient with respect to the model parameters, and update those parameters in the direction that reduces the loss:
 
@@ -115,9 +115,9 @@ Suppose the observed rewards are $[1,0,1,0]$. Changing one token may change the 
 
 What we need is a way to change the probability of the sampled code using only its score.
 
-## 3. REINFORCE: increase the probability of rewarding behavior
+### 3. REINFORCE
 
-### Solution: turn a reward into a gradient estimate
+#### Solution: turn a reward into a gradient estimate
 
 Although selecting a discrete token is not differentiable, the policy that produces the sampling probabilities is differentiable. Before sampling, the model computes
 
@@ -157,7 +157,7 @@ The reward remains non-differentiable, but $\log\pi_\theta(y\mid x)$ is differen
 
 This is our first meaningful improvement over SFT. The model trains on its own outputs, and the loss is tied to an outcome rather than to exact imitation.
 
-### Problem: the gradient is noisy
+#### Problem: the gradient is noisy
 
 Imagine that the model now generates four median implementations with rewards $[1,1,0,0]$. The update reinforces every token in each passing program. Some lines were essential. Some were harmless style choices. One line may even have been dubious but never exercised by the tests. A single final reward does not tell us which tokens deserve credit.
 
@@ -165,7 +165,7 @@ There is a second problem. A reward of $1$ has no meaning without context. If th
 
 The result is high variance. Two batches from the same policy can produce very different gradients merely because sampling is random.
 
-### Solution: compare reward with a baseline
+#### Solution: compare reward with a baseline
 
 The baseline represents the reward the policy should have expected before seeing the sampled action. Instead of asking whether a response received a large reward in absolute terms, the update asks whether it did better or worse than that expectation.
 
@@ -254,7 +254,7 @@ is the **advantage**. It asks whether an action was better or worse than expecte
 
 For those same four median implementations, the average reward is $0.5$. The centered rewards become $[0.5,0.5,-0.5,-0.5]$. Passing implementations are reinforced because they beat the baseline. Failing implementations are discouraged because they underperform it. The baseline cannot tell us which line caused a failure, but it does solve the comparison problem: a reward is now interpreted relative to what the model usually achieves.
 
-### Problem: the correct baseline is unknown
+#### Problem: the correct baseline is unknown
 
 The batch mean is a useful first baseline, but it is only one number computed from whichever samples happened to land in the current batch. This creates three problems.
 
@@ -266,9 +266,9 @@ Third, the batch mean is itself noisy. A batch containing mostly easy prompts ma
 
 What we actually want is not the average reward of the current batch. We want the expected future return for the specific state the policy is in. The next question is how to estimate that state-dependent expectation before the final answer is known.
 
-## 4. Actor-critic: learn what reward to expect
+### 4. Actor-critic
 
-### Solution: learn a state-dependent baseline
+#### Solution: learn a state-dependent baseline
 
 The notation $b(s)$ already points toward the solution. Instead of using one scalar batch mean for every state, define the baseline as a function of the current state. The ideal choice is the policy's value function:
 
@@ -310,7 +310,7 @@ $$
 
 For an LLM, the critic can share the policy's transformer backbone and add a scalar value head, or it can be a separate model. In either case, it converts the abstract baseline $b(s)$ into a prediction that can be evaluated for each generated prefix.
 
-### Problem: the true return arrives late
+#### Problem: the true return arrives late
 
 Suppose the model is halfway through writing the median function. It has already sorted the list and started handling even-length inputs, but the tests cannot run until the code is complete. The true return arrives late. Every partial program must share a final outcome that has not happened yet.
 
@@ -328,7 +328,7 @@ In many LLM tasks, intermediate token rewards are zero and the only task reward 
 
 This target does not guess what happens after state $s_t$. It waits, observes the complete rollout, and uses what actually happened. Across many rollouts, it gives an unbiased estimate of the value under the current policy. However, any one rollout may be unusually lucky or unlucky. Two similar prefixes can receive very different returns because their sampled continuations differ, so Monte Carlo value targets can have high variance.
 
-### Solution: bootstrap from the next value estimate
+#### Solution: bootstrap from the next value estimate
 
 But wait a minute. Write out the full Monte Carlo return again:
 
@@ -376,7 +376,7 @@ $$
 
 This update is available before the full program and its test result are observed. That solves the delayed-feedback problem, but it asks us to trust an imperfect critic.
 
-### Problem: Monte Carlo and one-step TD are opposite extremes
+#### Problem: Monte Carlo and one-step TD are opposite extremes
 
 Monte Carlo and one-step TD make opposite tradeoffs.
 
@@ -393,7 +393,7 @@ The two estimators therefore sit at opposite ends of a spectrum:
 
 Neither extreme is always best. The preferred tradeoff depends on how noisy the rollouts are and how accurate the critic is.
 
-### Solution: GAE interpolates between the extremes
+#### Solution: GAE interpolates between the extremes
 
 Generalized Advantage Estimation, or GAE, introduces a tunable parameter $\lambda\in[0,1]$ that controls how far the advantage estimate looks into the sampled future before relying on the critic. It begins with the one-step TD errors
 
@@ -423,7 +423,7 @@ $$
 
 The parameter $\lambda$ controls how quickly later TD errors lose weight.
 
-#### When $\lambda=0$
+##### When $\lambda=0$
 
 Every term after the first is multiplied by zero:
 
@@ -435,7 +435,7 @@ GAE becomes the one-step TD advantage. It relies heavily on the critic, which ge
 
 For the partial median implementation, only the immediate reward and the critic's value for the next prefix matter. The eventual test result does not directly enter this advantage estimate.
 
-#### When $\lambda=1$
+##### When $\lambda=1$
 
 All future TD errors are included with only the usual discount $\gamma$:
 
@@ -457,7 +457,7 @@ $$
 
 assuming the value after the terminal state is zero. GAE becomes the Monte Carlo advantage. It uses the completed program's observed test result, which gives lower bias but higher variance.
 
-#### When $0<\lambda<1$
+##### When $0<\lambda<1$
 
 An intermediate value blends the two behaviors. For example, with $\lambda=0.5$,
 
@@ -477,11 +477,11 @@ Increasing $\lambda$ generally moves toward lower bias and higher variance. Decr
 
 We now have a lower-variance learning signal. Unfortunately, a better gradient estimate does not guarantee a safe update.
 
-## 5. Why ordinary policy-gradient updates can break the policy
+### 5. Importance sampling
 
 Neural-network training usually takes several gradient steps over each batch. For supervised learning, the dataset does not change when the model changes. Online policy learning is different because the policy creates its own data, so changing the policy also changes the distribution that future examples will come from.
 
-### Problem: reused policy data becomes stale
+#### Problem: reused policy data becomes stale
 
 One way to picture the problem is a ball sitting on a hill. At the ball's current position, the gradient describes the local slope, and the negative gradient points toward the direction the ball should move to go downhill. After the ball moves, however, it is on a different part of the hill. The old direction may no longer point downhill. The slope must be measured again at the new position.
 
@@ -489,7 +489,7 @@ A policy gradient is similarly local. A batch sampled from policy $\pi_{\theta_{
 
 Large changes can destroy useful behavior, exploit errors in the reward model, or make the stored batch a poor description of the current policy.
 
-### Solution: importance sampling
+#### Solution: importance sampling
 
 Importance sampling is a general statistical technique for estimating an expectation under one distribution using samples drawn from another distribution.
 
@@ -518,7 +518,7 @@ $$
 
 The ratio $p(x)/q(x)$ is the **importance weight**. Samples that are more likely under the target distribution than under the proposal receive weights greater than $1$. Samples that are less likely under the target receive weights below $1$. This reweighting lets samples from $q$ estimate an expectation under $p$, provided that $q(x)>0$ wherever $p(x)>0$.
 
-### Applying importance sampling to policy gradients
+#### Applying importance sampling to policy gradients
 
 For policy optimization, the proposal distribution is the old policy $\pi_{\theta_{\text{old}}}$ that generated the batch, while the target distribution is the current policy $\pi_\theta$ being optimized. At a fixed state $s_t$, the general importance weight becomes the probability ratio
 
@@ -563,9 +563,9 @@ $$
 
 The ratio records that the action is now 1.8 times as likely as it was under the distribution that generated the batch. It adjusts the old sample's contribution to an objective for the current policy.
 
-## 6. PPO: allow improvement, but limit excessive change
+### 6. PPO
 
-### Problem: importance ratios can grow without limit
+#### Problem: importance ratios can grow without limit
 
 Importance sampling corrects for the fact that the data came from the old policy, but it does not constrain how far the current policy can move from that old policy. If the current policy makes a sampled action much more likely, the importance ratio becomes large. That large ratio multiplies the action's advantage, so a small number of samples can dominate the update.
 
@@ -585,7 +585,7 @@ One old sample now produces an update six times larger than it would have at rat
 
 Importance sampling tells us how much the sampling distribution changed. It does not prevent the change from becoming excessive. PPO is designed to add that missing constraint.
 
-### Solution: clip excessive probability changes
+#### Solution: clip excessive probability changes
 
 The intuition behind PPO is to allow the policy to learn from an action without allowing that one sample to keep providing a larger benefit as the policy moves farther from the rollout policy. If the ratio remains near $1$, the current and old policies are similar for that action, so the ordinary importance-weighted objective is reasonable. If the ratio moves outside a small interval around $1$, PPO limits the benefit of moving farther in the same direction.
 
@@ -634,7 +634,7 @@ $$
 
 Clipping is not a hard trust-region constraint. Other tokens can change, and the total sequence distribution can still move substantially. Implementations therefore monitor KL divergence and often include a KL penalty.
 
-### Problem: PPO is expensive and complicated
+#### Problem: PPO is expensive and complicated
 
 Imagine that each model is large enough to fill most of one accelerator. An LLM PPO system may need four model roles during training:
 
@@ -650,9 +650,9 @@ A learned reward model may add another large network. A training job that began 
 
 Can we keep online reward optimization while removing the critic?
 
-## 7. RLOO: use other samples as the baseline
+### 7. RLOO
 
-### Solution: replace the critic with peer responses
+#### Solution: replace the critic with peer responses
 
 The critic exists to answer a comparative question: was this response better than expected for this prompt? We can answer that without another model if we generate several responses to the same prompt and compare them with one another.
 
@@ -674,15 +674,15 @@ Suppose those four responses are implementations of our median function, with re
 
 RLOO is still an online policy-gradient method. It samples from the current policy and optimizes observed rewards. It simply replaces the critic with a Monte Carlo baseline. The [RLOO study](https://arxiv.org/abs/2402.14740) found that carefully adapted REINFORCE-style methods could be competitive for RLHF while reducing PPO's complexity.
 
-### Problem: raw comparisons can have inconsistent scale
+#### Problem: raw comparisons can have inconsistent scale
 
 Suppose one prompt produces median implementations with binary rewards $[1,1,0,0]$, while another produces code-quality scores $[90,80,20,10]$. Both groups contain two strong and two weak answers, but the second produces gradients roughly 70 times larger. Raw leave-one-out differences let reward scale, rather than just relative quality, determine which prompt dominates the update.
 
 RLOO also still needs multiple responses per prompt. If one implementation takes two seconds to sample, a group of eight takes up to sixteen seconds of serial generation, or enough parallel memory to generate them together. Generation is often the dominant cost in LLM RL. The next method does not eliminate this tradeoff.
 
-## 8. GRPO: evaluate a response relative to its group
+### 8. GRPO
 
-### Solution: normalize advantages within each group
+#### Solution: normalize advantages within each group
 
 Group Relative Policy Optimization, or GRPO, keeps the same group of samples and follows the same broad intuition. For one prompt, sample $G$ responses and normalize each reward using group statistics:
 
@@ -720,7 +720,7 @@ For the same two reward groups, subtracting each group mean and dividing by its 
 
 Consider eight solutions to the same math problem. If three are correct, the correct solutions receive positive relative advantages and the incorrect ones receive negative advantages. The comparison is prompt-specific. A correct answer to a hard prompt can be treated differently from an identical binary reward in a group where almost every answer is correct.
 
-### Problem: normalization and aggregation change the learning signal
+#### Problem: normalization and aggregation change the learning signal
 
 The simple formula hides several edge cases.
 
@@ -736,7 +736,7 @@ Imagine two groups of eight math solutions. The first group has four correct ans
 
 These are not merely cosmetic implementation details. They determine which prompts and tokens dominate learning.
 
-### Solution: Dr.GRPO and DAPO repair specific pathologies
+#### Solution: Dr.GRPO and DAPO repair specific pathologies
 
 [Dr.GRPO](https://arxiv.org/abs/2503.20783) removes normalization choices that can bias training toward response length or particular reward variances. For the first math group, this prevents the tiny reward standard deviation from arbitrarily magnifying the update. Its central lesson is that the denominator in a loss is part of the algorithm. Normalizing each response by its own length is not equivalent to normalizing over all valid tokens in a batch.
 
@@ -746,7 +746,7 @@ The evolution is familiar by now. REINFORCE directly optimizes reward but is noi
 
 All of these methods remain **online**. They repeatedly sample from a changing policy and evaluate new outputs.
 
-### Problem: online RL is expensive and indirect for fixed preferences
+#### Problem: online RL is expensive and indirect for fixed preferences
 
 Online RL is useful when exploration matters, but it is expensive. It requires fresh rollouts, reward evaluation, and policy-gradient optimization. PPO adds a critic, while critic-free methods replace that cost with several responses per prompt. Training may still involve a policy, an old policy, a reference policy, and a reward model or verifier.
 
@@ -768,9 +768,9 @@ over a repetitive paragraph that says the same thing five times. A reward model 
 
 The pair only said that the concise answer was better than the repetitive one. RLHF turns that local comparison into a general scoring function and then gives the policy freedom to optimize it. Can we fit the policy directly to the recorded preferences instead?
 
-## 9. DPO: the policy is an implicit reward model
+### 9. DPO
 
-### Solution: train the policy directly on each preference pair
+#### Solution: train the policy directly on each preference pair
 
 What if we could remove the RL machinery entirely and achieve the same preference-learning goal with the same optimization machinery used for SFT? We would train with gradient descent on a fixed dataset of preferred and rejected responses. There would be no online rollouts, policy-gradient estimator, critic, or separately optimized reward model.
 
@@ -870,7 +870,7 @@ DPO has several practical attractions.
 
 - Its reference-relative reward retains the KL-regularized RL interpretation.
 
-### DPO fixes one pipeline, not every problem
+#### DPO fixes one pipeline, not every problem
 
 DPO is simpler than PPO-based RLHF, but it is not assumption-free. Our Paris pair makes the limitations easy to see. It tells the model which of those two answers won, but it says nothing about a third answer that is concise and factually wrong. It also does not tell us how strong the preference should become after the model already favors the winner.
 
@@ -880,21 +880,21 @@ These limitations do not point to one obvious replacement. They give us several 
 
 Each DPO variant below answers one of those questions.
 
-## 10. The DPO family: four different directions
+### 10. DPO variants
 
 There is no single “next DPO.” Its limitations point in different directions. IPO changes the statistical objective. SimPO removes the reference model and normalizes for length. ORPO folds preference learning into SFT. KTO changes the feedback format itself.
 
 Each variant addresses one question.
 
-### IPO: stop pushing an already-large preference gap
+#### IPO
 
-#### Problem
+##### Problem: DPO can overfit preference pairs
 
 The standard RLHF story makes two approximations. It represents pairwise preferences using differences between scalar rewards, then assumes the learned reward generalizes to outputs produced by a changing policy. DPO removes the second approximation because it does not fit a separate reward model. It still relies on the first preference model.
 
 This can make the logistic objective increasingly confident on separable data. Consider the Paris example again. Suppose every annotator prefers “Paris is the capital of France” over the repetitive paragraph, and the policy already favors the concise answer by a huge margin. Continuing to enlarge that gap still lowers the DPO loss. The pair keeps pushing even though the model has clearly learned its lesson.
 
-#### Solution
+##### Solution: use a finite target margin
 
 Identity Preference Optimization, or IPO, starts from a framework that optimizes preferences as preferences rather than first interpreting them as pointwise rewards. Its practical loss places the policy's preference margin near a finite target:
 
@@ -915,15 +915,15 @@ For that same Paris pair, suppose IPO's target margin is $2$. Once the concise a
 
 IPO is one instance of the broader $\Psi$PO framework introduced in [A General Theoretical Paradigm to Understand Learning from Human Preferences](https://arxiv.org/abs/2310.12036). The paper contains the theoretical development and performance guarantees.
 
-### SimPO: remove the reference model and control length
+#### SimPO
 
-#### Problem
+##### Problem: DPO requires a reference model and entangles reward with length
 
 DPO needs both the trainable policy and a frozen reference policy. It also uses total sequence log-probability. Because log-probabilities add over tokens, longer responses naturally accumulate more negative values. This can introduce an unwanted relationship between length and implicit reward.
 
 Imagine two correct explanations of why Paris is the capital of France. One gives the necessary context in 40 tokens. The other gives equally useful context in 200 tokens. Even if the model is equally confident about each token, the longer answer accumulates far more negative log-probability. A raw sequence score makes length part of the comparison whether we intended it or not.
 
-#### Solution
+##### Solution: use a length-normalized reference-free reward
 
 Simple Preference Optimization, or SimPO, defines an implicit reward using average log-probability:
 
@@ -956,9 +956,9 @@ For the same 40-token and 200-token Paris explanations, dividing by $|y|$ compar
 
 The [SimPO paper](https://arxiv.org/abs/2405.14734) reports lower memory use from eliminating the reference model and strong empirical results in its evaluated settings.
 
-### ORPO: combine imitation and preference learning
+#### ORPO
 
-#### Problem
+##### Problem: SFT and preference optimization require separate stages
 
 A common alignment pipeline first runs SFT and then runs a separate preference-optimization stage. This requires two training phases and two objectives applied at different times.
 
@@ -966,7 +966,7 @@ Suppose a base model assigns low probability to both a helpful support answer an
 
 There is a natural question: why not do both in one loss?
 
-#### Solution
+##### Solution: combine SFT with odds-ratio preference learning
 
 Odds Ratio Preference Optimization, or ORPO, starts from the same high-level goal as DPO: the preferred response should become more likely relative to the rejected response. However, ORPO wants to achieve this separation while also performing SFT on the preferred response in a single training stage.
 
@@ -1048,9 +1048,9 @@ For those same two low-probability support answers, merely decreasing the dismis
 
 The [ORPO paper](https://arxiv.org/abs/2403.07691) presents this as a monolithic preference-alignment stage.
 
-### KTO: learn from good and bad examples without pairs
+#### KTO
 
-#### Problem
+##### Problem: pairwise preference data is expensive
 
 Pairwise data is often expensive. For every prompt, someone must inspect two responses and choose between them. Existing product data may instead contain independent signals: a thumbs-up, a thumbs-down, a successful task, or an abandoned interaction.
 
@@ -1058,7 +1058,7 @@ DPO cannot directly consume one desirable response in isolation because its loss
 
 Imagine a support system with 10,000 independently liked answers and 2,000 disliked answers. The logs do not contain matched pairs. Constructing pairs after the fact could compare answers to different questions, and discarding unmatched examples would waste most of the data.
 
-#### Solution
+##### Solution: compare unary feedback with a reference point
 
 Kahneman-Tversky Optimization, or KTO, replaces the missing paired response with a reference point. Instead of asking whether response $y_w$ is better than response $y_l$, it asks whether one response is better or worse than what the current policy typically produces.
 
@@ -1145,7 +1145,7 @@ KTO draws its shape from prospect theory, where outcomes are perceived relative 
 
 The broader lesson is important: no preference loss is universally best. Each objective encodes assumptions about the feedback, the desired margin, sequence length, and acceptable policy drift.
 
-## 11. The modern post-training landscape
+### 11. Modern post-training landscape
 
 We can now organize the methods by the problem they solve rather than by their acronyms.
 
@@ -1176,7 +1176,7 @@ The price is sampling cost and optimization complexity. Online RL is also only a
 
 The right branch is **offline preference optimization**. Training uses a fixed dataset of judgments. These methods are simpler to run and cannot exploit a live reward model through unrestricted exploration. However, they are limited by the coverage of their data. They cannot directly learn from better outputs that the current policy discovers unless those outputs are added to a new preference dataset.
 
-### A compact comparison
+#### A compact comparison
 
 | Method | Feedback | Online sampling | Learned critic | Reference policy | Main idea |
 | --- | --- | ---: | ---: | ---: | --- |
@@ -1192,7 +1192,7 @@ The right branch is **offline preference optimization**. Training uses a fixed d
 | ORPO | Preferred and rejected pair | No | No | No | Combine SFT with odds-ratio separation |
 | KTO | Desirable or undesirable label | No | No | Yes | Compare unary feedback with a KL reference point |
 
-### How should we choose?
+#### How should we choose?
 
 Use SFT when demonstrations directly specify the behavior and simplicity matters. It remains the normal foundation even when later stages use RL or preference optimization.
 
@@ -1202,7 +1202,7 @@ Use online RL when the model can discover outputs that are better than the fixed
 
 These categories can also be combined. A team might use SFT to establish instruction following, DPO to absorb broad preference data, and online RL with verifiable rewards to improve mathematical reasoning. The stages answer different questions.
 
-### Considerations for state-of-the-art post-training
+#### Considerations for state-of-the-art post-training
 
 - **The training signal should determine the objective.** SFT is appropriate when demonstrations specify the desired behavior. Outcome-based RL is useful when many possible responses can receive a reliable score. Pairwise methods fit comparison data, while KTO fits independent desirable or undesirable labels.
 
@@ -1240,7 +1240,7 @@ $$
 \text{simpler estimators and objectives}.
 $$
 
-## References
+### References
 
 - John Schulman et al. [High-Dimensional Continuous Control Using Generalized Advantage Estimation](https://arxiv.org/abs/1506.02438), 2015.
 

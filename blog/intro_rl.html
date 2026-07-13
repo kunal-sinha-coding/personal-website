@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A first-principles guide to reinforcement learning and preference optimization for modern LLM post-training.">
-  <title>An introduction to RL and preference alignment in modern LLMs | Kunal</title>
+  <title>An intro to RL in modern LLMs | Kunal</title>
   <style>
     :root {
       --bg: #f5efe6;
@@ -55,12 +55,12 @@
 
     article > h1:first-child {
       margin-top: 0;
-      font-size: clamp(2.4rem, 7vw, 4.5rem);
-      line-height: 0.98;
-      letter-spacing: -0.045em;
+      font-size: clamp(1.9rem, 5vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
     }
 
-    h1, h2, h3, h4 {
+    h1, h2, h3, h4, h5 {
       line-height: 1.18;
       text-wrap: balance;
     }
@@ -74,13 +74,18 @@
 
     h3 {
       margin: 2.5rem 0 1rem;
-      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      font-size: clamp(1.3rem, 3vw, 1.6rem);
     }
 
     h4 {
       margin: 2rem 0 0.75rem;
       color: var(--accent);
-      font-size: 1.15rem;
+      font-size: 1.08rem;
+    }
+
+    h5 {
+      margin: 1.6rem 0 0.65rem;
+      font-size: 1rem;
     }
 
     p, li {
@@ -178,7 +183,7 @@
   <main class="wrap">
     <a class="back" href="../index.html">Back to home</a>
     <article>
-      <h1>An introduction to RL and preference alignment in modern LLMs</h1>
+      <h1>An intro to RL in modern LLMs</h1>
       <p class="date">Posted July 12, 2026</p>
       <div id="post" aria-live="polite">
         <p class="status">Loading post…</p>
@@ -207,7 +212,7 @@
             const match = /^\$\$\n([\s\S]+?)\n\$\$(?:\n|$)/.exec(src);
             if (match) return { type: 'displayMath', raw: match[0], text: match[1] };
           },
-          renderer(token) { return `\\[${token.text}\\]\n`;
+          renderer(token) { return `\\[${escapeHtml(token.text)}\\]\n`;
           }
         },
         {
@@ -218,7 +223,7 @@
             const match = /^\$([^$\n]+?)\$/.exec(src);
             if (match) return { type: 'inlineMath', raw: match[0], text: match[1] };
           },
-          renderer(token) { return `\\(${token.text}\\)`; }
+          renderer(token) { return `\\(${escapeHtml(token.text)}\\)`; }
         }
       ]
     });
