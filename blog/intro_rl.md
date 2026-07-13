@@ -1,8 +1,8 @@
 Hey everyone! In this post, we'll dive into some of the "secret sauce" that allows modern state-of-the-art LLMs to be so useful: preference alignment to human feedback, most commonly through reinforcement learning.
 
-When ChatGPT launched in late 2022, it brought large language models into mainstream use. Although the earlier GPT-3 had already demonstrated impressive performance, the introduction of *RLHF (Reinforcement Learning with Human Feedback)* was one of the key additions that made the model actually useful as an assistant.
+When ChatGPT launched in late 2022, it brought large language models into mainstream use. Although the earlier GPT-3 had already demonstrated impressive performance, the introduction of **RLHF** (Reinforcement Learning with Human Feedback) was one of the key additions that made the model actually useful as an assistant.
 
-For context, LLM training begins with *pretraining* on next-token prediction. During *post-training*, supervised fine-tuning teaches the model to imitate high-quality responses. RLHF adds preference learning: humans compare model outputs, and reinforcement learning pushes the model toward the responses they prefer.
+For context, LLM training begins with pretraining on next-token prediction. During post-training, supervised fine-tuning teaches the model to imitate high-quality responses. RLHF adds preference learning: humans compare model outputs, and reinforcement learning pushes the model toward the responses they prefer.
 
 We'll start here by introducing the basics of reinforcement learning, then iteratively build up toward modern methods. At each stage, we will introduce a method, identify its problems, explain a solution, and then repeat the process as the next limitation appears.
 
