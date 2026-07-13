@@ -1,5 +1,3 @@
-# An introduction to RL and preference alignment in modern LLMs
-
 Hey everyone! In this post, I'll introduce some of the "secret sauce" that allows modern state-of-the-art LLMs to be so useful: preference alignment to human feedback, most commonly through reinforcement learning.
 
 When ChatGPT launched in late 2022, it was the first large language model to break into mainstream public use at enormous scale. To many users, it felt like a sudden technological leap, but underneath the hood, ChatGPT was an extension of an existing line of work rather than an entirely new kind of model. GPT-3 had already demonstrated that a sufficiently large pretrained transformer could write, answer questions, and perform tasks from natural-language prompts. However, one of the key innovations introduced in ChatGPT was RLHF (reinforcement learning with human feedback).

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A first-principles guide to reinforcement learning and preference optimization for modern LLM post-training.">
-  <title>From SFT to Modern LLM Post-Training | Kunal</title>
+  <title>An introduction to RL and preference alignment in modern LLMs | Kunal</title>
   <style>
     :root {
       --bg: #f5efe6;
@@ -177,8 +177,12 @@
 <body>
   <main class="wrap">
     <a class="back" href="../index.html">Back to home</a>
-    <article id="post" aria-live="polite">
-      <p class="status">Loading post…</p>
+    <article>
+      <h1>An introduction to RL and preference alignment in modern LLMs</h1>
+      <p class="date">Posted July 12, 2026</p>
+      <div id="post" aria-live="polite">
+        <p class="status">Loading post…</p>
+      </div>
     </article>
     <noscript>This post requires JavaScript to render its Markdown and equations.</noscript>
   </main>
@@ -224,14 +228,6 @@
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const markdown = await response.text();
       post.innerHTML = marked.parse(markdown, { gfm: true });
-
-      const title = post.querySelector('h1');
-      if (title) {
-        const date = document.createElement('p');
-        date.className = 'date';
-        date.textContent = 'Posted July 12, 2026';
-        title.after(date);
-      }
 
       post.querySelectorAll('table').forEach((table) => {
         const wrapper = document.createElement('div');
