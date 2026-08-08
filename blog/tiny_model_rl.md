@@ -50,6 +50,11 @@ The script also updates or clones the relevant repositories. It registers the sh
 
 #### Shared skills repository
 
-I also created a shared skills repository for reusable procedures that support the experiments. The repository currently includes an error analysis skill, an iterative training workflow, and the publishing workflow used for this website.
+I also created a shared skills repository for reusable procedures that support the experiments. The repository currently includes the following skills.
+
+- The error analysis skill reads logged failures, groups recurring patterns, and supports the next training hypothesis.
+- The iterative workflow skill runs a user specified command repeatedly while preserving a clear stopping condition.
+- The documentation skill audits repository instructions and updates outdated README files.
+- The publishing skill turns a specified website post into the files required for publication and updates the visibility manifest.
 
 Keeping these procedures in a separate repository makes them available across GPU instances and projects. It also turns improvements to the experiment loop into versioned code that can be reused after the next environment restart.
