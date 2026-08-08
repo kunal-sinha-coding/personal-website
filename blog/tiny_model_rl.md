@@ -1,27 +1,39 @@
-# Why I Am Starting RL Experiments With a Tiny Model
+I will examine how much reinforcement learning can improve the performance of a tiny language model. The objective is not to treat a small experiment as a complete answer to the broader problem of language-model post-training. The objective is to establish a fast and controlled environment for evaluating post-training methods.
 
-I am going to explore reinforcement learning on a tiny language model to see how far we can improve its performance. The goal is not to claim that a small experiment answers every question about post training. The goal is to build a fast and rigorous place to test ideas.
+### 1. Motivation for a Tiny Model
 
-## Why start with a tiny model?
+#### Practical considerations
 
-There are practical reasons to begin small.
+Tiny models offer two practical advantages for an independent researcher.
 
-- Training is cheap. As an independent researcher, I can run more experiments without needing expensive hardware or a large budget.
-- Training is quick. A shorter training cycle means that I can inspect results and start the next experiment sooner.
-- The setup is easier to understand. A small model makes it easier to inspect data, prompts, rewards, and failure cases together.
+- Training costs are low. This permits more experiments without requiring a large compute budget.
+- Training cycles are short. Results can be inspected and the next experiment can begin quickly.
+- The experimental system is easier to inspect. Prompts, data formats, rewards, and failure cases can be analyzed together.
 
-The speed of iteration is probably the biggest factor in determining how quickly we can hill climb on a metric. Faster experiments let us explore more hypotheses in the same amount of time. They also make it easier to discard weak ideas before we become attached to them.
+The speed of iteration is likely the largest practical factor in determining the rate of hill climbing on a metric. If an experiment takes less time, more hypotheses can be evaluated under the same resource constraint. Faster iteration therefore increases the rate at which a researcher can explore the space of possible training strategies.
 
-There is also a research reason to use a tiny model. Larger models are already close to saturated on some common benchmarks. A tiny model often starts with very low performance, which gives an RL or post training method much more room to improve the baseline.
+#### Research considerations
 
-When the baseline model is poor, post training becomes especially important. That makes a tiny model a fruitful place to explore different post training strategies. We can learn which parts of the training regime create real gains before testing whether those ideas transfer to larger models.
+There is also a research motivation for starting with a tiny model. Larger models are already near saturation on some common benchmarks. A tiny model generally has substantially lower baseline performance, which creates more room for measurable improvement.
 
-Tiny models are also much more brittle in my experience. They are more sensitive to subtle differences in context, including the prompt, the data format, and the exact instructions. That sensitivity forces more rigor. A researcher has to pay closer attention to every part of the experiment because a small formatting change can alter the result.
+When the baseline is weak, post-training has a larger relative role in determining the final result. This makes a tiny model a useful testbed for comparing post-training strategies. A strategy that produces a clear improvement from a weak baseline can then be evaluated for transfer to larger models.
 
-## Letting the agent run experiments
+#### Brittleness as a rigor test
 
-I am also experimenting with RSI techniques in which the agent runs its own experiments and checks its own results over a limited number of cycles. The current process is intentionally basic. The agent can make a change, run an experiment, inspect the result, and use the error pattern to decide what to try next.
+In my experience, tiny models are more brittle than larger models. Their behavior is more sensitive to subtle changes in context, including the prompt, the data format, and the exact instructions.
 
-One part of this process is the error analysis skill. It reads the logged failures, groups recurring patterns, and helps identify whether a problem is likely caused by the data, the reward, the prompt, or the training setup. This gives the next experiment a more informed starting point than simply choosing another change at random.
+This brittleness creates a useful methodological constraint. A researcher must control the experimental context more carefully because a small formatting change can change the result. The resulting discipline improves the quality of comparisons between training runs.
 
-This is a very basic approach so far. I will refine it later as I learn which parts of the loop produce useful improvements and which parts only create noise.
+### 2. Agent Driven Experimentation
+
+#### Limited cycle experimentation
+
+I am also experimenting with recursive self improvement techniques in which an agent runs experiments and evaluates its own results over a limited number of cycles. The current procedure is intentionally basic. The agent changes one part of the setup, runs an experiment, inspects the result, and uses the observed error pattern to select a subsequent hypothesis.
+
+This procedure treats the agent as an experiment coordinator rather than as an unrestricted autonomous researcher. Limiting the number of cycles keeps the process auditable and makes it possible to compare the results with a fixed experimental budget.
+
+#### Error analysis
+
+The error analysis skill is one component of this process. It reads logged failures, groups recurring patterns, and helps distinguish problems caused by the data, reward, prompt, or training configuration. This gives the next experiment a more informed starting point than selecting a change at random.
+
+The current approach is only a basic starting point. I will refine it after measuring which parts of the loop produce useful improvements and which parts introduce noise. The main limitation is that the agent currently has a small number of evaluation cycles and a narrow set of diagnostic tools.

@@ -13,6 +13,8 @@
 - Instead of writing long paragraphs, break up content into short paragraphs.
 - Feel free to use bullet point and numbered lists whenever appropriate.
 - Feel free to insert Markdown code blocks or LaTeX math whenever appropriate.
+- For blog posts, follow the heading hierarchy used by prior blog posts. Use the same heading levels for comparable sections.
+- For blog posts, use a technical style similar to a research report. State the motivation, assumptions, methods, observations, and limitations clearly.
 
 ## Parallelization
 
