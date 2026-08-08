@@ -58,3 +58,15 @@ I also created a shared skills repository for reusable procedures that support t
 - The publishing skill turns a specified website post into the files required for publication and updates the visibility manifest.
 
 Keeping these procedures in a separate repository makes them available across GPU instances and projects. It also turns improvements to the experiment loop into versioned code that can be reused after the next environment restart.
+
+### 4. Findings
+
+#### Weakness of instructions
+
+The first finding is that prompt instructions alone are a weak mechanism for enforcing output structure. If the model is told to return a particular format, it often fails to follow the instruction reliably.
+
+For example, I have observed the model place unrelated text before a code block even when the prompt required a code-only response. The parser then receives text before the code, so the generated program cannot be parsed or executed. The failure is operational rather than cosmetic. A small formatting violation can prevent the entire evaluation from producing a reward.
+
+This means that the post-training system cannot assume that the model will produce directly executable output. The pipeline needs defensive handling around the model. Possible mitigations include extracting the first valid code block, removing known wrapper text, normalizing delimiters, validating the result before execution, and asking the model to repair an invalid response.
+
+The broader lesson is that useful post-training systems often need to massage and post-process model outputs. Prompt design remains important, but it should be paired with parsers, validators, and recovery procedures that convert imperfect responses into a form the evaluator can inspect safely.
