@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "intro_rl",
+    "title": "An intro to RL in modern LLMs",
+    "date": "July 12, 2026",
+    "summary": "A first principles guide to reinforcement learning and preference optimization for modern language models.",
+    "published": true
+  },
+  {
+    "slug": "tiny_model_rl",
+    "title": "Why I Am Starting RL Experiments With a Tiny Model",
+    "date": "August 8, 2026",
+    "summary": "Why tiny models are a practical and rigorous place to explore reinforcement learning and post training.",
+    "published": true
+  }
+]

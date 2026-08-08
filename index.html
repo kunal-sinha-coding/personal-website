@@ -169,18 +169,56 @@
 
     <section aria-labelledby="blog-posts-title">
       <h2 class="section-title" id="blog-posts-title">Blog Posts</h2>
-      <div class="post-list">
-        <a class="post-card" href="blog/intro_rl.html">
-          <span class="post-date">Posted July 12, 2026</span>
-          <h3 class="post-title">An intro to RL in modern LLMs</h3>
-          <p class="post-summary">A first-principles guide to reinforcement learning and preference optimization for modern language models.</p>
-        </a>
-      </div>
+      <div class="post-list" id="post-list" aria-live="polite"></div>
     </section>
   </main>
   <script>
     const intro = document.querySelector("#personal-intro");
+    const postList = document.querySelector("#post-list");
 
+    // Build one homepage card from one manifest entry.
+    function createPostCard(post) {
+      const link = document.createElement("a");
+      link.className = "post-card";
+      link.href = `blog/${post.slug}.html`;
+
+      const date = document.createElement("span");
+      date.className = "post-date";
+      date.textContent = `Posted ${post.date}`;
+      link.append(date);
+
+      const title = document.createElement("h3");
+      title.className = "post-title";
+      title.textContent = post.title;
+      link.append(title);
+
+      const summary = document.createElement("p");
+      summary.className = "post-summary";
+      summary.textContent = post.summary;
+      link.append(summary);
+
+      return link;
+    }
+
+    // Load the manifest and display only posts explicitly marked as published.
+    fetch("blog/posts.json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Unable to load blog posts (${response.status})`);
+        }
+
+        return response.json();
+      })
+      .then((posts) => {
+        posts.filter((post) => post.published).forEach((post) => {
+          postList.append(createPostCard(post));
+        });
+      })
+      .catch(() => {
+        postList.textContent = "The blog posts could not be loaded.";
+      });
+
+    // Load the personal introduction separately from the blog manifest.
     fetch("header/personal_intro.md")
       .then((response) => {
         if (!response.ok) {
