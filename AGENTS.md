@@ -18,7 +18,8 @@
 
 ## Parallelization
 
-- For tasks with multiple steps, first identify which steps are independent and can run in parallel and which steps depend on one another and must run sequentially.
+- Always look for independent work that can run in parallel unless the task is trivial or quick.
+- Identify which work can run concurrently and which work depends on earlier results, then sequence only the dependent work.
 - Run independent work in parallel with subagents whenever available, then integrate and verify their results before continuing with dependent steps.
 - Coordinate edits to shared files to avoid conflicts.
 
