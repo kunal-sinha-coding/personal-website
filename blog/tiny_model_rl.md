@@ -83,6 +83,22 @@ The first dense-reward run produced nonzero reward variance and nonzero gradient
 
 This experiment changes the reward path while keeping the five-step training budget and full evaluation set fixed. A later experiment can increase the number of generations or add supervised warm-start training if dense rewards do not produce enough mixed groups.
 
+#### Task difficulty and reward variance
+
+A related lesson came from a recent onsite hackathon. We took a first step toward replacing one of our frontier language model calls with an open source model and using GRPO to train it. When choosing a suitable task, a colleague pointed out that the task could not be too easy or too hard. If nearly every sampled response succeeds, or nearly every response fails, the rewards have low variance and the training method has little useful signal to learn from.
+
+This is particularly important for GRPO because it samples several responses for the same prompt and computes each response’s advantage relative to the other responses in that group. In simplified form, the advantage is
+
+$$
+A_i = \frac{R_i - \mu_{\mathrm{group}}}{\sigma_{\mathrm{group}} + \epsilon}.
+$$
+
+If every response receives the same reward, then every centered reward is zero. GRPO cannot identify which response was better, so the group contributes no comparative learning signal. If the rewards differ only slightly, the signal may be too weak to distinguish useful behavior from noise. Normalization by a very small standard deviation can also magnify tiny and unreliable differences, depending on the implementation.
+
+Other policy gradient methods also struggle when rewards or advantages have little variation. The problem is especially pronounced for GRPO because its baseline is computed from the sampled response group itself. GRPO does not use a separately learned critic to estimate the expected value of each prompt or partial trajectory, so it depends heavily on relative differences within the group. Other methods may recover some signal from a learned value function, temporal credit assignment, or comparisons across a broader batch.
+
+This creates a practical task selection rule. The task should be difficult enough to produce failures, but attainable enough that some sampled responses outperform others. The relevant quantity for GRPO is within prompt group variance, not merely overall reward variance across the dataset. A task can have varied rewards across prompts while still producing flat groups and therefore little GRPO training signal.
+
 #### Weakness of instructions
 
 The first finding is that prompt instructions alone are a weak mechanism for enforcing output structure. If the model is told to return a particular format, it often fails to follow the instruction reliably.
