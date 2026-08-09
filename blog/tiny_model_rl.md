@@ -61,6 +61,28 @@ Keeping these procedures in a separate repository makes them available across GP
 
 ### 4. Findings
 
+#### Experimental notes
+
+One recent experiment tested whether the training loop was receiving enough useful reward variation to update the policy. The hypothesis was that the binary reward was too sparse for this model at its current capability level. A candidate received `1.0` only when every supplied assertion passed, and received `0.0` for format errors, syntax errors, runtime errors, and partially correct programs. When all four generations for a prompt failed, GRPO had no within-group preference to learn from.
+
+The initial choice of a sparse reward was deliberate. If correctness is decomposed into format, syntax, execution, and test performance, a dense reward requires explicit coefficients that specify how much each component matters. Hardcoding those coefficients is an uncomfortable choice because the values encode my assumptions about the relative importance of different kinds of progress. I initially preferred the most open-ended objective available: produce the correct answer. The policy could then, in principle, discover for itself how much probability to assign to behaviors that improve syntax, execution, and test performance, rather than being guided by coefficients chosen in advance.
+
+That intuition is plausible, but it may apply more to the behavior learned by the policy than to the definition of the reward used to train it. Explicit weights in a reward function are also part of the task specification, much like the detailed instructions in a prompt constrain a model toward a desired behavior. They can provide useful credit for intermediate progress when a model is too weak to reach the final answer often enough for a sparse signal to produce meaningful comparisons. A more capable model might benefit from the freedom of the end to end objective, while a weaker model may need carefully chosen partial rewards to reach the region where final correctness becomes learnable.
+
+The dense reward experiment therefore tests a practical question rather than assuming that dense rewards are universally better. It asks whether explicit partial credit provides this model with a more useful learning signal than an implicit decomposition learned only from full correctness. The coefficients remain hyperparameters rather than objective truths, so they should be treated as a hypothesis to evaluate with ablations and error analysis. If dense rewards improve intermediate behavior but not final correctness, that would suggest that the weighting or the reward components are misaligned rather than proving that sparse reward is preferable.
+
+The next experiment is replacing that binary signal with a dense reward. The proposed reward is
+
+$$
+R = 0.05I_{\mathrm{format}} + 0.10I_{\mathrm{syntax}} + 0.05I_{\mathrm{execution}} + 0.80\frac{\mathrm{tests\ passed}}{\mathrm{total\ tests}}.
+$$
+
+The training run will also log group-level diagnostics to W&B and the local training log. These diagnostics will measure the fraction of flat-reward groups, the fraction of mixed-reward groups, within-group reward standard deviation, partial-test progress, format failures, and full passes. The purpose is to determine whether the model is producing partially correct candidates and whether those candidates create a useful GRPO learning signal.
+
+The first dense-reward run produced nonzero reward variance and nonzero gradients on all five steps. Four of the five steps had mixed rewards in every generation group, and the remaining step had mixed rewards in seven of eight groups. This confirms that the reward change created a usable training signal. It did not yet improve the held-out pass rate: the baseline scored 21/75 and the final checkpoint scored 19/75. The next question is whether the signal is directionally useful, rather than merely nonzero.
+
+This experiment changes the reward path while keeping the five-step training budget and full evaluation set fixed. A later experiment can increase the number of generations or add supervised warm-start training if dense rewards do not produce enough mixed groups.
+
 #### Weakness of instructions
 
 The first finding is that prompt instructions alone are a weak mechanism for enforcing output structure. If the model is told to return a particular format, it often fails to follow the instruction reliably.
