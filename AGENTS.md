@@ -31,8 +31,8 @@
 
 ## Patch workflow
 
-- In this environment, the direct patch helper may fail because its sandbox cannot create an unprivileged user namespace. Apply patches through an elevated `exec_command` invocation instead.
-- When passing a patch through a nested shell, protect `$` variables, backticks, and quotes from shell interpolation. Base64-encode the patch and pipe it through `base64 -d | apply_patch` when necessary.
+- Do not call the direct patch helper in this environment. It runs in a separate restricted sandbox and cannot use the elevated execution context.
+- Apply every patch through an elevated `exec_command` call. For simple patches, pass the patch safely to `apply_patch` from that command. For patches containing shell-sensitive text, base64-encode the patch and pipe it through `base64 -d | apply_patch`.
 
 ## Synchronization
 
