@@ -26,6 +26,7 @@
 ## Git workflow
 
 - After making any set of changes to the code, always commit the changes directly on the `main` branch and push `main` to the repository.
+- Whenever any command creates, modifies, or deletes a non-gitignored file, commit that change directly on `main` and push `main` to the repository as well.
 - If a push fails because DNS cannot resolve GitHub, wait 10 seconds and retry. Stop after three consecutive DNS failures and inform the user.
 
 ## Patch workflow
