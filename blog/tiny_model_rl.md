@@ -83,6 +83,16 @@ The first dense-reward run produced nonzero reward variance and nonzero gradient
 
 This experiment changes the reward path while keeping the five-step training budget and full evaluation set fixed. A later experiment can increase the number of generations or add supervised warm-start training if dense rewards do not produce enough mixed groups.
 
+#### Improving MBPP from 29 percent to 40 percent
+
+The next improvement came from giving the dense-reward setup a larger training budget and selecting the best intermediate checkpoint. The earlier run reached 22/75 on held-out MBPP, which is 29.3 percent pass@1. I increased training to ten epochs, kept four generations per prompt, used an effective batch size of 32, and evaluated a checkpoint every 25 optimizer steps.
+
+Performance did not improve monotonically. The checkpoints ranged from 24/75 to 30/75 after the first evaluation, and the final training checkpoint scored 26/75. The best checkpoint appeared at step 150 and scored 30/75, which is 40 percent pass@1. Restoring that checkpoint instead of using the final weights therefore preserved an 11 percentage point absolute improvement over the earlier 29.3 percent result.
+
+This result suggests that the dense reward was useful once the policy received enough updates. It also shows that more training was not sufficient by itself. Periodic held-out evaluation and best-checkpoint restoration were necessary because later updates could reduce generalization.
+
+The result remains preliminary. The evaluation contains only 75 examples, and repeatedly selecting a checkpoint against the same split can overfit the model-selection process to that split. A stronger claim will require repeated seeds and a separate test set that is used only after the training and checkpoint-selection procedure is fixed.
+
 #### Task difficulty and reward variance
 
 A related lesson came from a recent onsite hackathon. We took a first step toward replacing one of our frontier language model calls with an open source model and using GRPO to train it. When choosing a suitable task, a colleague pointed out that the task could not be too easy or too hard. If nearly every sampled response succeeds, or nearly every response fails, the rewards have low variance and the training method has little useful signal to learn from.
