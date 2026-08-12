@@ -3,7 +3,8 @@
 ## Code style
 
 - Favor simplicity over complexity. Do the minimal possible code changes required to achieve the objective.
-- Leave inline comments on every function and block of code. Each comment should use complete sentences, but should be as short and simple as possible to communicate the idea. All inline comments must be between 1-2 sentences.
+- Add a larger comment at the top of each code file that describes the complete code flow.
+- Add a one-line inline comment to every function and logical code block that describes what it does. Each comment must be one complete sentence and no more than one line.
 
 ## Writing style
 
