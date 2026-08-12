@@ -93,6 +93,16 @@ This result suggests that the dense reward was useful once the policy received e
 
 The result remains preliminary. The evaluation contains only 75 examples, and repeatedly selecting a checkpoint against the same split can overfit the model-selection process to that split. A stronger claim will require repeated seeds and a separate test set that is used only after the training and checkpoint-selection procedure is fixed.
 
+#### Supervised fine tuning before reinforcement learning
+
+The next hypothesis is that the model should reach a reasonable level of task competence before reinforcement learning begins. GRPO learns by comparing sampled programs, but a weak policy often produces groups in which every candidate fails. Those groups provide little evidence about which behavior should become more likely. Supervised fine tuning provides a more direct starting signal because each MBPP prompt is paired with a verified reference solution and the model receives token-level feedback throughout that solution.
+
+I therefore added one epoch of response-only supervised fine tuning before GRPO. The initial model passed 22/75 held-out problems, which is 29.3 percent pass@1. After one supervised epoch, it passed 27/75, which is 36 percent pass@1. Format errors also fell from four to one. This is a 6.7 percentage point absolute improvement from a single pass through the training data.
+
+The result supports using supervised learning to establish the base coding policy before asking reinforcement learning to refine it. It does not yet establish the best amount of supervised training. The next objective is to evaluate after each epoch, continue SFT until held-out performance saturates, and then apply GRPO to the strongest supervised checkpoint. This separates two roles: SFT first teaches the model to produce competent solutions, and RL then optimizes those solutions against execution outcomes.
+
+As with the earlier experiments, this finding is based on one seed and a 75-example held-out set. Repeated runs and a final untouched test set will be needed to distinguish a durable improvement from evaluation noise.
+
 #### Task difficulty and reward variance
 
 A related lesson came from a recent onsite hackathon. We took a first step toward replacing one of our frontier language model calls with an open source model and using GRPO to train it. When choosing a suitable task, a colleague pointed out that the task could not be too easy or too hard. If nearly every sampled response succeeds, or nearly every response fails, the rewards have low variance and the training method has little useful signal to learn from.
