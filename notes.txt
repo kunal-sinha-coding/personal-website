@@ -1,0 +1,31 @@
+## Commit Name
+
+Synchronize commit note requirements.
+
+## Description
+
+The repository instructions require every commit to include a notes entry with the commit name, what changed, why it changed, and relevant context.
+
+## Why
+
+This keeps repository history understandable beyond the commit subject.
+
+## Context
+
+The rule was synchronized across the local repositories as required by their shared AGENTS.md policy.
+
+## Commit Name
+
+Complete commit note records.
+
+## Description
+
+This commit fills the notes file that was created empty by the initial synchronization command.
+
+## Why
+
+The first mechanical append did not process a zero-length file, so the required commit context was missing.
+
+## Context
+
+This correction documents both the original instruction change and the reason for this follow-up commit.
