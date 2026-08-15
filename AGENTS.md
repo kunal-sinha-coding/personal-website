@@ -4,7 +4,7 @@
 
 - Favor simplicity over complexity. Do the minimal possible code changes required to achieve the objective.
 - Add a larger comment at the top of each code file that describes the complete code flow.
-- Add a one-line inline comment to every function and logical code block that describes what it does. Each comment must be one complete sentence and no more than one line.
+- Add a one-line inline comment to every function and logical code block that describes what it does. Each comment must be one complete sentence and no more than one line. Separate blocks with a newline.
 
 ## Writing style
 
@@ -30,6 +30,7 @@
 - Whenever any command creates, modifies, or deletes a non-gitignored file, commit that change directly on `main` and push `main` to the repository as well.
 - If a push fails because DNS cannot resolve GitHub, wait 10 seconds and retry. Stop after three consecutive DNS failures and inform the user.
 - These commit and push rules also apply to files created under /root/.codex/skills and /root/.codex/skills-repository. Copy skill changes into the appropriate tracked repository before committing and pushing them.
+- Before every commit, update the repository notes file with the commit name, a complete description of what changed and why, and any relevant discussion or context. Use `logs/notes.txt` when that tracked path exists. Otherwise, use or create `notes.txt` at the repository root.
 
 ## Patch workflow
 
