@@ -41,3 +41,7 @@
 
 - Keep this `AGENTS.md` synchronized with the `AGENTS.md` files in the other local repositories.
 - Synchronize any change made to any local `AGENTS.md` across all three repositories.
+
+## Continuation
+
+- If the user interrupts an in-progress task to provide another instruction or ask a question, complete the interruption first and then resume the original task automatically unless the user explicitly cancels or replaces it.
