@@ -29,3 +29,7 @@ The first mechanical append did not process a zero-length file, so the required 
 ## Context
 
 This correction documents both the original instruction change and the reason for this follow-up commit.
+
+## 2026-09-02: Clarify default and explicit branch workflow
+
+Updated AGENTS.md so commits and pushes default to main, while an explicitly specified branch is used when provided. Synchronized the instruction across the three local repositories.
