@@ -33,3 +33,7 @@ This correction documents both the original instruction change and the reason fo
 ## 2026-09-02: Clarify default and explicit branch workflow
 
 Updated AGENTS.md so commits and pushes default to main, while an explicitly specified branch is used when provided. Synchronized the instruction across the three local repositories.
+
+## 2026-09-06: Require immediate commit and push after every change
+
+Updated AGENTS.md to state explicitly that every change must be committed and pushed immediately on the configured branch. Synchronized the instruction across all three local repositories.
