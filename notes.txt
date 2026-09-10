@@ -37,3 +37,7 @@ Updated AGENTS.md so commits and pushes default to main, while an explicitly spe
 ## 2026-09-06: Require immediate commit and push after every change
 
 Updated AGENTS.md to state explicitly that every change must be committed and pushed immediately on the configured branch. Synchronized the instruction across all three local repositories.
+
+## 2026-09-10: Require reproducible experiment result records
+
+Synchronized the repository agent instructions with post-training. Metric-bearing experiments must save complete reproducibility metadata and keep ground truth separate from candidate selection.

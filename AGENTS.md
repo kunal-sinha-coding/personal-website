@@ -42,6 +42,12 @@
 - Keep this `AGENTS.md` synchronized with the `AGENTS.md` files in the other local repositories.
 - Synchronize any change made to any local `AGENTS.md` across all three repositories.
 
+## Experiment records
+
+- When the user asks for an experiment that reports metrics or numerical results, save the results in the repository results file.
+- Record the experiment name, purpose, complete setup, configuration, data and candidate artifact identifiers, selection procedure, reported metrics, relevant environment details, code and commit identifiers, and any limitations needed to reproduce the experiment if its outputs are lost.
+- Keep candidate selection independent of ground truth. Use ground truth only after selection for a separate benchmark measurement, and record that separation explicitly.
+
 ## Continuation
 
 - If the user interrupts an in-progress task to provide another instruction or ask a question, complete the interruption first and then resume the original task automatically unless the user explicitly cancels or replaces it.
