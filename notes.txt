@@ -30,6 +30,10 @@ The first mechanical append did not process a zero-length file, so the required 
 
 This correction documents both the original instruction change and the reason for this follow-up commit.
 
+## 2026-09-26: Add Auditing an Audit Agent cross-post
+
+Added the cross-post text and Fieldguide Engineering Blog link as a published post, plus the matching homepage manifest entry and HTML page. The user requested the specified title, preview subtitle, body copy, and link.
+
 ## 2026-09-02: Clarify default and explicit branch workflow
 
 Updated AGENTS.md so commits and pushes default to main, while an explicitly specified branch is used when provided. Synchronized the instruction across the three local repositories.

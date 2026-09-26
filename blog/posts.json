@@ -12,5 +12,12 @@
     "date": "August 8, 2026",
     "summary": "Why tiny models are a practical and rigorous place to explore reinforcement learning and post training.",
     "published": false
+  },
+  {
+    "slug": "auditing_an_audit_agent",
+    "title": "Auditing an Audit Agent",
+    "date": "September 26, 2026",
+    "summary": "A brief overview of some of the work I've done at Fieldguide to evaluate our Agents",
+    "published": true
   }
 ]
