@@ -1,9 +1,9 @@
 [
   {
-    "slug": "intro_rl",
-    "title": "An intro to RL in modern LLMs",
-    "date": "July 12, 2026",
-    "summary": "A first principles guide to reinforcement learning and preference optimization for modern language models.",
+    "slug": "auditing_an_audit_agent",
+    "title": "Auditing an Audit Agent",
+    "date": "September 26, 2026",
+    "summary": "A brief overview of some of the work I've done at Fieldguide to evaluate our Agents",
     "published": true
   },
   {
@@ -14,10 +14,10 @@
     "published": false
   },
   {
-    "slug": "auditing_an_audit_agent",
-    "title": "Auditing an Audit Agent",
-    "date": "September 26, 2026",
-    "summary": "A brief overview of some of the work I've done at Fieldguide to evaluate our Agents",
+    "slug": "intro_rl",
+    "title": "An intro to RL in modern LLMs",
+    "date": "July 12, 2026",
+    "summary": "A first principles guide to reinforcement learning and preference optimization for modern language models.",
     "published": true
   }
 ]
