@@ -38,6 +38,10 @@ Added the cross-post text and Fieldguide Engineering Blog link as a published po
 
 Reordered the blog manifest entries by publication date in descending order so newer posts appear before older posts on the homepage.
 
+## 2026-09-26: Normalize post title capitalization and subtitle punctuation
+
+Changed the cross-post title to “Auditing an audit agent” in the page and homepage manifest. Removed the final period from the older post's homepage subtitle to match the requested punctuation.
+
 ## 2026-09-02: Clarify default and explicit branch workflow
 
 Updated AGENTS.md so commits and pushes default to main, while an explicitly specified branch is used when provided. Synchronized the instruction across the three local repositories.
