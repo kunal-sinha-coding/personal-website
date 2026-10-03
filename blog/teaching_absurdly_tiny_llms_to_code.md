@@ -112,29 +112,21 @@ This finding led me to the approach described at the start of the section: show 
 
 ### 2. Selecting among multiple generations
 
-The approach that worked combined a sandbox execution check with clustering of candidate outputs. The sandbox tested each program against the one input and output pair shown in the prompt. For candidates that passed, it ran the programs on the remaining MBPP inputs and grouped candidates that returned the same output signature. It did not compare those outputs with the hidden expected answers.
+#### What worked: execution-based verifier and output clustering
 
-At checkpoint 630, the combined selector reached 76.19% MBPP accuracy at pass@16. Execution-only selection reached 75.40%. On MBPP+, the combined selector reached 60.05%, compared with 59.52% for execution alone. These results show that output clustering added a small gain after the visible assertion check.
+During the previous experiments, I noticed a curious phenomenon. Pass@1 could be low, but sampling more candidates greatly increased the chance of finding a correct solution. In an earlier 80-task rollout, the first candidate to pass the visible test was fully correct on 56.25% of tasks. Among 16 candidates, at least one was fully correct on 67.50% of tasks. On checkpoint 630, raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16. I wanted to investigate this effect more thoroughly.
 
-#### How pass@K pointed to candidate selection
+The problem is that even when a batch contains a correct program, we cannot identify it at inference time by checking the ground truth. Instead, I used the one visible test case in the prompt and an execution sandbox. The sandbox can run each candidate program on the known input. A candidate that fails the visible test is incorrect, so I filter it out. If more than one candidate passes, I select the first one. This is a useful but imperfect guess: a program can pass the visible test and still fail hidden tests. The results below show how well this simple check works.
 
-I first measured pass@K to see whether the model could produce a correct program after an incorrect first answer. This diagnostic followed the GRPO training experience: groups need variation in reward to provide a learning signal. In an earlier 80-task rollout, the first candidate that passed the visible assertion was correct on 56.25% of tasks. The best of 16 candidates was correct on 67.50%. A perfect oracle that knew the hidden-test labels could select a correct candidate on those same 67.50% of tasks.
+##### Execution-based filtering
 
-The oracle is only an upper bound because a real selector cannot see hidden labels. It showed that sampling could expose useful programs the first answer missed. The later frozen-checkpoint evaluation showed the same pattern on 378 tasks: raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16 for checkpoint 630. The challenge was to select among these candidates without seeing which passed the hidden tests.
+The execution filter checks each candidate against the input and output pair shown in the prompt. It keeps the first candidate that passes. If no candidate passes, it keeps the first candidate generated. The filter does not run the full benchmark tests or read their expected outputs.
 
-#### Why the execution check worked
+##### Joint output clustering
 
-I first tried a learned verifier, but a model that predicts correctness has to generalize from a small labeled set. Instead, I used the sandbox to run each candidate against the single assertion visible in the prompt. This gives an exact pass or fail for that assertion. The selector chose the first candidate that passed. If none passed, it kept the first candidate.
+For the hidden tests, I do not know the correct outputs. I can still use the sandbox to run candidate programs on the hidden inputs and compare their outputs. I record each candidate's outputs as a signature, then group candidates with identical signatures. The selector chooses the earliest candidate in the largest group among those that passed the visible test. If no candidate has a complete output signature, it falls back to the execution filter.
 
-The execution-only selector did not run the full hidden benchmark tests or read their expected outputs. One visible assertion is a weak correctness test, since an incorrect program can pass it. The method is useful because it gives a reliable answer for a cheap, known check.
-
-#### Why output clustering added a small gain
-
-I then tested whether hidden inputs could provide more evidence without comparing candidate outputs with expected answers. For each candidate that passed the visible assertion, the sandbox ran the program on the remaining MBPP inputs and recorded its outputs. It did not check them against hidden labels.
-
-I compared joint output clustering with per-input plurality. Joint clustering groups candidates with the same output signature across hidden inputs. Per-input plurality favors a candidate whose output matches the most common output for each input. In an earlier 80-task diagnostic, the two rules performed nearly the same. At K=16, each selected a correct candidate on 60.00% of tasks, compared with 56.25% for visible-assertion selection.
-
-The latest evaluation used exact typed output signatures. It selected the earliest candidate in the largest cluster among candidates that passed the visible assertion and returned a complete signature. If none had a complete signature, it fell back to visible-assertion selection. The intuition is that correct programs tend to agree on outputs, while incorrect programs may fail in different ways. This is only a heuristic. Several incorrect programs can agree on the same wrong outputs. In the earlier 80-task analysis, the largest cluster contained a correct program in 48 of 54 tasks where any sample was correct. It missed six tasks that the oracle could have solved.
+The idea is that correct programs should produce the same outputs, while incorrect programs may fail in different ways and produce different outputs. This is only a heuristic. Incorrect programs can also agree on the same wrong outputs. In an earlier 80-task analysis, the largest group contained a correct program in 48 of the 54 tasks where at least one candidate was correct. It missed six tasks that an oracle with access to hidden-test labels could have solved.
 
 #### A learned verifier did not provide a reliable selector
 

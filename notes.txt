@@ -241,3 +241,19 @@ The author said the subsection was too long and asked it to end after the concis
 ## Context
 
 The resulting section now ends after noting that hardcoding the visible test earns slightly more reward than total failure, but much less than a fully correct solution.
+
+## Commit Name
+
+Restructure the candidate selection section around the working method.
+
+## Description
+
+Rewrote section 2 to open with the observation that sampling more candidates raises the chance of finding a correct solution. Added the requested narrative about the lack of inference-time ground truth, then described visible-test execution filtering and joint output clustering as subsections under the working approach.
+
+## Why
+
+The revised structure explains why candidate selection was explored, how the execution sandbox filters candidates, and how output clustering uses hidden-test inputs without their expected labels.
+
+## Context
+
+The introductory metrics use the existing 80-task rollout and checkpoint 630 evaluation. The two selector methods retain the prior caveats that visible-test passes can still fail hidden tests and that incorrect candidates can share output signatures.
