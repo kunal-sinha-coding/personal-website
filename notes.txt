@@ -125,3 +125,7 @@ Removed the two W&B hyperlinks from the SFT and binary-reward evidence paragraph
 ## 2026-10-03: Simplify the SFT and GRPO data comparison
 
 Replaced the SFT section's rollout paragraph with the requested contrast: SFT uses one reference program per example, while GRPO samples 16 programs per prompt, and the GRPO training set contains 593 examples. Removed the previous total rollout count and explanatory caveat from that paragraph.
+
+## 2026-10-03: Lead the binary-reward section with diversity evidence
+
+Reordered the binary-reward subsection to state the reward-diversity problem and its logged evidence before introducing the reward and group-relative advantage equations. The explanation now follows the evidence from three zero-variance updates to the GRPO mechanism that makes identical group rewards uninformative, then compares the denser-reward follow-up and its lack of held-out accuracy gain.

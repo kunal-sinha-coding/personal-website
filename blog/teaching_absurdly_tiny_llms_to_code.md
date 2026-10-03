@@ -69,23 +69,25 @@ In contrast, GRPO can produce more training signal from a limited set of prompts
 
 #### GRPO with binary reward: feedback was too sparse
 
-An early GRPO attempt used a binary reward. Each sampled program received a reward of 1 if it passed all tests and 0 otherwise:
+The first reward I tried gave only two possible scores. A program received 1 if it passed every test and 0 otherwise. For a small coding model, most sampled programs failed, so many groups had little or no difference in their rewards.
+
+An earlier five-step diagnostic used `Qwen3.5-0.8B` with four samples per prompt. Three of the five update batches had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. This short run used a different model, but it shows the problem with the binary signal: in those three batches, sampled programs did not have different rewards for the optimizer to compare.
+
+The reward was:
 
 $$
 r_i = \mathbf{1}[\text{program } i \text{ passes all tests}]
 $$
 
-GRPO compares rewards within a group of $G$ sampled programs. Its group-relative advantage is:
+This lack of within-group diversity matters because GRPO uses relative rewards to update the policy. For a group of $G$ sampled programs, it computes a normalized advantage:
 
 $$
 \hat{A}_i = \frac{r_i - \bar{r}}{\sigma_r + \epsilon}, \qquad \bar{r} = \frac{1}{G} \sum_{j=1}^{G} r_j
 $$
 
-Here, $r_i$ is the reward for program $i$, $\bar{r}$ is the group's mean reward, and $\sigma_r$ is the group's reward standard deviation. The advantage measures whether a program scored above or below the other programs for the same prompt. GRPO uses this relative signal to update the policy.
+Here, $r_i$ is the reward for program $i$, $\bar{r}$ is the mean group reward, and $\sigma_r$ is the group's reward standard deviation. The advantage shows whether each program did better or worse than the others for the same prompt. If every program in a group gets the same binary reward, each reward equals the group mean and every advantage is zero. That group then provides no relative signal for the policy update.
 
-If every program in a group has the same binary reward, each reward equals the group mean. Every advantage is then zero, so that group gives no relative signal for the policy update. With a binary reward, this happens when all sampled programs fail or all pass.
-
-An earlier five-step diagnostic used `Qwen3.5-0.8B` with four samples per prompt. Three of the five updates had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. These measurements support the sparse-signal explanation, although this was a short diagnostic on a different model. In the follow-up dense-reward diagnostic, all five updates had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
+The follow-up dense-reward diagnostic gave partial credit for valid code and test progress. All five updates then had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
 
 #### Showing every expected answer led to lookup solutions
 
