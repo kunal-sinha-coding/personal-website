@@ -1,12 +1,12 @@
 ### Summary
 
-The Qwen2.5-Coder 0.5B model started at 52.9% accuracy on MBPP in the supplied zero-shot comparison. GRPO raised greedy MBPP accuracy to 65.1% at checkpoint 830. That is a gain of 12.2 percentage points.
+The supplied zero-shot reference for Qwen2.5-Coder Base 0.5B is 52.9% on MBPP. The Qwen2.5-Coder-0.5B-Instruct adapter reached 65.1% greedy accuracy at checkpoint 830. That is a contrast of 12.2 percentage points.
 
 Sampling more solutions and selecting with an execution verifier plus joint output clustering reached 76.19% MBPP accuracy at checkpoint 630 with 16 candidates. This is 23.29 points above the 52.9% baseline. It costs more inference work and can increase response time.
 
 The training method used group relative policy optimization, or GRPO, with a hybrid reward. The verifier first ran each candidate against one known input and output pair. It then grouped candidate outputs on the remaining MBPP inputs without reading the expected answers. The verifier selected a candidate from the largest output cluster.
 
-The two headline gains use different evaluation settings. The 12.2 point result is a greedy score from checkpoint 830. The 23.29 point result is a 16-candidate selection score from checkpoint 630. Both checkpoints were chosen using the same benchmark family used for reporting, so these figures have selection bias. The rest of this post explains how the training and selection methods developed, what failed, and what the measurements do and do not show.
+The two headline gains use different evaluation settings. The 12.2 point result compares greedy scores from two different model variants. The 23.29 point result compares a 16-candidate selection score with the supplied zero-shot reference. Checkpoint 830 produced the best saved greedy MBPP score, while checkpoint 630 produced the 76.19% verifier result. Both checkpoints were chosen using the same benchmark family used for reporting, so these figures have selection bias. Treat the gains as useful context, not as a matched estimate of GRPO alone. The rest of this post explains how the training and selection methods developed, what failed, and what the measurements do and do not show.
 
 ### 1. Training the 0.5B model
 
@@ -128,7 +128,7 @@ Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best
 | Execution verifier | 830 | 65.1% | 60.63% | 65.97% | 69.40% | 71.64% | 72.22% |
 | Execution verifier plus joint output clustering | 830 | 65.1% | 60.63% | 66.01% | 69.59% | 71.84% | 73.02% |
 
-The 65.1% greedy score at checkpoint 830 is 12.2 percentage points above the 52.9% zero-shot reference. The 76.19% selected-candidate score at checkpoint 630 is 23.29 points above that reference. The second comparison uses 16 sampled candidates and a different checkpoint. It is not a direct estimate of the verifier's gain over greedy decoding.
+The 65.1% greedy score at checkpoint 830 is 12.2 percentage points above the supplied 52.9% zero-shot reference. The 76.19% selected-candidate score at checkpoint 630 is 23.29 points above that reference. The reference uses Qwen2.5-Coder Base, while training started from Qwen2.5-Coder-Instruct. The second comparison also uses 16 sampled candidates and a different checkpoint. Neither difference isolates the causal effect of GRPO or the verifier.
 
 #### MBPP+ base and extra tests
 
@@ -153,8 +153,8 @@ xychart-beta
     title "MBPP accuracy by number of candidates"
     x-axis "Candidates (K)" [1, 2, 4, 8, 16]
     y-axis "Accuracy (%)" 55 --> 82
-    line [58.85, 65.96, 71.42, 76.27, 80.42]
-    line [58.85, 64.87, 69.20, 72.70, 76.19]
+    line "Raw sampling" [58.85, 65.96, 71.42, 76.27, 80.42]
+    line "Execution plus joint clustering" [58.85, 64.87, 69.20, 72.70, 76.19]
 ```
 
 ```mermaid
@@ -162,15 +162,15 @@ xychart-beta
     title "MBPP+ accuracy by number of candidates"
     x-axis "Candidates (K)" [1, 2, 4, 8, 16]
     y-axis "Accuracy (%)" 45 --> 72
-    line [49.74, 56.17, 61.02, 65.16, 69.05]
-    line [49.74, 53.98, 56.82, 58.79, 60.05]
+    line "Raw sampling" [49.74, 56.17, 61.02, 65.16, 69.05]
+    line "Execution plus joint clustering" [49.74, 53.98, 56.82, 58.79, 60.05]
 ```
 
 The curves show two different quantities. Raw pass@K rises when the candidate pool has a better chance of containing a correct program. The selector's score depends on whether its rule can identify that program. Output clustering improves on execution-only selection, but it does not match the raw oracle-free candidate coverage.
 
 ### 4. Model size, latency, and limits
 
-The table below gives the supplied zero-shot reference scores for Qwen2.5-Coder Base models. The small model uses much less parameter memory and disk space. Larger models have higher accuracy without post-training or multiple candidate selection.
+The table below gives the supplied zero-shot reference scores for Qwen2.5-Coder Base models. These are context scores, not a controlled comparison with the Qwen2.5-Coder-Instruct adapter used in the experiments. The small model uses much less parameter memory and disk space. Larger models have higher accuracy without post-training or multiple candidate selection.
 
 | Qwen2.5-Coder Base | Parameters | MBPP 0-shot | MBPP+ | MBPP 3-shot |
 | --- | ---: | ---: | ---: | ---: |

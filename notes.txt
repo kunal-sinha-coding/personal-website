@@ -61,3 +61,7 @@ Updated the writing style instructions in AGENTS.md across post-training, person
 ## 2026-10-03: Draft teaching absurdly tiny LLMs to code
 
 Added an unpublished Markdown post, matching HTML renderer, and hidden manifest entry for the requested article. The draft follows the Intro to RL post's heading hierarchy, uses the ASD-STE100 writing guidance, records the measured MBPP and MBPP+ results for checkpoints 630 and 830, and includes Mermaid performance charts. It distinguishes measured results from historical diagnostics and records missing early-stop and compute-efficiency measurements instead of estimating them. The post remains unpublished pending review.
+
+## 2026-10-03: Clarify comparisons in the tiny-model draft
+
+Refined the unpublished post to identify the 52.9% score as a Qwen2.5-Coder Base reference and the trained model as Qwen2.5-Coder-Instruct. The draft now explains that the headline differences mix model variants, checkpoints, and decoding settings. Named the Mermaid chart series so each line has a visible legend. Kept the post hidden pending user review.
