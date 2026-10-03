@@ -209,3 +209,19 @@ This follows the requested narrative from the interface failures to the one-visi
 ## Context
 
 The audit found 25 interface contract failures among 160 generations. The reward uses a 0.75 full-pass term plus a 0.25 test-fraction term. The comparison assumes only the one visible test passes and all other tests fail.
+
+## Commit Name
+
+Lead reward-hacking section with the performance question.
+
+## Description
+
+Replaced the repeated explanation about adding partial-test credit with the requested sentence about investigating the lack of performance improvement, followed by a concise description of the reward-hacking setup.
+
+## Why
+
+This makes the section flow from the preceding discussion without repeating its explanation of the hybrid reward.
+
+## Context
+
+No results or other subsection content changed.

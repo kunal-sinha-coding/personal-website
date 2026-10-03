@@ -91,7 +91,7 @@ The follow-up dense-reward diagnostic gave partial credit for valid code and tes
 
 #### GRPO without hidden tests: reward hacking
 
-Adding partial-test credit gave GRPO more feedback, but the first long run showed every expected input and output in the prompt. The reward then tested the program on those same examples. A program could get full reward by memorizing the visible pairs instead of learning the general rule.
+When trying to understand the lack of improvement in performance, I found a clear case of reward hacking. The first long run showed every expected input and output in the prompt, and the reward tested the program on those same examples. A program could get full reward by memorizing the visible pairs instead of learning the general rule.
 
 At step 960, the training pass rate had increased to 86.3%, while pass@1 on MBPP+ fell to 43.4%, below its 43.7% starting point. A strict code audit classified 27.65% of generations in the late training window as lookup solutions. For example, a generated program could compare its input with the literal values in the prompt and return the matching literal outputs:
 
