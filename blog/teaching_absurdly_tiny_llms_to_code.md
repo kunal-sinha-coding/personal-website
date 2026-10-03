@@ -17,7 +17,7 @@ I wanted to find how much performance I could squeeze out of one of the smallest
 
 #### What worked: Hybrid reward with hidden scoring tests
 
-The training prompt showed the task description and one input and output example. The example was the first assertion in the MBPP tests. The model generated a Python function in the open code block. The full test list remained available to the reward function, but only one assertion appeared in the prompt. Here is the prompt for the actual MBPP data point `MBPP/2`:
+The training prompt showed the task description and one input and output example. The example was the first assertion in the MBPP tests. The model generated a Python function in the open code block. The full test list remained available to the reward function, but only one assertion appeared in the prompt. Here is an example of what the MBPP prompt looks like:
 
 ````text
 <|im_start|>system
@@ -37,7 +37,7 @@ assert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))
 ```python
 ````
 
-I started by defining the reward function. For a generated program $y$, it was:
+During training, I used the following reward function. For a generated program $y$, it was:
 
 $$
 R(y) = 0.75 \, \mathbf{1}[\text{all tests pass}] + 0.25 \, \frac{n_{\text{passed}}(y)}{n_{\text{total}}}
@@ -47,19 +47,45 @@ The indicator is 1 when the program passes every test and 0 otherwise. The value
 
 I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of `1e-5`, and a KL coefficient of `0.01`. It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
 
-The best saved greedy checkpoint reached 65.1% on MBPP. The best saved MBPP+ checkpoint reached 53.2%. These are the final setup's strongest recorded benchmark scores. The failed attempts below explain why the prompt used one visible example and why the reward included partial test credit.
+In the following subsections, I'll explain the other strategies I tried before this and why they *didn't* work.
 
-#### SFT did not give a reliable improvement
+#### SFT: no reliable improvement
 
-I first used supervised fine-tuning (SFT) to train on 374 MBPP examples. SFT asks the model to imitate reference programs. The held-out greedy pass@1 score was 35.6% before SFT and 32.2% at steps 94 and 187. In a separate check on 20 examples with 16 generations per example, SFT had 15% pass@1 versus 20% for the base model. It did have higher pass@16 coverage in that small check, 45% versus 35%.
+Supervised fine-tuning (SFT) teaches a model to reproduce reference programs. I trained the model on 374 MBPP examples for one epoch. The prompt used the chat template, and the loss applied only to the reference code response. Prompt tokens were masked out.
 
-These results did not show a reliable greedy improvement. One likely reason is that 374 programs covered too few of the ways to solve the tasks. Imitation alone did not ensure that the model would generalize to new tests. The 20-example check was small, so it cannot establish that SFT never helps.
+The response-only training loss was:
 
-#### A binary GRPO reward gave too little feedback
+$$
+L_{\text{SFT}} = -\frac{1}{N} \sum_{t \in \text{response}} \log p_{\theta}(y_t \mid x, y_{<t})
+$$
 
-I next tried GRPO with a binary reward. A program received a positive reward only if it passed every test. Otherwise, it received zero. This reward was easy to interpret, but it did not distinguish a program that passed some tests from one that passed none.
+Here, $x$ is the prompt, $y_t$ is the next reference-code token, and $N$ is the number of response tokens. The run used one epoch over the 374 examples, a per-device batch size of 1, AdamW, a linear learning-rate schedule starting at `1e-5`, seed 42, and a maximum prompt length of 512 tokens. The held-out evaluation used greedy pass@1 on 90 examples.
 
-GRPO compares rewards among programs in a group. If every program in a group gets the same reward, the group provides no useful preference for updating the policy. This can happen often when a small model produces mostly incorrect programs. In the later hybrid-reward run, the first batch of 128 completions had a 17.97% full-pass fraction. This is not a controlled comparison of the two reward functions, but it shows why a binary reward could leave many groups with little signal.
+Before SFT, pass@1 was 35.6%. It fell to 32.2% at steps 94 and 187, then finished at 30.0% after one epoch. The [saved SFT run](https://wandb.ai/kunal-personal/grpo-mbpp/runs/ct96rhob) therefore shows that held-out performance did not improve. It fell by 5.6 percentage points after the full epoch.
+
+One likely reason is that the training set was too small. It contained only 374 examples. The model fit the reference code, but its held-out score fell. This strongly suggests overfitting to the small set of demonstrations.
+
+GRPO can produce more training signal from a limited set of prompts. SFT uses one reference program for each example in an epoch. GRPO samples multiple fresh programs for a prompt and scores each program by executing it. A later run with the 0.5B model generated 124,160 programs across 593 prompts. These are many response and reward pairs, but they are not 124,160 independent tasks. Repeated rollouts can provide more feedback about a task, but they cannot replace task diversity or guarantee generalization.
+
+#### GRPO with binary reward: feedback was too sparse
+
+An early GRPO attempt used a binary reward. Each sampled program received a reward of 1 if it passed all tests and 0 otherwise:
+
+$$
+r_i = \mathbf{1}[\text{program } i \text{ passes all tests}]
+$$
+
+GRPO compares rewards within a group of $G$ sampled programs. Its group-relative advantage is:
+
+$$
+\hat{A}_i = \frac{r_i - \bar{r}}{\sigma_r + \epsilon}, \qquad \bar{r} = \frac{1}{G} \sum_{j=1}^{G} r_j
+$$
+
+Here, $r_i$ is the reward for program $i$, $\bar{r}$ is the group's mean reward, and $\sigma_r$ is the group's reward standard deviation. The advantage measures whether a program scored above or below the other programs for the same prompt. GRPO uses this relative signal to update the policy.
+
+If every program in a group has the same binary reward, each reward equals the group mean. Every advantage is then zero, so that group gives no relative signal for the policy update. With a binary reward, this happens when all sampled programs fail or all pass.
+
+An earlier five-step diagnostic used `Qwen3.5-0.8B` with four samples per prompt. Three of the five updates had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. The [saved run record](https://wandb.ai/kunal-personal/grpo-mbpp/runs/vizfiyn2) supports the sparse-signal explanation, although this was a short diagnostic on a different model. In the follow-up dense-reward diagnostic, all five updates had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
 
 #### Showing every expected answer led to lookup solutions
 

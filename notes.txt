@@ -105,3 +105,15 @@ Changed “low-power device” to “small device” in the introduction. Replac
 ## 2026-10-03: Restore MathJax reward notation
 
 Restored the reward equation as LaTeX using dollar delimiters. The blog renderer's Markdown extension converts `$...$` and `$$...$$` into MathJax delimiters before the post is typeset; the earlier `\\(...\\)` source delimiters were not supported by its Markdown parsing path. No renderer code change was needed.
+
+## 2026-10-03: Expand post-training method and failure analysis
+
+Updated the hybrid-reward subsection wording and removed its repeated result paragraph. Reworked the SFT subsection to define the response-only cross-entropy loss, describe the 374-example one-epoch setup, report the logged pass@1 decrease, and explain why repeated GRPO rollouts provide more scored attempts without adding independent tasks. Expanded the binary-reward subsection with the binary reward and group-relative advantage equations, plus the five-step diagnostic evidence. The stored SFT record reports 32.2% at steps 94 and 187; retained this logged value instead of the 32.3% given in feedback. The binary-reward diagnostic used a different 0.8B model and is labeled accordingly.
+
+## 2026-10-03: Add SFT setup and GRPO diversity equations
+
+Expanded the SFT subsection with the response-only cross-entropy equation and the confirmed W&B settings: one epoch, 374 examples, batch size one, AdamW, linear learning-rate schedule from 1e-5, and seed 42. Reported the stored 35.6% baseline, 32.2% intermediate pass@1 values, and 30.0% end-of-epoch score. Explained that GRPO creates more response and reward pairs through repeated sampling without adding independent tasks, using the logged 124,160-completion run as an example. Added the binary reward and group-relative advantage equations and cited the earlier five-step diagnostic where three updates had zero reward variance, loss, and gradient norm.
+
+## 2026-10-03: Clarify SFT decline and dense-reward comparison
+
+Added the verified SFT optimizer details from W&B, stated the full-epoch pass@1 drop in percentage points, and clarified that GRPO adds sampled responses rather than independent tasks. Identified the binary trial as an early GRPO attempt and added the follow-up dense-reward diagnostic: nonzero reward variance and gradients on all five steps, with mixed groups on all steps, but held-out pass@1 decreased from 21/75 to 19/75. This separates restored signal from improved benchmark performance.
