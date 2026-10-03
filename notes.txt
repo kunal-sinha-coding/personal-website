@@ -161,3 +161,19 @@ The post should use the corrected dataset size and reserve inline code formattin
 ## Context
 
 The correction follows the author's latest feedback. The SFT section now avoids the extra intermediate and end-of-training statistics requested for removal.
+
+## Commit Name
+
+Move binary reward definition before diagnostic.
+
+## Description
+
+Moved the binary reward equation directly after the opening paragraph of the GRPO binary-reward subsection. Removed the diagnostic model name and its aside about using a different model.
+
+## Why
+
+This follows the requested order and keeps attention on the binary reward behavior and observed diagnostic results.
+
+## Context
+
+No diagnostic metrics were changed.

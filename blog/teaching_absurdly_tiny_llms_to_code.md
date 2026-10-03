@@ -71,13 +71,13 @@ In contrast, GRPO can produce more training signal from a limited set of prompts
 
 The first reward I tried gave only two possible scores. A program received 1 if it passed every test and 0 otherwise. For a small coding model, most sampled programs failed, so many groups had little or no difference in their rewards.
 
-An earlier five-step diagnostic used `Qwen3.5-0.8B` with four samples per prompt. Three of the five update batches had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. This short run used a different model, but it shows the problem with the binary signal: in those three batches, sampled programs did not have different rewards for the optimizer to compare.
-
 The reward was:
 
 $$
 r_i = \mathbf{1}[\text{program } i \text{ passes all tests}]
 $$
+
+An earlier five-step diagnostic sampled four programs per prompt. Three of the five update batches had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. In those three batches, sampled programs did not have different rewards for the optimizer to compare.
 
 This lack of within-group diversity matters because GRPO uses relative rewards to update the policy. For a group of $G$ sampled programs, it computes a normalized advantage:
 
