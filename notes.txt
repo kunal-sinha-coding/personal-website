@@ -53,3 +53,7 @@ Updated AGENTS.md to state explicitly that every change must be committed and pu
 ## 2026-09-10: Require reproducible experiment result records
 
 Synchronized the repository agent instructions with post-training. Metric-bearing experiments must save complete reproducibility metadata and keep ground truth separate from candidate selection.
+
+## 2026-10-03: Add ASD-STE100 writing guidance
+
+Updated the writing style instructions in AGENTS.md across post-training, personal-website, and user-skills to follow ASD-STE100 Simplified Technical English. This applies the requested style standard before drafting a new blog post.

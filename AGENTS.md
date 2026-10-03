@@ -8,6 +8,7 @@
 
 ## Writing style
 
+- Follow the ASD-STE100 Simplified Technical English guidelines.
 - Be concise when writing. Only include the minimal amount of writing needed to communicate the point.
 - Always use complete sentences rather than sentence fragments.
 - Do not use punctuation like semicolons, hyphens, or arrows to join sentence fragments together.
