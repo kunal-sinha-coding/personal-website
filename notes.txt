@@ -177,3 +177,19 @@ This follows the requested order and keeps attention on the binary reward behavi
 ## Context
 
 No diagnostic metrics were changed.
+
+## Commit Name
+
+Report binary reward diagnostic accuracy as percentages.
+
+## Description
+
+Changed the binary-reward diagnostic's pass@1 results from task counts out of 75 to percentages, including the follow-up dense-reward result.
+
+## Why
+
+The author requested percentages in this subsection instead of counts out of 75.
+
+## Context
+
+The conversions are 21/75 = 28.0%, 20/75 = 26.7%, and 19/75 = 25.3%, rounded to one decimal place.

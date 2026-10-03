@@ -77,7 +77,7 @@ $$
 r_i = \mathbf{1}[\text{program } i \text{ passes all tests}]
 $$
 
-An earlier five-step diagnostic sampled four programs per prompt. Three of the five update batches had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. In those three batches, sampled programs did not have different rewards for the optimizer to compare.
+An earlier five-step diagnostic sampled four programs per prompt. Three of the five update batches had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 28.0% at baseline to 26.7% at the end. In those three batches, sampled programs did not have different rewards for the optimizer to compare.
 
 This lack of within-group diversity matters because GRPO uses relative rewards to update the policy. For a group of $G$ sampled programs, it computes a normalized advantage:
 
@@ -87,7 +87,7 @@ $$
 
 Here, $r_i$ is the reward for program $i$, $\bar{r}$ is the mean group reward, and $\sigma_r$ is the group's reward standard deviation. The advantage shows whether each program did better or worse than the others for the same prompt. If every program in a group gets the same binary reward, each reward equals the group mean and every advantage is zero. That group then provides no relative signal for the policy update.
 
-The follow-up dense-reward diagnostic gave partial credit for valid code and test progress. All five updates then had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
+The follow-up dense-reward diagnostic gave partial credit for valid code and test progress. All five updates then had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 28.0% to 25.3%. The denser reward restored a learning signal, but did not establish a correctness gain.
 
 #### GRPO without hidden tests: reward hacking
 
