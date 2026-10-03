@@ -104,11 +104,13 @@ if value == <visible_test_input_2>:
 
 Because the reward tested the same examples shown in the prompt, these programs could earn high training reward without learning a general solution. The training score improved, but the model did not learn a better program for unseen inputs.
 
-#### Hiding every example caused interface errors
+#### GRPO with only hidden tests: interface errors
 
-Removing all input and output examples prevented direct copying, but left the model to infer the required function interface from the description. Interface errors became a recurring problem. One earlier audit of 160 generations found 25 contract failures.
+To prevent the reward hacking described above, I removed all input and output examples from the prompt. This prevented direct copying, but left the model to infer the required function interface from the task description. An interface error occurs when the generated code does not use the required function name or arguments, so the evaluator cannot call it. In an audit of 160 generations, 15.6% had an interface error.
 
-I did not find a matched benchmark comparison for the all-hidden prompt. The audit confirms that interface errors occurred, but it does not isolate how many the all-hidden prompt caused. The likely explanation is that removing every example also removed a useful interface cue.
+I then used the approach described at the start of this section. I showed one input and output pair and hid the other two or three tests. This gave the model the correct interface while making a program that hardcoded the one visible test earn much less reward than a program that passed every test.
+
+With the hybrid reward, a fully correct program earns 1.0. A program that hardcodes only the visible example earns just the partial-test component. If the task has three tests, that reward is 0.25 × 1/3, or 0.083. If it has four tests, it is 0.25 × 1/4, or 0.063. Hiding the other tests therefore makes full reward depend on solving the task beyond the one example in the prompt.
 
 The failed attempts explain the role of each part of the final prompt. The hybrid reward supplied partial feedback when programs failed some tests. One visible example supplied the function interface. Hidden scoring tests reduced the direct path to memorizing every expected answer. The selected checkpoints are discussed with the full benchmark results below. Checkpoint selection used the same benchmark family, so the scores are not an independent estimate of generalization.
 

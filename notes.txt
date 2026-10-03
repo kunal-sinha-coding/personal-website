@@ -193,3 +193,19 @@ The author requested percentages in this subsection instead of counts out of 75.
 ## Context
 
 The conversions are 21/75 = 28.0%, 20/75 = 26.7%, and 19/75 = 25.3%, rounded to one decimal place.
+
+## Commit Name
+
+Clarify hidden-test interface errors and reward gap.
+
+## Description
+
+Renamed the all-hidden prompt subsection, added a brief definition of interface errors, reported the audit rate as 15.6%, and explained how one visible test with the remaining tests hidden lowers the hybrid reward for a hardcoded answer. The comparison shows 0.083 or 0.063 reward for one of three or four tests passed, versus 1.0 for a fully correct program.
+
+## Why
+
+This follows the requested narrative from the interface failures to the one-visible-test prompt, and makes the training incentive explicit.
+
+## Context
+
+The audit found 25 interface contract failures among 160 generations. The reward uses a 0.75 full-pass term plus a 0.25 test-fraction term. The comparison assumes only the one visible test passes and all other tests fail.
