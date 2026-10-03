@@ -9,7 +9,7 @@ The first technique improved pass@1 by **12.2%** while the second improved by up
 
 ### Introduction
 
-Modern LLMs are very powerful, but many performance gains have come from scaling laws. In practice, this often means using more data, compute, and larger models. In some settings, we cannot use that much compute. A model that runs locally may have to fit in very little disk space, RAM, or CUDA memory, especially on a low-power device.
+Modern LLMs are very powerful, but many performance gains have come from scaling laws. In practice, this often means using more data, compute, and larger models. In some settings, we cannot use that much compute. A model that runs locally may have to fit in very little disk space, RAM, or CUDA memory, especially on a small device.
 
 I wanted to find how much performance I could squeeze out of one of the smallest coding models available, a 0.5B-parameter `Qwen2.5-Coder-0.5B-Instruct`. The next two sections describe the approaches I tried before presenting the full results. Each section starts with the approach that worked, then explains the alternatives that did not work and why.
 
@@ -17,7 +17,7 @@ I wanted to find how much performance I could squeeze out of one of the smallest
 
 #### What worked: Hybrid reward with hidden scoring tests
 
-The training prompt showed the task description and one input and output example. The example was the first assertion in the MBPP tests. The model generated a Python function in the open code block. The full test list remained available to the reward function, but only one assertion appeared in the prompt. In simplified form, the prompt was:
+The training prompt showed the task description and one input and output example. The example was the first assertion in the MBPP tests. The model generated a Python function in the open code block. The full test list remained available to the reward function, but only one assertion appeared in the prompt. Here is the prompt for the actual MBPP data point `MBPP/2`:
 
 ````text
 <|im_start|>system
@@ -27,8 +27,8 @@ You are an intelligent programming assistant to produce Python algorithmic solut
 Can you complete the following Python function?
 ```python
 """
-{task description}
-{one visible assertion}
+Write a function to find the shared elements from the given two lists.
+assert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))
 """
 ```
 
@@ -37,15 +37,13 @@ Can you complete the following Python function?
 ```python
 ````
 
-I started by defining the reward function. For a generated program \(y\), it was:
+I started by defining the reward function:
 
-\[
-R(y) = 0.75 \, I(\text{all tests pass}) + 0.25 \, \frac{n_{\text{passed}}(y)}{n_{\text{total}}}
-\]
+`reward = 0.75 * all_tests_pass + 0.25 * (passed_tests / total_tests)`
 
-Here, \(I(\text{all tests pass})\) is 1 when the program passes every test and 0 otherwise. The value \(n_{\text{passed}}(y)\) is the number of tests passed by program \(y\), and \(n_{\text{total}}\) is the total number of tests for the task. The reward therefore gives most of its weight to full correctness and some credit to partial progress. It scores all available tests, including tests hidden from the prompt.
+Here, `all_tests_pass` is 1 when the program passes every test and 0 otherwise. `passed_tests` is the number of tests passed by the program, and `total_tests` is the number of tests for the task. The reward therefore gives most of its weight to full correctness and some credit to partial progress. It scores all available tests, including tests hidden from the prompt.
 
-I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of \(1\times10^{-5}\), and a KL coefficient of \(0.01\). It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
+I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of `1e-5`, and a KL coefficient of `0.01`. It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
 
 The best saved greedy checkpoint reached 65.1% on MBPP. The best saved MBPP+ checkpoint reached 53.2%. These are the final setup's strongest recorded benchmark scores. The failed attempts below explain why the prompt used one visible example and why the reward included partial test credit.
 

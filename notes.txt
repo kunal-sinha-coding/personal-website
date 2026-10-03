@@ -97,3 +97,7 @@ Applied the requested introduction wording and renamed Section 1 to “Post-trai
 ## 2026-10-03: Trigger a deployment retry
 
 Added this notes-only commit and pushed it to `main` at the user's request to trigger GitHub Actions again after the previous deployment attempt failed. No website content or deployment configuration changed.
+
+## 2026-10-03: Use an MBPP example and plain-text reward formula
+
+Changed “low-power device” to “small device” in the introduction. Replaced the placeholder prompt with the real MBPP/2 task and assertion from the local EvalPlus MBPP record. Rewrote the hybrid reward and GRPO hyperparameter values in plain text and inline code because the site's math rendering did not display the LaTeX correctly.
