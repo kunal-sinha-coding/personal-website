@@ -81,3 +81,7 @@ Updated the published tiny-model post to remove the supplied Qwen2.5-Coder Base 
 ## 2026-10-03: Rewrite the tiny coding post for narrative flow
 
 Rewrote the published post to connect its results through the progression of the experiments. The summary now frames the memory constraint, the two-stage approach, and the evaluation caveat before the details. The training section introduces the final GRPO setup, then explains how SFT, sparse binary rewards, exposed answers, and fully hidden examples informed that design. The selection section moves from pass@K diagnostics and the earlier oracle analysis through verifier attempts to execution checks and output clustering. The Results section now holds the full benchmark tables, comparison arithmetic, and curves, while the final section explains the latency and memory tradeoff and the remaining measurement limits. Kept reported metrics, dataset distinctions, model-family caveats, and reproduction details intact while removing repeated summary claims.
+
+## 2026-10-03: Rename tiny coding post and replace its summary
+
+Changed the published post title to “Teaching baby LLMs to code” in the website manifest and article page. Replaced the article summary with the user-provided two-approach description, nested verifier steps, and headline figures of 12.2% and 21.6%. Updated the repository notes before committing as required.

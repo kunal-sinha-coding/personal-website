@@ -1,12 +1,13 @@
 ### Summary
 
-A 0.5B coding model is small enough to run where memory or model storage is limited, but its first answer is often wrong. I tested two ways to make this model more useful without replacing it with a larger one. First, I used GRPO post-training to improve its code generation. Then I sampled several answers and used a lightweight verifier to choose among them.
+I was able to take a very small LLM with under a billion parameters, namely Qwen2.5-Coder-0.5B-Instruct, and boost performance on MBPP through two approaches:
 
-The best saved greedy result reached 65.1% on MBPP. With 16 sampled programs, execution checks and output clustering selected a program that passed MBPP on 76.19% of tasks. An official Instruct score provides a reference point, although its evaluation setup differs from ours. The second result also uses more inference work.
+1. Post-training the model through GRPO.
+2. Sampling multiple generations from the model and using a cheap verifier to filter them, which involves:
+   - Executing code in a sandbox.
+   - Clustering similar outputs.
 
-The route to these results mattered. SFT did not improve the model reliably. GRPO with a binary reward gave too little feedback, while showing every expected answer made it easy to memorize the tests. Hiding every example caused interface errors. Showing one example and scoring the rest gave the model an interface hint while keeping most answers hidden. Sampling then showed that correct programs were often present even when the first answer failed. That observation led from learned verifiers to a deterministic execution check, then to clustering candidate outputs without reading the hidden answers.
-
-This post follows that sequence. It describes the training choices, the verifier experiments, the benchmark results, and the tradeoff between a small model with more sampling and a larger model with one answer.
+The first technique improved pass@1 by **12.2%** while the second improved by up to **21.6%**, albeit at the cost of higher latency.
 
 ### 1. Training a 0.5B coding model
 
