@@ -73,3 +73,7 @@ Added the W&B run, source commit, dataset hash, model sampling configuration, an
 ## 2026-10-03: Publish teaching absurdly tiny LLMs to code
 
 Set the new blog manifest entry to published and changed the post page date label from draft to posted. The user approved publication. The post title, subtitle, Markdown source, HTML fetch path, and publication date are consistent.
+
+## 2026-10-03: Replace Base references with Instruct scores in the coding post
+
+Updated the published tiny-model post to remove the supplied Qwen2.5-Coder Base comparison scores and use the official Qwen2.5-Coder Instruct MBPP and MBPP+ scores instead. Replaced the all-size comparison table with Table 16 values from the Qwen2.5-Coder Technical Report, removed the unavailable Instruct 3-shot column, and updated the 0.5B reference rows and headline differences to 12.7 and 23.79 percentage points. Added an explicit caveat that the official report uses a different evaluation setup, so matching the Instruct model family does not make these controlled comparisons. The rendered HTML fetches this Markdown source dynamically and needed no separate content edit.

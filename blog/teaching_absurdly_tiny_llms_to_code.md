@@ -1,12 +1,12 @@
 ### Summary
 
-The supplied zero-shot reference for Qwen2.5-Coder Base 0.5B is 52.9% on MBPP. The Qwen2.5-Coder-0.5B-Instruct adapter reached 65.1% greedy accuracy at checkpoint 830. That is a contrast of 12.2 percentage points.
+The Qwen2.5-Coder-0.5B-Instruct reference score is 52.4% on MBPP. Our Qwen2.5-Coder-0.5B-Instruct adapter reached 65.1% greedy accuracy at checkpoint 830, a difference of 12.7 percentage points.
 
-Sampling more solutions and selecting with an execution verifier plus joint output clustering reached 76.19% MBPP accuracy at checkpoint 630 with 16 candidates. This is 23.29 points above the 52.9% baseline. It costs more inference work and can increase response time.
+Sampling more solutions and selecting with an execution verifier plus joint output clustering reached 76.19% MBPP accuracy at checkpoint 630 with 16 candidates. This is 23.79 points above the 52.4% Instruct reference. It costs more inference work and can increase response time.
 
 The training method used group relative policy optimization, or GRPO, with a hybrid reward. The verifier first ran each candidate against one known input and output pair. It then grouped candidate outputs on the remaining MBPP inputs without reading the expected answers. The verifier selected a candidate from the largest output cluster.
 
-The two headline gains use different evaluation settings. The 12.2 point result compares greedy scores from two different model variants. The 23.29 point result compares a 16-candidate selection score with the supplied zero-shot reference. Checkpoint 830 produced the best saved greedy MBPP score, while checkpoint 630 produced the 76.19% verifier result. Both checkpoints were chosen using the same benchmark family used for reporting, so these figures have selection bias. Treat the gains as useful context, not as a matched estimate of GRPO alone. The rest of this post explains how the training and selection methods developed, what failed, and what the measurements do and do not show.
+The official Instruct reference and our run use different evaluation setups, so these differences are not controlled estimates of the training effect. The 12.7 point result compares greedy scores. The 23.79 point result compares a 16-candidate selection score with the official reference. Checkpoint 830 produced the best saved greedy MBPP score, while checkpoint 630 produced the 76.19% verifier result. Both checkpoints were chosen using the same benchmark family used for reporting, so these figures have selection bias. Treat the gains as useful context, not as matched estimates of GRPO or verification alone. The rest of this post explains how the training and selection methods developed, what failed, and what the measurements do and do not show.
 
 ### 1. Training the 0.5B model
 
@@ -120,7 +120,7 @@ Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best
 
 | Model or method | Checkpoint | Greedy pass@1 | pass@1 | pass@2 | pass@4 | pass@8 | pass@16 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Qwen2.5-Coder Base 0.5B, zero-shot reference | — | 52.9% | — | — | — | — | — |
+| Qwen2.5-Coder-0.5B-Instruct, official reference | — | 52.4% | — | — | — | — | — |
 | Raw sampling | 630 | 64.0% | 58.85% | 65.96% | 71.42% | 76.27% | 80.42% |
 | Execution verifier | 630 | 64.0% | 58.85% | 64.86% | 69.11% | 72.69% | 75.40% |
 | Execution verifier plus joint output clustering | 630 | 64.0% | 58.85% | 64.87% | 69.20% | 72.70% | 76.19% |
@@ -128,13 +128,13 @@ Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best
 | Execution verifier | 830 | 65.1% | 60.63% | 65.97% | 69.40% | 71.64% | 72.22% |
 | Execution verifier plus joint output clustering | 830 | 65.1% | 60.63% | 66.01% | 69.59% | 71.84% | 73.02% |
 
-The 65.1% greedy score at checkpoint 830 is 12.2 percentage points above the supplied 52.9% zero-shot reference. The 76.19% selected-candidate score at checkpoint 630 is 23.29 points above that reference. The reference uses Qwen2.5-Coder Base, while training started from Qwen2.5-Coder-Instruct. The second comparison also uses 16 sampled candidates and a different checkpoint. Neither difference isolates the causal effect of GRPO or the verifier.
+The 65.1% greedy score at checkpoint 830 is 12.7 percentage points above the official 52.4% Qwen2.5-Coder-0.5B-Instruct reference. The 76.19% selected-candidate score at checkpoint 630 is 23.79 points above that reference. The model variant now matches the experiment base, but the official reference uses a different evaluation setup. The second comparison also uses 16 sampled candidates and a different checkpoint. Neither difference isolates the causal effect of GRPO or the verifier.
 
 #### MBPP+ base and extra tests
 
 | Model or method | Checkpoint | Greedy pass@1 | pass@1 | pass@2 | pass@4 | pass@8 | pass@16 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Qwen2.5-Coder Base 0.5B, zero-shot reference | — | 47.1% | — | — | — | — | — |
+| Qwen2.5-Coder-0.5B-Instruct, official reference | — | 43.7% | — | — | — | — | — |
 | Raw sampling | 630 | 54.0% | 49.74% | 56.17% | 61.02% | 65.16% | 69.05% |
 | Execution verifier | 630 | 54.0% | 49.74% | 53.98% | 56.69% | 58.61% | 59.52% |
 | Execution verifier plus joint output clustering | 630 | 54.0% | 49.74% | 53.98% | 56.82% | 58.79% | 60.05% |
@@ -174,16 +174,18 @@ The benchmark run used W&B run `c4fthzd3`, source commit `ba8b794085828aef55d617
 
 ### 4. Model size, latency, and limits
 
-The table below gives the supplied zero-shot reference scores for Qwen2.5-Coder Base models. These are context scores, not a controlled comparison with the Qwen2.5-Coder-Instruct adapter used in the experiments. The small model uses much less parameter memory and disk space. Larger models have higher accuracy without post-training or multiple candidate selection.
+The table below gives the official Qwen2.5-Coder Instruct scores for MBPP and MBPP+. These model variants match the Instruct family used in our experiments. The report does not list an MBPP 3-shot score for Instruct models. Its evaluation setup may differ from our EvalPlus run, so these scores provide a variant-matched reference rather than a controlled comparison. The small model uses much less parameter memory and disk space. Larger models have higher accuracy without post-training or multiple candidate selection.
 
-| Qwen2.5-Coder Base | Parameters | MBPP 0-shot | MBPP+ | MBPP 3-shot |
-| --- | ---: | ---: | ---: | ---: |
-| 0.5B | 0.49B | 52.9% | 47.1% | 40.4% |
-| 1.5B | 1.54B | 69.2% | 58.6% | 59.2% |
-| 3B | 3.09B | 72.2% | 61.4% | 65.2% |
-| 7B | 7.61B | 76.9% | 62.9% | 68.8% |
-| 14B | 14.7B | 81.0% | 66.7% | 71.4% |
-| 32B | 32.5B | 83.0% | 68.2% | 76.4% |
+| Qwen2.5-Coder Instruct | Parameters | MBPP | MBPP+ |
+| --- | ---: | ---: | ---: |
+| 0.5B | 0.49B | 52.4% | 43.7% |
+| 1.5B | 1.54B | 69.2% | 59.4% |
+| 3B | 3.09B | 73.6% | 62.4% |
+| 7B | 7.61B | 83.5% | 71.7% |
+| 14B | 14.7B | 86.2% | 72.8% |
+| 32B | 32.5B | 90.2% | 75.1% |
+
+Source: [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186), Table 16.
 
 A larger model can produce one answer with lower latency than 16 sequential samples from a smaller model. It also needs more memory and disk space. A small model can fit on hardware with limited RAM or CUDA memory. Sequential sampling keeps peak memory lower than generating all candidates at once, but it increases response time.
 
