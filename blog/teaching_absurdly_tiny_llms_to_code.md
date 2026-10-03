@@ -37,11 +37,13 @@ assert set(similar_elements((3, 4, 5, 6),(5, 7, 4, 10))) == set((4, 5))
 ```python
 ````
 
-I started by defining the reward function:
+I started by defining the reward function. For a generated program $y$, it was:
 
-`reward = 0.75 * all_tests_pass + 0.25 * (passed_tests / total_tests)`
+$$
+R(y) = 0.75 \, \mathbf{1}[\text{all tests pass}] + 0.25 \, \frac{n_{\text{passed}}(y)}{n_{\text{total}}}
+$$
 
-Here, `all_tests_pass` is 1 when the program passes every test and 0 otherwise. `passed_tests` is the number of tests passed by the program, and `total_tests` is the number of tests for the task. The reward therefore gives most of its weight to full correctness and some credit to partial progress. It scores all available tests, including tests hidden from the prompt.
+The indicator is 1 when the program passes every test and 0 otherwise. The value $n_{\text{passed}}(y)$ is the number of tests passed by program $y$, and $n_{\text{total}}$ is the total number of tests for the task. The reward therefore gives most of its weight to full correctness and some credit to partial progress. It scores all available tests, including tests hidden from the prompt.
 
 I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of `1e-5`, and a KL coefficient of `0.01`. It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
 

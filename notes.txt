@@ -101,3 +101,7 @@ Added this notes-only commit and pushed it to `main` at the user's request to tr
 ## 2026-10-03: Use an MBPP example and plain-text reward formula
 
 Changed “low-power device” to “small device” in the introduction. Replaced the placeholder prompt with the real MBPP/2 task and assertion from the local EvalPlus MBPP record. Rewrote the hybrid reward and GRPO hyperparameter values in plain text and inline code because the site's math rendering did not display the LaTeX correctly.
+
+## 2026-10-03: Restore MathJax reward notation
+
+Restored the reward equation as LaTeX using dollar delimiters. The blog renderer's Markdown extension converts `$...$` and `$$...$$` into MathJax delimiters before the post is typeset; the earlier `\\(...\\)` source delimiters were not supported by its Markdown parsing path. No renderer code change was needed.
