@@ -145,3 +145,19 @@ The revision follows the requested narrative: show the training and evaluation d
 ## Context
 
 The saved run reports 86.3% training pass@1 and 43.4% MBPP+ pass@1 at step 960, below the 43.7% step-zero baseline. The corrected strict code-shape audit reports 27.65% lookup-style generations in the late window. The code sample is schematic and uses placeholders for the task-specific visible inputs and outputs.
+
+## Commit Name
+
+Correct SFT example count and number formatting.
+
+## Description
+
+Updated the SFT section to state that the training set contained 593 examples, and corrected its pass@1 comparison to 35.6% before SFT and 32.3% after SFT. Removed inline code formatting from numeric hyperparameters.
+
+## Why
+
+The post should use the corrected dataset size and reserve inline code formatting for code and model identifiers, not ordinary numbers.
+
+## Context
+
+The correction follows the author's latest feedback. The SFT section now avoids the extra intermediate and end-of-training statistics requested for removal.

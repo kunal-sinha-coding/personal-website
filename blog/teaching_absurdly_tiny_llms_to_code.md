@@ -45,13 +45,13 @@ $$
 
 The indicator is 1 when the program passes every test and 0 otherwise. The value $n_{\text{passed}}(y)$ is the number of tests passed by program $y$, and $n_{\text{total}}$ is the total number of tests for the task. The reward therefore gives most of its weight to full correctness and some credit to partial progress. It scores all available tests, including tests hidden from the prompt.
 
-I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of `1e-5`, and a KL coefficient of `0.01`. It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
+I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of 1e-5, and a KL coefficient of 0.01. It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
 
 In the following subsections, I'll explain the other strategies I tried before this and why they *didn't* work.
 
 #### SFT: no reliable improvement
 
-Supervised fine-tuning (SFT) teaches a model to reproduce reference programs. I trained the model on 374 MBPP examples for one epoch. The prompt used the chat template, and the loss applied only to the reference code response. Prompt tokens were masked out.
+Supervised fine-tuning (SFT) teaches a model to reproduce reference programs. I trained the model on 593 MBPP examples for one epoch. The prompt used the chat template, and the loss applied only to the reference code response. Prompt tokens were masked out.
 
 The response-only training loss was:
 
@@ -59,11 +59,11 @@ $$
 L_{\text{SFT}} = -\frac{1}{N} \sum_{t \in \text{response}} \log p_{\theta}(y_t \mid x, y_{<t})
 $$
 
-Here, $x$ is the prompt, $y_t$ is the next reference-code token, and $N$ is the number of response tokens. The run used one epoch over the 374 examples, a per-device batch size of 1, AdamW, a linear learning-rate schedule starting at `1e-5`, seed 42, and a maximum prompt length of 512 tokens. The held-out evaluation used greedy pass@1 on 90 examples.
+Here, $x$ is the prompt, $y_t$ is the next reference-code token, and $N$ is the number of response tokens. The run used one epoch over the 593 examples, a per-device batch size of 1, AdamW, a linear learning-rate schedule starting at 1e-5, seed 42, and a maximum prompt length of 512 tokens. The held-out evaluation used greedy pass@1 on 90 examples.
 
-Before SFT, pass@1 was 35.6%. It fell to 32.2% at steps 94 and 187, then finished at 30.0% after one epoch. The SFT run therefore shows that held-out performance did not improve. It fell by 5.6 percentage points after the full epoch.
+Before SFT, pass@1 was 35.6%. After SFT, it fell to 32.3%, so held-out performance did not improve.
 
-One likely reason is that the training set was too small. It contained only 374 examples. The model fit the reference code, but its held-out score fell. This strongly suggests overfitting to the small set of demonstrations.
+One likely reason is that the training set was too small. It contained only 593 examples. The model fit the reference code, but its held-out score fell. This strongly suggests overfitting to the demonstrations.
 
 In contrast, GRPO can produce more training signal from a limited set of prompts. SFT uses one reference program for each example. Meanwhile, GRPO samples 16 fresh programs for a given prompt, effectively multiplying the number of rollouts to learn from by 16. The GRPO training set contained 593 examples.
 
