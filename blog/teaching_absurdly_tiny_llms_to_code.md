@@ -168,6 +168,10 @@ xychart-beta
 
 The curves show two different quantities. Raw pass@K rises when the candidate pool has a better chance of containing a correct program. The selector's score depends on whether its rule can identify that program. Output clustering improves on execution-only selection, but it does not match the raw oracle-free candidate coverage.
 
+#### Reproduction details
+
+The benchmark run used W&B run `c4fthzd3`, source commit `ba8b794085828aef55d617ac1d2b7a20dd2dee89`, Python 3.12, PyTorch 2.8.0+cu128, and one NVIDIA RTX 2000 Ada Generation GPU with 16,380 MiB of memory. The dataset was EvalPlus 0.3.1 MBPP, with 378 tasks and hash `ee43ecabebf20deef4bb776a405ac5b1`. Sampling used vLLM 0.10.2, temperature 1.0, top-p 1.0, seed 42, and a 2,048-token output limit.
+
 ### 4. Model size, latency, and limits
 
 The table below gives the supplied zero-shot reference scores for Qwen2.5-Coder Base models. These are context scores, not a controlled comparison with the Qwen2.5-Coder-Instruct adapter used in the experiments. The small model uses much less parameter memory and disk space. Larger models have higher accuracy without post-training or multiple candidate selection.
@@ -193,8 +197,6 @@ There are four more limits to keep in mind.
 - The chosen checkpoints were selected using the same benchmark family used for reporting. This introduces selection bias.
 - The verifier uses MBPP inputs and one prompt-visible assertion. Its output agreement may not transfer to inputs from a different distribution.
 - Output agreement is not proof of correctness. Several wrong programs can agree with one another.
-
-### Conclusion
 
 A 0.5B coding model can benefit from both post-training and candidate selection. GRPO improved the saved greedy MBPP score. A hybrid reward gave the optimizer partial progress, and hiding most expected outputs reduced one clear route to reward hacking. Sampling exposed more correct programs than greedy decoding. A deterministic execution check and answer-blind output clustering selected better candidates than the visible assertion alone.
 

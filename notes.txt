@@ -65,3 +65,7 @@ Added an unpublished Markdown post, matching HTML renderer, and hidden manifest 
 ## 2026-10-03: Clarify comparisons in the tiny-model draft
 
 Refined the unpublished post to identify the 52.9% score as a Qwen2.5-Coder Base reference and the trained model as Qwen2.5-Coder-Instruct. The draft now explains that the headline differences mix model variants, checkpoints, and decoding settings. Named the Mermaid chart series so each line has a visible legend. Kept the post hidden pending user review.
+
+## 2026-10-03: Add reproduction details to the tiny-model draft
+
+Added the W&B run, source commit, dataset hash, model sampling configuration, and environment to the unpublished article. Folded the closing summary into the limitations and deployment trade-offs section so the final article keeps the requested two result and trade-off sections after the narrative.
