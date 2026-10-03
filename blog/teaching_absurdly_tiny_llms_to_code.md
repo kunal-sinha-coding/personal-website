@@ -108,13 +108,7 @@ Because the reward tested the same examples shown in the prompt, these programs 
 
 To prevent the reward hacking described above, I removed all input and output examples from the prompt. This prevented direct copying, but left the model to infer the required function interface from the task description. An interface error occurs when the generated code does not use the required function name or arguments, so the evaluator cannot call it. In an audit of 160 generations, 15.6% had an interface error.
 
-I then used the approach described at the start of this section. I showed one input and output pair and hid the other two or three tests. This gave the model the correct interface while making a program that hardcoded the one visible test earn much less reward than a program that passed every test.
-
-With the hybrid reward, a fully correct program earns 1.0. A program that hardcodes only the visible example earns just the partial-test component. If the task has three tests, that reward is 0.25 × 1/3, or 0.083. If it has four tests, it is 0.25 × 1/4, or 0.063. Hiding the other tests therefore makes full reward depend on solving the task beyond the one example in the prompt.
-
-The failed attempts explain the role of each part of the final prompt. The hybrid reward supplied partial feedback when programs failed some tests. One visible example supplied the function interface. Hidden scoring tests reduced the direct path to memorizing every expected answer. The selected checkpoints are discussed with the full benchmark results below. Checkpoint selection used the same benchmark family, so the scores are not an independent estimate of generalization.
-
-That training result raised the next question. If one answer is sometimes wrong, could the model produce a correct answer among several samples, and could a cheap rule identify it?
+This finding led me to the approach described at the start of the section: show the LLM only the first test in the prompt, but calculate reward using both this visible test and the other hidden tests. In this setup, hardcoding the answer to the visible test yields a reward slightly higher than a fully failing solution, but far less than a fully correct solution.
 
 ### 2. Selecting among multiple generations
 

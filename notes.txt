@@ -225,3 +225,19 @@ This makes the section flow from the preceding discussion without repeating its 
 ## Context
 
 No results or other subsection content changed.
+
+## Commit Name
+
+Shorten the hidden-test interface subsection.
+
+## Description
+
+Reduced the “GRPO with only hidden tests” subsection to its interface-error observation and the requested explanation of the one-visible-test approach. Removed the reward arithmetic and the following transition paragraphs.
+
+## Why
+
+The author said the subsection was too long and asked it to end after the concise explanation of why visible and hidden tests provide the right reward incentive.
+
+## Context
+
+The resulting section now ends after noting that hardcoding the visible test earns slightly more reward than total failure, but much less than a fully correct solution.
