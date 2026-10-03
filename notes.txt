@@ -69,3 +69,7 @@ Refined the unpublished post to identify the 52.9% score as a Qwen2.5-Coder Base
 ## 2026-10-03: Add reproduction details to the tiny-model draft
 
 Added the W&B run, source commit, dataset hash, model sampling configuration, and environment to the unpublished article. Folded the closing summary into the limitations and deployment trade-offs section so the final article keeps the requested two result and trade-off sections after the narrative.
+
+## 2026-10-03: Publish teaching absurdly tiny LLMs to code
+
+Set the new blog manifest entry to published and changed the post page date label from draft to posted. The user approved publication. The post title, subtitle, Markdown source, HTML fetch path, and publication date are consistent.

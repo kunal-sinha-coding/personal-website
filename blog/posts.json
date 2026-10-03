@@ -4,7 +4,7 @@
     "title": "Teaching absurdly tiny LLMs to code",
     "date": "October 3, 2026",
     "summary": "Experiments with GRPO and answer-blind candidate selection for a 0.5B coding model.",
-    "published": false
+    "published": true
   },
   {
     "slug": "auditing_an_audit_agent",
