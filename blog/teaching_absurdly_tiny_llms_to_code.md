@@ -1,120 +1,100 @@
 ### Summary
 
-The Qwen2.5-Coder-0.5B-Instruct reference score is 52.4% on MBPP. Our Qwen2.5-Coder-0.5B-Instruct adapter reached 65.1% greedy accuracy at checkpoint 830, a difference of 12.7 percentage points.
+A 0.5B coding model is small enough to run where memory or model storage is limited, but its first answer is often wrong. I tested two ways to make this model more useful without replacing it with a larger one. First, I used GRPO post-training to improve its code generation. Then I sampled several answers and used a lightweight verifier to choose among them.
 
-Sampling more solutions and selecting with an execution verifier plus joint output clustering reached 76.19% MBPP accuracy at checkpoint 630 with 16 candidates. This is 23.79 points above the 52.4% Instruct reference. It costs more inference work and can increase response time.
+The best saved greedy result reached 65.1% on MBPP. With 16 sampled programs, execution checks and output clustering selected a program that passed MBPP on 76.19% of tasks. An official Instruct score provides a reference point, although its evaluation setup differs from ours. The second result also uses more inference work.
 
-The training method used group relative policy optimization, or GRPO, with a hybrid reward. The verifier first ran each candidate against one known input and output pair. It then grouped candidate outputs on the remaining MBPP inputs without reading the expected answers. The verifier selected a candidate from the largest output cluster.
+The route to these results mattered. SFT did not improve the model reliably. GRPO with a binary reward gave too little feedback, while showing every expected answer made it easy to memorize the tests. Hiding every example caused interface errors. Showing one example and scoring the rest gave the model an interface hint while keeping most answers hidden. Sampling then showed that correct programs were often present even when the first answer failed. That observation led from learned verifiers to a deterministic execution check, then to clustering candidate outputs without reading the hidden answers.
 
-The official Instruct reference and our run use different evaluation setups, so these differences are not controlled estimates of the training effect. The 12.7 point result compares greedy scores. The 23.79 point result compares a 16-candidate selection score with the official reference. Checkpoint 830 produced the best saved greedy MBPP score, while checkpoint 630 produced the 76.19% verifier result. Both checkpoints were chosen using the same benchmark family used for reporting, so these figures have selection bias. Treat the gains as useful context, not as matched estimates of GRPO or verification alone. The rest of this post explains how the training and selection methods developed, what failed, and what the measurements do and do not show.
+This post follows that sequence. It describes the training choices, the verifier experiments, the benchmark results, and the tradeoff between a small model with more sampling and a larger model with one answer.
 
-### 1. Training the 0.5B model
+### 1. Training a 0.5B coding model
 
-I wanted to improve a small coding model without relying on a larger model at inference time. The training data came from MBPP. The evaluation used the EvalPlus MBPP and MBPP+ benchmarks.
+I wanted to improve a coding model that could fit within a small memory and storage budget. The model was Qwen2.5-Coder-0.5B-Instruct with a LoRA adapter. Training examples came from MBPP. I evaluated saved checkpoints with EvalPlus MBPP and MBPP+.
 
-The main training result came from Qwen2.5-Coder-0.5B-Instruct with a LoRA adapter. GRPO used groups of 16 generated programs. Its hybrid reward combined full-test correctness with partial test progress. This gave the optimizer a stronger signal than a single pass or fail value.
+#### The workable setup: hybrid reward with hidden scoring tests
 
-#### Solution: GRPO with a hybrid reward and hidden scoring tests
+The approach that worked combined GRPO with a hybrid reward and a prompt that showed one input and output pair. The reward tested each program on all available tests, including the tests hidden from the prompt. It assigned 75% of the reward to passing every test and 25% to the fraction of tests passed. The visible pair showed the model the expected function interface. The hidden tests made it harder to earn a high reward by copying every known answer.
 
-The final training prompt showed one input and output example. The reward function scored the program on all available tests, including tests that were not shown in the prompt. The single example taught the model the function interface. The hidden scoring tests encouraged it to learn the general behavior.
+The best saved greedy checkpoint reached 65.1% on MBPP. The best saved MBPP+ checkpoint reached 53.2%. These scores show what the final setup achieved. The earlier attempts explain why it used both partial test credit and a single visible example.
 
-The hybrid reward gave credit for both full correctness and partial test progress. In the main run, it was 75% full-pass reward and 25% fraction of tests passed. This let GRPO distinguish some partially correct programs from programs that failed every test.
+#### SFT did not give a reliable improvement
 
-The training evidence supports a real gain, with important limits. The run reached 86.3% greedy pass@1 on its training pool at step 960, while MBPP+ evaluation fell to 43.4%. This was a failed checkpoint, not the final result. It revealed reward hacking. In a later run, the selected checkpoint reached 65.1% greedy pass@1 on MBPP and 53.2% on MBPP+.
+I first used supervised fine-tuning (SFT) to train on 374 MBPP examples. SFT asks the model to imitate reference programs. The held-out greedy pass@1 score was 35.6% before SFT and 32.2% at steps 94 and 187. In a separate check on 20 examples with 16 generations per example, SFT had 15% pass@1 versus 20% for the base model. It did have higher pass@16 coverage in that small check, 45% versus 35%.
 
-The central lesson was to keep the answer to one example in the prompt, but hold the remaining tests back from the model. The reward could still run those tests. This reduced the direct path to memorizing every expected input and output.
+These results did not show a reliable greedy improvement. One likely reason is that 374 programs covered too few of the ways to solve the tasks. Imitation alone did not ensure that the model would generalize to new tests. The 20-example check was small, so it cannot establish that SFT never helps.
 
-#### Failed approach: SFT did not give a reliable gain
+#### A binary GRPO reward gave too little feedback
 
-Supervised fine-tuning, or SFT, trains the model to imitate reference programs. I trained Qwen2.5-Coder-0.5B-Instruct on 374 MBPP examples. The model's held-out greedy pass@1 was 35.6% before SFT. It measured 32.2% at steps 94 and 187. A separate 20-example, 16-generation check gave pass@1 of 15% for the SFT model and 20% for the base model. The SFT model had higher pass@16 coverage, 45% versus 35%, on that small sample.
+I next tried GRPO with a binary reward. A program received a positive reward only if it passed every test. Otherwise, it received zero. This reward was easy to interpret, but it did not distinguish a program that passed some tests from one that passed none.
 
-These measurements do not show that SFT can never help. They show that this SFT run did not provide a reliable greedy improvement. A likely reason is that 374 reference programs gave limited coverage of the ways each problem can be solved. Imitating those examples did not ensure that the model could generalize to new tests. The 20-example result is too small to settle the question, and the held-out trajectory used a limited number of checkpoints.
+GRPO compares rewards among programs in a group. If every program in a group gets the same reward, the group provides no useful preference for updating the policy. This can happen often when a small model produces mostly incorrect programs. In the later hybrid-reward run, the first batch of 128 completions had a 17.97% full-pass fraction. This is not a controlled comparison of the two reward functions, but it shows why a binary reward could leave many groups with little signal.
 
-#### Failed approach: a binary reward was too sparse
+#### Showing every expected answer led to lookup solutions
 
-The first GRPO reward used only full correctness. A completion received a positive reward if it passed every test and zero otherwise. This made the reward easy to interpret, but it gave no ranking signal when every completion in a group failed.
+Adding partial-test credit gave GRPO more feedback, but the first long run showed every expected input and output in the prompt. The reward then tested the program on those same examples. A program could get full reward by memorizing the visible pairs instead of learning the general rule.
 
-GRPO compares rewards inside each group. If all 16 programs receive the same reward, their relative advantages are equal. The optimizer then has no useful preference among them. This is likely for a small model that often produces incorrect code.
+The training and evaluation results diverged. At step 960, training pass@1 reached 86.3%, while MBPP+ pass@1 fell from 43.7% at initialization to 43.4%. An audit found lookup-style programs in about 54% of full-pass rollouts from steps 850 to 969. On the benchmark, 91 of 378 tasks showed visible-example specialization at step 960, compared with none at step zero. These results indicated that the reward encouraged memorization of prompt-visible answers.
 
-The later 0.5B run used a hybrid reward. Its first 128-completion batch had a 17.97% full-pass fraction. That is a small positive pool, even before splitting completions into groups. This batch is not a controlled comparison between binary and hybrid rewards, but it shows why a binary-only signal can be sparse for this model.
+#### Hiding every example caused interface errors
 
-#### Failed approach: hybrid reward with every answer exposed
+Removing all input and output examples prevented direct copying, but left the model to infer the required function interface from the description. Interface errors became a recurring problem. One earlier audit of 160 generations found 25 contract failures.
 
-Adding partial test credit gave GRPO a training signal, but it did not protect against leakage. In the first long run, the prompt showed all the inputs and expected outputs that the reward function later checked. A program that memorized those examples could receive full reward without implementing the general rule.
+I did not find a matched benchmark comparison for the all-hidden prompt. The audit confirms that interface errors occurred, but it does not isolate how many the all-hidden prompt caused. The likely explanation is that removing every example also removed a useful interface cue.
 
-The effect was visible in the training record. By step 960, training pass@1 reached 86.3%, while MBPP+ pass@1 fell from 43.7% at initialization to 43.4%. An audit found that lookup-style programs became common. They made up about 54% of full-pass rollouts in steps 850 to 969. The benchmark output audit found visible-example specialization in 91 of 378 tasks at step 960, compared with none at step zero.
+The failed attempts explain the role of each part of the final prompt. The hybrid reward supplied partial feedback when programs failed some tests. One visible example supplied the function interface. Hidden scoring tests reduced the direct path to memorizing every expected answer. The selected checkpoints are discussed with the full benchmark results below. Checkpoint selection used the same benchmark family, so the scores are not an independent estimate of generalization.
 
-The reward was measuring agreement with the examples in the prompt. It was not measuring generalization. More training made this mismatch worse.
-
-#### Failed approach: hiding every example
-
-Removing all expected input and output examples avoided that direct leakage. It also made the task harder for the model. The model had to infer the required function interface from the description alone. Interface errors became a recurring failure mode, especially when the generated function used the wrong name or argument count.
-
-I did not find a matched final benchmark table for the all-hidden prompt variant. Earlier baseline audits show that interface errors were real. For example, one 160-generation audit found 25 interface contract failures. These audits do not isolate the effect of hiding every example, so the causal link is a working explanation rather than a measured ablation.
-
-#### Working prompt: show one example and score the rest
-
-The compromise was to retain one input and output example in the prompt and hide the remaining tests. The visible example taught the function shape. The reward still evaluated the full test set. This design made it harder to earn reward by copying all known answers.
-
-This change addressed the observed reward leak. It did not remove every limitation. The training run still used one random seed, and the final checkpoint selection used scores from the same benchmark family as the results. The next section describes a second source of improvement: selecting among several programs from one trained model.
+That training result raised the next question. If one answer is sometimes wrong, could the model produce a correct answer among several samples, and could a cheap rule identify it?
 
 ### 2. Selecting among multiple generations
 
-GRPO training gave the model more useful solutions, but a single greedy answer did not expose everything the model could do. This led to a separate question. If the model samples several programs, can a cheap verifier identify a better one?
+I began by measuring pass@K, which asks whether at least one of K generated programs is correct. This check followed directly from the GRPO problem: a group needs variation in reward to provide a learning signal. I wanted to see whether the trained model produced useful variation once the prompt and reward were working.
 
-#### Diagnostic: pass@K revealed answers the first sample missed
+It did. In an earlier 80-task rollout, the first candidate that passed the visible assertion was correct on 56.25% of tasks. The best of 16 candidates was correct on 67.50%. A perfect oracle that knew all hidden-test labels could select a correct program on those same 67.50% of tasks. This oracle result is only an upper bound because a real selector cannot see the labels. It showed, however, that sampling could expose correct programs the first candidate missed.
 
-Pass@K measures whether a set of K samples contains at least one correct program. I checked it because GRPO had exposed a problem with groups that lacked both positive and negative rewards. I wanted to know whether the trained model produced a mix of correct and incorrect programs once its prompt and reward were working.
+The frozen-checkpoint evaluation showed the same pattern. For checkpoint 630, raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16. The remaining problem was selection. Sampling more candidates helps only if a selector can choose a good one without reading the answer.
 
-The answer was yes. In an earlier 80-task rollout analysis, the best of 16 samples was correct on 67.50% of tasks. The first visible-test-passing candidate was correct on 56.25%. A perfect oracle that knew the full-test labels could select a correct sample whenever one existed. That oracle reached 67.50% at K=16.
+#### A learned verifier did not provide a reliable selector
 
-The oracle is only a diagnostic upper bound. It uses the labels that a real verifier must not see. It shows that sampling can expose useful answers. It does not provide a deployable selection method. The latest frozen-checkpoint evaluation also showed rising raw MBPP pass@K, from 58.85% at K=1 to 80.42% at K=16 for checkpoint 630.
+I first treated selection as binary classification. A verifier would receive a task and a candidate program, then predict whether to keep it. The available saved experiment trained a CodeBERT verifier on MBPP candidates labeled by sandbox execution. It had 1,495 training candidates from 299 tasks and 375 validation candidates from 75 tasks. The best run reached 70.1% validation accuracy and 77.7% area under the ROC curve. Later runs exposed threshold problems: a checkpoint could have better AUC but poor recall at the fixed 0.5 threshold.
 
-#### Failed approach: train a binary verifier
+The results did not establish a reliable selector. The training set was small, much like the SFT data. A more powerful verifier might do better, but it would need additional memory and compute. If that extra capacity is available, using it to generate better code directly may be a better use of the budget.
 
-I also tried a learned verifier. It treated candidate selection as binary classification. The verifier received a task and a generated program, then predicted whether to keep the program. A CodeBERT verifier was trained on MBPP tasks, with generated candidates labeled by sandbox execution.
+#### Synthetic examples did not solve the data problem
 
-This was a plausible task, but the labeled set was small. The saved dataset had 1,495 training candidates from 299 tasks and 375 validation candidates from 75 tasks. The best run reached 70.1% validation accuracy and 77.7% area under the ROC curve. Later runs showed threshold calibration problems. A checkpoint could improve AUC while its fixed 0.5 threshold produced poor recall.
+I also considered adding synthetic examples to the verifier data. The 0.5B model was not strong enough to produce consistently useful examples. GPT-5 mini produced stronger examples, but those examples came from a different source than the benchmark tasks and candidate programs. They also appeared harder to solve than the existing cases.
 
-These results were not strong enough to establish a reliable candidate selector for the coding model. A more capable verifier might improve classification, but it would use more memory and compute. At that point, spending those resources on a stronger code model could be a better use of the budget.
+I did not find a controlled numerical difficulty comparison in the saved reports. The difficulty difference is a qualitative observation, not a measured result. Calibrating synthetic difficulty would have required more work, and it was unclear whether the resulting examples would match the cases the verifier needed to distinguish.
 
-#### Failed approach: generate synthetic verifier examples
+#### A static lookup detector rejected no candidates
 
-I tried creating synthetic examples to increase the verifier's training data. A small model was not reliable enough to produce consistently useful examples. A stronger model could produce better examples, but it also changed the data distribution. The synthetic cases came from GPT-5 mini, while the benchmark tasks and model generations came from a different source.
+A hand-written detector looked for programs that returned literal outputs for literal test inputs. It was meant to reject lookup solutions that passed the visible assertion. In an 80-task sample, 516 candidates passed that assertion, and the detector rejected none. The rules needed more than one matching example to identify a lookup table, but the verifier had only one visible example. This detector therefore added no filtering value.
 
-The synthetic cases also appeared harder than the existing cases. This made it unclear whether a verifier trained on them would learn the distinctions needed for the real candidate pool. I did not find a controlled, numeric difficulty comparison in the saved reports. The difficulty mismatch is therefore a qualitative observation, and I stopped before spending more time on calibration.
+#### Executing the visible assertion gave a dependable first filter
 
-#### Failed approach: a static lookup detector
+Instead of predicting correctness with another model, I ran each candidate in a sandbox against the one assertion shown in the prompt. The sandbox returned a deterministic pass or fail for that check. The selector chose the first candidate that passed. If none passed, it kept the first candidate.
 
-A hand-written detector looked for code that matched literal test inputs and returned literal outputs. This was intended to reject hardcoded lookup solutions after they passed the visible assertion.
+This simple filter reached 75.40% MBPP accuracy at pass@16 for checkpoint 630. It did not run the full hidden benchmark tests or read their expected outputs. One assertion is weak evidence: an incorrect program can pass it. Execution is useful here because it gives an exact result for a cheap, known check.
 
-On an 80-task sample, 516 candidates passed the visible assertion. The detector rejected none of them. Its rules needed more than one matching example to identify a lookup table, while the verifier could see only one example. The filter therefore produced the same result as visible-test selection alone.
+#### Clustering hidden outputs added a small further gain
 
-#### Working approach: execute one known assertion
+I then tested whether hidden inputs could provide more evidence without comparing candidate outputs with the expected answers. For each candidate that passed the visible assertion, the sandbox ran the program on the remaining MBPP inputs. It recorded the outputs but did not check them against the hidden labels.
 
-Instead of predicting correctness with another model, I used a sandbox to run each candidate against the one assertion shown in the prompt. This is deterministic. It returns a clear pass or fail for that assertion.
+I compared joint output clustering with per-input plurality. Joint clustering groups candidates that produce the same output signature over the hidden inputs. Per-input plurality favors a candidate whose outputs match the most common output for each input. In an earlier 80-task diagnostic, the two rules performed nearly the same. At K=16, each selected a correct candidate on 60.00% of tasks, compared with 56.25% for visible-assertion selection.
 
-The selector chose the first candidate that passed. If no candidate passed, it kept the first candidate. It did not execute the full hidden benchmark tests or read their expected outputs. On the latest evaluation, execution-only selection reached 75.40% MBPP pass@16 for checkpoint 630.
+The latest evaluation used exact typed output signatures and selected the earliest candidate in the largest cluster among candidates that passed the visible assertion and returned a complete signature. If none had a complete signature, it fell back to the visible-assertion selector. At checkpoint 630, the combined selector reached 76.19% MBPP accuracy at pass@16, up 0.79 points from execution-only selection. On MBPP+, it reached 60.05%, up 0.53 points.
 
-One visible assertion is a weak correctness test. Some incorrect programs can pass it. The method is useful because execution is cheap and exact for the check it performs, not because one example proves a program correct.
+The idea is that correct programs should often agree on outputs, while wrong programs may fail in different ways. Agreement is only a heuristic. Several incorrect programs can agree on the same wrong outputs. In the earlier 80-task analysis, the largest cluster contained a correct program in 48 of the 54 tasks where any sample was correct. It missed six tasks that the oracle could have solved.
 
-#### Working approach: cluster outputs across hidden inputs
-
-I then asked whether hidden test inputs could provide additional information without exposing their expected answers. For each candidate that passed the visible assertion, the sandbox ran the program on the remaining MBPP inputs. It recorded the returned values. It did not compare those values with the expected outputs.
-
-I tried two simple selection rules. The first formed a joint signature from each candidate's outputs on all hidden inputs, then selected from the largest exact cluster. The second found the most common output for each input and selected a candidate that matched the most common outputs. The joint cluster and per-input plurality gave nearly the same result in the earlier 80-task diagnostic. At K=16, both reached 60.00%, above the 56.25% visible-only selector.
-
-The latest evaluation used exact typed output signatures. It selected the earliest candidate in the largest cluster among candidates that passed the visible assertion and returned a complete output signature. If no complete signature was available, it fell back to visible-test selection. At checkpoint 630, the combined selector reached 76.19% MBPP pass@16. This was 0.79 points above execution-only selection on the same candidate pool. On MBPP+, it reached 60.05%, or 0.53 points above execution-only selection.
-
-The intuition is that correct programs tend to agree on their outputs. Incorrect programs may fail in different ways. This is a heuristic, not a proof. A large cluster can agree on the same wrong answer. In the earlier 80-task analysis, the largest cluster contained a correct candidate in 48 of 54 tasks where any of the 16 candidates was correct. It missed six tasks that the oracle could have solved.
+The results show that each step addressed a specific weakness. The assertion check removed candidates that failed a known example. Output clustering used answer-blind agreement to improve selection a little further. Neither method can identify every correct candidate, so the next section compares the measured results and explains how much the added sampling costs.
 
 ### 3. Results
 
-The main benchmark run used the EvalPlus 0.3.1 MBPP release with 378 tasks. The model was Qwen2.5-Coder-0.5B-Instruct with a LoRA adapter. Each checkpoint produced 16 candidates per task at temperature 1.0. The verifier made its decisions before benchmark correctness labels were read.
+The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was Qwen2.5-Coder-0.5B-Instruct with a LoRA adapter. Each checkpoint had 16 sampled programs per task. Sampling used temperature 1.0. The verifier made its decisions before benchmark correctness labels were read.
 
-The raw pass@K rows use the standard estimate of whether at least one of K samples is correct. Verifier rows measure the accuracy of the selected candidate, averaged over all uniformly selected subsets of K candidates. A verifier result can be lower than raw pass@K because the raw estimate only asks whether a correct candidate exists. The verifier must choose one candidate without seeing the answer.
+The tables report two kinds of scores. Raw pass@K estimates whether at least one of K samples is correct. Verifier accuracy measures whether the selector chose a correct candidate, averaged over uniformly selected subsets of K candidates. These values answer different questions. A selector can score below raw pass@K because it must choose without knowing which candidates pass all tests.
 
-Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best saved greedy MBPP+ score. The checkpoints were selected from the same benchmark family reported here, so the table is optimistic as a held-out estimate.
+Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best saved greedy MBPP+ score. Both were selected from the same benchmark family used for reporting, so the results are optimistic as held-out estimates.
 
 #### MBPP base tests
 
@@ -128,7 +108,7 @@ Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best
 | Execution verifier | 830 | 65.1% | 60.63% | 65.97% | 69.40% | 71.64% | 72.22% |
 | Execution verifier plus joint output clustering | 830 | 65.1% | 60.63% | 66.01% | 69.59% | 71.84% | 73.02% |
 
-The 65.1% greedy score at checkpoint 830 is 12.7 percentage points above the official 52.4% Qwen2.5-Coder-0.5B-Instruct reference. The 76.19% selected-candidate score at checkpoint 630 is 23.79 points above that reference. The model variant now matches the experiment base, but the official reference uses a different evaluation setup. The second comparison also uses 16 sampled candidates and a different checkpoint. Neither difference isolates the causal effect of GRPO or the verifier.
+The checkpoint 830 greedy result is 12.7 percentage points above the official 52.4% Instruct reference. The checkpoint 630 selector result at K=16 is 23.79 points above it. The official report and our EvalPlus run use different evaluation setups. The model family matches, but these differences are not controlled estimates of the effects of GRPO or verification. The K=16 result also uses more inference work and a different checkpoint.
 
 #### MBPP+ base and extra tests
 
@@ -142,11 +122,11 @@ The 65.1% greedy score at checkpoint 830 is 12.7 percentage points above the off
 | Execution verifier | 830 | 53.2% | 51.09% | 55.21% | 57.80% | 59.43% | 60.05% |
 | Execution verifier plus joint output clustering | 830 | 53.2% | 51.09% | 55.22% | 57.92% | 59.51% | 60.32% |
 
-The verifier improvement over execution-only selection is smaller than the gain from GRPO. At checkpoint 830, clustering added 0.80 points at pass@16 on MBPP and 0.27 points on MBPP+. At checkpoint 630, it added 0.79 points on MBPP and 0.53 points on MBPP+. The strongest result comes from combining the trained model with multiple samples and a verifier. Each component has a separate effect.
+Output clustering added less than one percentage point over execution-only selection at K=16. It added 0.79 points on MBPP and 0.53 points on MBPP+ for checkpoint 630. For checkpoint 830, the gains were 0.80 and 0.27 points. Most of the improvement came from combining the post-trained model with multiple samples and a selector. Clustering made a smaller further contribution.
 
-#### Performance as the candidate pool grows
+#### Accuracy as the candidate pool grows
 
-These charts show raw sampling and execution plus joint output clustering for checkpoint 630. The first line is raw sampling. The second line is the combined selector. The charts do not include the oracle.
+These charts show raw sampling and the combined execution and clustering selector for checkpoint 630. They do not show the oracle. Raw pass@K measures whether a correct program is present. The selector lines measure whether the method chose one.
 
 ```mermaid
 xychart-beta
@@ -166,15 +146,15 @@ xychart-beta
     line "Execution plus joint clustering" [49.74, 53.98, 56.82, 58.79, 60.05]
 ```
 
-The curves show two different quantities. Raw pass@K rises when the candidate pool has a better chance of containing a correct program. The selector's score depends on whether its rule can identify that program. Output clustering improves on execution-only selection, but it does not match the raw oracle-free candidate coverage.
+The gap between the lines is the cost of not knowing which candidate passes the full benchmark. Sampling increases the chance that the pool contains a correct program. The verifier uses available evidence to choose, but cannot reproduce a perfect oracle.
 
 #### Reproduction details
 
-The benchmark run used W&B run `c4fthzd3`, source commit `ba8b794085828aef55d617ac1d2b7a20dd2dee89`, Python 3.12, PyTorch 2.8.0+cu128, and one NVIDIA RTX 2000 Ada Generation GPU with 16,380 MiB of memory. The dataset was EvalPlus 0.3.1 MBPP, with 378 tasks and hash `ee43ecabebf20deef4bb776a405ac5b1`. Sampling used vLLM 0.10.2, temperature 1.0, top-p 1.0, seed 42, and a 2,048-token output limit.
+The benchmark run used W&B run `c4fthzd3` and source commit `ba8b794085828aef55d617ac1d2b7a20dd2dee89`. It used Python 3.12, PyTorch 2.8.0+cu128, and one NVIDIA RTX 2000 Ada Generation GPU with 16,380 MiB of memory. The data was EvalPlus 0.3.1 MBPP with 378 tasks and hash `ee43ecabebf20deef4bb776a405ac5b1`. Sampling used vLLM 0.10.2, temperature 1.0, top-p 1.0, seed 42, and a 2,048-token output limit.
 
 ### 4. Model size, latency, and limits
 
-The table below gives the official Qwen2.5-Coder Instruct scores for MBPP and MBPP+. These model variants match the Instruct family used in our experiments. The report does not list an MBPP 3-shot score for Instruct models. Its evaluation setup may differ from our EvalPlus run, so these scores provide a variant-matched reference rather than a controlled comparison. The small model uses much less parameter memory and disk space. Larger models have higher accuracy without post-training or multiple candidate selection.
+The Instruct model scores below give context for the 0.5B result. They also show what is gained by using a larger model without post-training or candidate selection. The small model uses less memory and disk space. Sampling it more can improve accuracy, but costs additional time and inference work.
 
 | Qwen2.5-Coder Instruct | Parameters | MBPP | MBPP+ |
 | --- | ---: | ---: | ---: |
@@ -185,21 +165,21 @@ The table below gives the official Qwen2.5-Coder Instruct scores for MBPP and MB
 | 14B | 14.7B | 86.2% | 72.8% |
 | 32B | 32.5B | 90.2% | 75.1% |
 
-Source: [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186), Table 16.
+Source: [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186), Table 16. The report does not list an MBPP 3-shot score for Instruct models. Its evaluation setup may differ from our EvalPlus run, so these scores are a model-family reference, not a controlled comparison.
 
-A larger model can produce one answer with lower latency than 16 sequential samples from a smaller model. It also needs more memory and disk space. A small model can fit on hardware with limited RAM or CUDA memory. Sequential sampling keeps peak memory lower than generating all candidates at once, but it increases response time.
+A larger model may answer faster than 16 sequential samples from a smaller model, but it needs more memory and storage. A 0.5B model can fit on hardware with limited RAM or CUDA memory. If the model generates one candidate at a time, peak memory can remain lower than when it generates all candidates in parallel. The cost is increased response time.
 
-The benchmark run generated all 16 candidates for each task before scoring. It did not measure sequential early stopping after the first candidate passed the execution filter. The saved artifacts also do not provide a reliable average count of generations to first pass, per-request token counts, or matched wall-clock and FLOP measurements against the larger models. I therefore cannot claim that this approach is more compute-efficient at equal FLOPs.
+The benchmark run generated all 16 candidates before scoring. It did not measure sequential early stopping after the first candidate passed the execution filter. The saved results also do not give a reliable average number of generations to the first pass, per-request token counts, or matched wall-clock and FLOP measurements against the larger models. I therefore cannot claim that this method is more compute-efficient at equal FLOPs.
 
-The result is most useful when memory or model storage is the binding constraint and response time is flexible. It is less attractive when the user needs a fast answer or when a larger model fits within the available hardware budget. A practical deployment should measure latency, energy, and generation count under its own prompts and sandbox limits.
+The method may be useful when model memory or storage is the main constraint and response time can increase. It may be less suitable when users need a fast answer or when a larger model fits the available hardware. A deployment should measure latency, energy, and generation count with its own prompts and sandbox limits.
 
-There are four more limits to keep in mind.
+Four limits shape these results:
 
-- The training and verifier evaluations use one seed. The observed gains need replication.
-- The chosen checkpoints were selected using the same benchmark family used for reporting. This introduces selection bias.
-- The verifier uses MBPP inputs and one prompt-visible assertion. Its output agreement may not transfer to inputs from a different distribution.
-- Output agreement is not proof of correctness. Several wrong programs can agree with one another.
+- The training and verifier evaluations used one seed. The gains need replication.
+- Checkpoints were selected using the same benchmark family used for reporting. This creates selection bias.
+- The verifier uses MBPP inputs and one prompt-visible assertion. Its output agreement may not transfer to a different input distribution.
+- Output agreement does not prove correctness. Several wrong programs can agree with one another.
 
-A 0.5B coding model can benefit from both post-training and candidate selection. GRPO improved the saved greedy MBPP score. A hybrid reward gave the optimizer partial progress, and hiding most expected outputs reduced one clear route to reward hacking. Sampling exposed more correct programs than greedy decoding. A deterministic execution check and answer-blind output clustering selected better candidates than the visible assertion alone.
+The experiments suggest a practical route for a small coding model. GRPO can improve the model when its reward gives partial feedback and its prompt hides most expected answers. Sampling can expose correct programs that greedy decoding misses. A sandbox check and output clustering can select among some of those programs without reading hidden answers.
 
-The method trades inference work and response time for lower memory requirements. The current evidence supports that tradeoff on MBPP. It does not establish a general compute advantage or a held-out estimate. The next useful step is to repeat the benchmark with an independent checkpoint-selection split and record sequential verifier latency and generation counts.
+The tradeoff is clear in the current evidence: a small model can reach higher benchmark accuracy by spending more inference work, but these results do not show a general compute advantage. The next step is an evaluation with a separate checkpoint-selection split and measurements of sequential verifier latency and generation counts.
