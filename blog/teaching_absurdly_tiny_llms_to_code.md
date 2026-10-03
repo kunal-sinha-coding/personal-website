@@ -65,7 +65,7 @@ Before SFT, pass@1 was 35.6%. It fell to 32.2% at steps 94 and 187, then finishe
 
 One likely reason is that the training set was too small. It contained only 374 examples. The model fit the reference code, but its held-out score fell. This strongly suggests overfitting to the small set of demonstrations.
 
-GRPO can produce more training signal from a limited set of prompts. SFT uses one reference program for each example in an epoch. GRPO samples multiple fresh programs for a prompt and scores each program by executing it. A later run with the 0.5B model generated 124,160 programs across 593 prompts. These are many response and reward pairs, but they are not 124,160 independent tasks. Repeated rollouts can provide more feedback about a task, but they cannot replace task diversity or guarantee generalization.
+In contrast, GRPO can produce more training signal from a limited set of prompts. SFT uses one reference program for each example. Meanwhile, GRPO samples 16 fresh programs for a given prompt, effectively multiplying the number of rollouts to learn from by 16. The GRPO training set contained 593 examples.
 
 #### GRPO with binary reward: feedback was too sparse
 
