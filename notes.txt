@@ -93,3 +93,7 @@ Added an introduction before the two main sections to explain scaling, local com
 ## 2026-10-03: Clarify the post-training prompt and reward
 
 Applied the requested introduction wording and renamed Section 1 to “Post-training.” The working subsection now starts with a representative ChatML prompt block, followed by the hybrid reward equation and definitions, then the GRPO and LoRA hyperparameters from the saved training configuration. Wrapped Qwen2.5-Coder model identifiers in inline code throughout the post. The prompt template and settings were checked against `data.py`, the run configuration, and the saved evaluation report in post-training.
+
+## 2026-10-03: Trigger a deployment retry
+
+Added this notes-only commit and pushed it to `main` at the user's request to trigger GitHub Actions again after the previous deployment attempt failed. No website content or deployment configuration changed.
