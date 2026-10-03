@@ -1,13 +1,17 @@
 ### Summary
 
-I was able to take a very small LLM with under a billion parameters, namely Qwen2.5-Coder-0.5B-Instruct, and boost performance on MBPP through two approaches:
+I was able to take a very small LLM with under a billion parameters (Qwen2.5-Coder-0.5B-Instruct) and boost performance on MBPP through two approaches:
 
 1. Post-training the model through GRPO.
-2. Sampling multiple generations from the model and using a cheap verifier to filter them, which involves:
-   - Executing code in a sandbox.
-   - Clustering similar outputs.
+2. Sampling multiple generations from the model and using a cheap verifier to filter them. The verifier required executing code in a sandbox and clustering similar outputs.
 
 The first technique improved pass@1 by **12.2%** while the second improved by up to **21.6%**, albeit at the cost of higher latency.
+
+### Introduction
+
+Modern LLMs are very capable, but many performance gains have come from scaling laws. In practice, this often means using more data, compute, and larger models. In some settings, we cannot use that much compute. A model that runs locally may have to fit in very little disk space, RAM, or CUDA memory, especially on a low-power device.
+
+I wanted to find out how much performance I could get from one of the smallest coding models available: the 0.5B-parameter Qwen2.5-Coder-0.5B-Instruct. The next two sections describe the approaches I tried before presenting the full results. Each section starts with the approach that worked, then explains the alternatives that did not work and why.
 
 ### 1. Training a 0.5B coding model
 
@@ -49,17 +53,35 @@ That training result raised the next question. If one answer is sometimes wrong,
 
 ### 2. Selecting among multiple generations
 
-I began by measuring pass@K, which asks whether at least one of K generated programs is correct. This check followed directly from the GRPO problem: a group needs variation in reward to provide a learning signal. I wanted to see whether the trained model produced useful variation once the prompt and reward were working.
+The approach that worked combined a sandbox execution check with clustering of candidate outputs. The sandbox tested each program against the one input and output pair shown in the prompt. For candidates that passed, it ran the programs on the remaining MBPP inputs and grouped candidates that returned the same output signature. It did not compare those outputs with the hidden expected answers.
 
-It did. In an earlier 80-task rollout, the first candidate that passed the visible assertion was correct on 56.25% of tasks. The best of 16 candidates was correct on 67.50%. A perfect oracle that knew all hidden-test labels could select a correct program on those same 67.50% of tasks. This oracle result is only an upper bound because a real selector cannot see the labels. It showed, however, that sampling could expose correct programs the first candidate missed.
+At checkpoint 630, the combined selector reached 76.19% MBPP accuracy at pass@16. Execution-only selection reached 75.40%. On MBPP+, the combined selector reached 60.05%, compared with 59.52% for execution alone. These results show that output clustering added a small gain after the visible assertion check.
 
-The frozen-checkpoint evaluation showed the same pattern. For checkpoint 630, raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16. The remaining problem was selection. Sampling more candidates helps only if a selector can choose a good one without reading the answer.
+#### How pass@K pointed to candidate selection
+
+I first measured pass@K to see whether the model could produce a correct program after an incorrect first answer. This diagnostic followed the GRPO training experience: groups need variation in reward to provide a learning signal. In an earlier 80-task rollout, the first candidate that passed the visible assertion was correct on 56.25% of tasks. The best of 16 candidates was correct on 67.50%. A perfect oracle that knew the hidden-test labels could select a correct candidate on those same 67.50% of tasks.
+
+The oracle is only an upper bound because a real selector cannot see hidden labels. It showed that sampling could expose useful programs the first answer missed. The later frozen-checkpoint evaluation showed the same pattern on 378 tasks: raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16 for checkpoint 630. The challenge was to select among these candidates without seeing which passed the hidden tests.
+
+#### Why the execution check worked
+
+I first tried a learned verifier, but a model that predicts correctness has to generalize from a small labeled set. Instead, I used the sandbox to run each candidate against the single assertion visible in the prompt. This gives an exact pass or fail for that assertion. The selector chose the first candidate that passed. If none passed, it kept the first candidate.
+
+The execution-only selector did not run the full hidden benchmark tests or read their expected outputs. One visible assertion is a weak correctness test, since an incorrect program can pass it. The method is useful because it gives a reliable answer for a cheap, known check.
+
+#### Why output clustering added a small gain
+
+I then tested whether hidden inputs could provide more evidence without comparing candidate outputs with expected answers. For each candidate that passed the visible assertion, the sandbox ran the program on the remaining MBPP inputs and recorded its outputs. It did not check them against hidden labels.
+
+I compared joint output clustering with per-input plurality. Joint clustering groups candidates with the same output signature across hidden inputs. Per-input plurality favors a candidate whose output matches the most common output for each input. In an earlier 80-task diagnostic, the two rules performed nearly the same. At K=16, each selected a correct candidate on 60.00% of tasks, compared with 56.25% for visible-assertion selection.
+
+The latest evaluation used exact typed output signatures. It selected the earliest candidate in the largest cluster among candidates that passed the visible assertion and returned a complete signature. If none had a complete signature, it fell back to visible-assertion selection. The intuition is that correct programs tend to agree on outputs, while incorrect programs may fail in different ways. This is only a heuristic. Several incorrect programs can agree on the same wrong outputs. In the earlier 80-task analysis, the largest cluster contained a correct program in 48 of 54 tasks where any sample was correct. It missed six tasks that the oracle could have solved.
 
 #### A learned verifier did not provide a reliable selector
 
 I first treated selection as binary classification. A verifier would receive a task and a candidate program, then predict whether to keep it. The available saved experiment trained a CodeBERT verifier on MBPP candidates labeled by sandbox execution. It had 1,495 training candidates from 299 tasks and 375 validation candidates from 75 tasks. The best run reached 70.1% validation accuracy and 77.7% area under the ROC curve. Later runs exposed threshold problems: a checkpoint could have better AUC but poor recall at the fixed 0.5 threshold.
 
-The results did not establish a reliable selector. The training set was small, much like the SFT data. A more powerful verifier might do better, but it would need additional memory and compute. If that extra capacity is available, using it to generate better code directly may be a better use of the budget.
+The results did not establish a reliable selector. The labeled set was small, much like the SFT data. A more powerful verifier might do better, but it would need additional memory and compute. If that extra capacity is available, using it to generate better code directly may be a better use of the budget.
 
 #### Synthetic examples did not solve the data problem
 
@@ -70,24 +92,6 @@ I did not find a controlled numerical difficulty comparison in the saved reports
 #### A static lookup detector rejected no candidates
 
 A hand-written detector looked for programs that returned literal outputs for literal test inputs. It was meant to reject lookup solutions that passed the visible assertion. In an 80-task sample, 516 candidates passed that assertion, and the detector rejected none. The rules needed more than one matching example to identify a lookup table, but the verifier had only one visible example. This detector therefore added no filtering value.
-
-#### Executing the visible assertion gave a dependable first filter
-
-Instead of predicting correctness with another model, I ran each candidate in a sandbox against the one assertion shown in the prompt. The sandbox returned a deterministic pass or fail for that check. The selector chose the first candidate that passed. If none passed, it kept the first candidate.
-
-This simple filter reached 75.40% MBPP accuracy at pass@16 for checkpoint 630. It did not run the full hidden benchmark tests or read their expected outputs. One assertion is weak evidence: an incorrect program can pass it. Execution is useful here because it gives an exact result for a cheap, known check.
-
-#### Clustering hidden outputs added a small further gain
-
-I then tested whether hidden inputs could provide more evidence without comparing candidate outputs with the expected answers. For each candidate that passed the visible assertion, the sandbox ran the program on the remaining MBPP inputs. It recorded the outputs but did not check them against the hidden labels.
-
-I compared joint output clustering with per-input plurality. Joint clustering groups candidates that produce the same output signature over the hidden inputs. Per-input plurality favors a candidate whose outputs match the most common output for each input. In an earlier 80-task diagnostic, the two rules performed nearly the same. At K=16, each selected a correct candidate on 60.00% of tasks, compared with 56.25% for visible-assertion selection.
-
-The latest evaluation used exact typed output signatures and selected the earliest candidate in the largest cluster among candidates that passed the visible assertion and returned a complete signature. If none had a complete signature, it fell back to the visible-assertion selector. At checkpoint 630, the combined selector reached 76.19% MBPP accuracy at pass@16, up 0.79 points from execution-only selection. On MBPP+, it reached 60.05%, up 0.53 points.
-
-The idea is that correct programs should often agree on outputs, while wrong programs may fail in different ways. Agreement is only a heuristic. Several incorrect programs can agree on the same wrong outputs. In the earlier 80-task analysis, the largest cluster contained a correct program in 48 of the 54 tasks where any sample was correct. It missed six tasks that the oracle could have solved.
-
-The results show that each step addressed a specific weakness. The assertion check removed candidates that failed a known example. Output clustering used answer-blind agreement to improve selection a little further. Neither method can identify every correct candidate, so the next section compares the measured results and explains how much the added sampling costs.
 
 ### 3. Results
 

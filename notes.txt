@@ -85,3 +85,7 @@ Rewrote the published post to connect its results through the progression of the
 ## 2026-10-03: Rename tiny coding post and replace its summary
 
 Changed the published post title to “Teaching baby LLMs to code” in the website manifest and article page. Replaced the article summary with the user-provided two-approach description, nested verifier steps, and headline figures of 12.2% and 21.6%. Updated the repository notes before committing as required.
+
+## 2026-10-03: Add introduction and align section structure
+
+Added an introduction before the two main sections to explain scaling, local compute constraints, and the motivation for testing a 0.5B coding model. Updated the summary to put the model name in parentheses and describe the verifier steps in one sentence without nested bullets. Reordered Section 2 to open with the combined execution and output-clustering method, then explain the pass@K diagnostic and unsuccessful learned-verifier alternatives, consistent with the promised section structure.
