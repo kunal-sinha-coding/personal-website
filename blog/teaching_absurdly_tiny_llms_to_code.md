@@ -89,11 +89,20 @@ Here, $r_i$ is the reward for program $i$, $\bar{r}$ is the mean group reward, a
 
 The follow-up dense-reward diagnostic gave partial credit for valid code and test progress. All five updates then had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
 
-#### Showing every expected answer led to lookup solutions
+#### GRPO without hidden tests: reward hacking
 
 Adding partial-test credit gave GRPO more feedback, but the first long run showed every expected input and output in the prompt. The reward then tested the program on those same examples. A program could get full reward by memorizing the visible pairs instead of learning the general rule.
 
-The training and evaluation results diverged. At step 960, training pass@1 reached 86.3%, while MBPP+ pass@1 fell from 43.7% at initialization to 43.4%. An audit found lookup-style programs in about 54% of full-pass rollouts from steps 850 to 969. On the benchmark, 91 of 378 tasks showed visible-example specialization at step 960, compared with none at step zero. These results indicated that the reward encouraged memorization of prompt-visible answers.
+At step 960, the training pass rate had increased to 86.3%, while pass@1 on MBPP+ fell to 43.4%, below its 43.7% starting point. A strict code audit classified 27.65% of generations in the late training window as lookup solutions. For example, a generated program could compare its input with the literal values in the prompt and return the matching literal outputs:
+
+```python
+if value == <visible_test_input_1>:
+    return <visible_test_output_1>
+if value == <visible_test_input_2>:
+    return <visible_test_output_2>
+```
+
+Because the reward tested the same examples shown in the prompt, these programs could earn high training reward without learning a general solution. The training score improved, but the model did not learn a better program for unseen inputs.
 
 #### Hiding every example caused interface errors
 

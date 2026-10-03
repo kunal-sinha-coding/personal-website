@@ -129,3 +129,19 @@ Replaced the SFT section's rollout paragraph with the requested contrast: SFT us
 ## 2026-10-03: Lead the binary-reward section with diversity evidence
 
 Reordered the binary-reward subsection to state the reward-diversity problem and its logged evidence before introducing the reward and group-relative advantage equations. The explanation now follows the evidence from three zero-variance updates to the GRPO mechanism that makes identical group rewards uninformative, then compares the denser-reward follow-up and its lack of held-out accuracy gain.
+
+## Commit Name
+
+Describe GRPO reward hacking with late-run evidence.
+
+## Description
+
+Renamed the subsection to “GRPO without hidden tests: reward hacking” and revised its results paragraph with the step 960 training and MBPP+ scores, the strict late-window lookup-solution rate, and a schematic example of a program that returns outputs for prompt-visible inputs.
+
+## Why
+
+The revision follows the requested narrative: show the training and evaluation divergence, explain the hardcoding behavior with an example, and connect the improving training reward to failure to learn a general solution.
+
+## Context
+
+The saved run reports 86.3% training pass@1 and 43.4% MBPP+ pass@1 at step 960, below the 43.7% step-zero baseline. The corrected strict code-shape audit reports 27.65% lookup-style generations in the late window. The code sample is schematic and uses placeholders for the task-specific visible inputs and outputs.
