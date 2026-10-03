@@ -57,3 +57,7 @@ Synchronized the repository agent instructions with post-training. Metric-bearin
 ## 2026-10-03: Add ASD-STE100 writing guidance
 
 Updated the writing style instructions in AGENTS.md across post-training, personal-website, and user-skills to follow ASD-STE100 Simplified Technical English. This applies the requested style standard before drafting a new blog post.
+
+## 2026-10-03: Draft teaching absurdly tiny LLMs to code
+
+Added an unpublished Markdown post, matching HTML renderer, and hidden manifest entry for the requested article. The draft follows the Intro to RL post's heading hierarchy, uses the ASD-STE100 writing guidance, records the measured MBPP and MBPP+ results for checkpoints 630 and 830, and includes Mermaid performance charts. It distinguishes measured results from historical diagnostics and records missing early-stop and compute-efficiency measurements instead of estimating them. The post remains unpublished pending review.
