@@ -257,3 +257,19 @@ The revised structure explains why candidate selection was explored, how the exe
 ## Context
 
 The introductory metrics use the existing 80-task rollout and checkpoint 630 evaluation. The two selector methods retain the prior caveats that visible-test passes can still fail hidden tests and that incorrect candidates can share output signatures.
+
+## Commit Name
+
+Rewrite learned verifier subsection around limited data.
+
+## Description
+
+Renamed the learned-verifier subsection, described the CodeBERT classification experiment and its dataset, reported the validation metrics relative to chance, and explained the poor recall seen when applying a 0.5 prediction threshold. Added the requested memory and compute tradeoff.
+
+## Why
+
+The revision follows the requested narrative from the verifier's binary classification setup to its validation score, poor filtering behavior, and resource cost.
+
+## Context
+
+The CodeBERT data had 1,495 training candidates from 299 tasks and 375 validation candidates from 75 tasks. The best reported run reached 70.1% accuracy and 77.7% AUC; later checkpoint behavior included recall of 39.6% at the 0.5 threshold.

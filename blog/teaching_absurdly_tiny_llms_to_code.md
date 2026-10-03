@@ -128,11 +128,13 @@ For the hidden tests, I do not know the correct outputs. I can still use the san
 
 The idea is that correct programs should produce the same outputs, while incorrect programs may fail in different ways and produce different outputs. This is only a heuristic. Incorrect programs can also agree on the same wrong outputs. In an earlier 80-task analysis, the largest group contained a correct program in 48 of the 54 tasks where at least one candidate was correct. It missed six tasks that an oracle with access to hidden-test labels could have solved.
 
-#### A learned verifier did not provide a reliable selector
+#### Learned verifier: insufficient training data
 
-I first treated selection as binary classification. A verifier would receive a task and a candidate program, then predict whether to keep it. The available saved experiment trained a CodeBERT verifier on MBPP candidates labeled by sandbox execution. It had 1,495 training candidates from 299 tasks and 375 validation candidates from 75 tasks. The best run reached 70.1% validation accuracy and 77.7% area under the ROC curve. Later runs exposed threshold problems: a checkpoint could have better AUC but poor recall at the fixed 0.5 threshold.
+One alternative I first tried was to train a small verifier to predict whether a program was correct. This is a binary classification problem. I ran an experiment with CodeBERT, a model trained to understand both source code and natural language, and fine-tuned it on MBPP candidates labeled by sandbox execution. The dataset contained 1,495 training examples from 299 tasks and 375 validation examples from 75 tasks.
 
-The results did not establish a reliable selector. The labeled set was small, much like the SFT data. A more powerful verifier might do better, but it would need additional memory and compute. If that extra capacity is available, using it to generate better code directly may be a better use of the budget.
+The best run reached 70.1% validation accuracy and 77.7% area under the ROC curve. A classifier at chance would reach about 50% accuracy, so this was only about 20 percentage points above chance. When I used the verifier's predictions to filter candidates at a 0.5 threshold, performance was poor. Later checkpoints had better AUC but recall as low as 39.6%, so they rejected many correct programs.
+
+We might have obtained better results with a more powerful verifier, but it would require more memory and compute. Those resources could also support a more powerful code-generation model, so a larger verifier would defeat the purpose.
 
 #### Synthetic examples did not solve the data problem
 
