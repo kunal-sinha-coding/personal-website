@@ -1,6 +1,6 @@
 ### Summary
 
-I was able to take a very small LLM with under a billion parameters (Qwen2.5-Coder-0.5B-Instruct) and boost performance on MBPP through two approaches:
+I was able to take a very small LLM with under a billion parameters (`Qwen2.5-Coder-0.5B-Instruct`) and boost performance on MBPP through two approaches:
 
 1. Post-training the model through GRPO.
 2. Sampling multiple generations from the model and using a cheap verifier to filter them. The verifier required executing code in a sandbox and clustering similar outputs.
@@ -9,19 +9,45 @@ The first technique improved pass@1 by **12.2%** while the second improved by up
 
 ### Introduction
 
-Modern LLMs are very capable, but many performance gains have come from scaling laws. In practice, this often means using more data, compute, and larger models. In some settings, we cannot use that much compute. A model that runs locally may have to fit in very little disk space, RAM, or CUDA memory, especially on a low-power device.
+Modern LLMs are very powerful, but many performance gains have come from scaling laws. In practice, this often means using more data, compute, and larger models. In some settings, we cannot use that much compute. A model that runs locally may have to fit in very little disk space, RAM, or CUDA memory, especially on a low-power device.
 
-I wanted to find out how much performance I could get from one of the smallest coding models available: the 0.5B-parameter Qwen2.5-Coder-0.5B-Instruct. The next two sections describe the approaches I tried before presenting the full results. Each section starts with the approach that worked, then explains the alternatives that did not work and why.
+I wanted to find how much performance I could squeeze out of one of the smallest coding models available, a 0.5B-parameter `Qwen2.5-Coder-0.5B-Instruct`. The next two sections describe the approaches I tried before presenting the full results. Each section starts with the approach that worked, then explains the alternatives that did not work and why.
 
-### 1. Training a 0.5B coding model
+### 1. Post-training
 
-I wanted to improve a coding model that could fit within a small memory and storage budget. The model was Qwen2.5-Coder-0.5B-Instruct with a LoRA adapter. Training examples came from MBPP. I evaluated saved checkpoints with EvalPlus MBPP and MBPP+.
+#### What worked: Hybrid reward with hidden scoring tests
 
-#### The workable setup: hybrid reward with hidden scoring tests
+The training prompt showed the task description and one input and output example. The example was the first assertion in the MBPP tests. The model generated a Python function in the open code block. The full test list remained available to the reward function, but only one assertion appeared in the prompt. In simplified form, the prompt was:
 
-The approach that worked combined GRPO with a hybrid reward and a prompt that showed one input and output pair. The reward tested each program on all available tests, including the tests hidden from the prompt. It assigned 75% of the reward to passing every test and 25% to the fraction of tests passed. The visible pair showed the model the expected function interface. The hidden tests made it harder to earn a high reward by copying every known answer.
+````text
+<|im_start|>system
+You are an intelligent programming assistant to produce Python algorithmic solutions<|im_end|>
 
-The best saved greedy checkpoint reached 65.1% on MBPP. The best saved MBPP+ checkpoint reached 53.2%. These scores show what the final setup achieved. The earlier attempts explain why it used both partial test credit and a single visible example.
+<|im_start|>user
+Can you complete the following Python function?
+```python
+"""
+{task description}
+{one visible assertion}
+"""
+```
+
+<|im_end|>
+<|im_start|>assistant
+```python
+````
+
+I started by defining the reward function. For a generated program \(y\), it was:
+
+\[
+R(y) = 0.75 \, I(\text{all tests pass}) + 0.25 \, \frac{n_{\text{passed}}(y)}{n_{\text{total}}}
+\]
+
+Here, \(I(\text{all tests pass})\) is 1 when the program passes every test and 0 otherwise. The value \(n_{\text{passed}}(y)\) is the number of tests passed by program \(y\), and \(n_{\text{total}}\) is the total number of tests for the task. The reward therefore gives most of its weight to full correctness and some credit to partial progress. It scores all available tests, including tests hidden from the prompt.
+
+I optimized this reward with GRPO. Each prompt group contained 16 sampled programs. An optimizer update used eight task groups, for 128 completions in total. The run used the DAPO loss, a learning rate of \(1\times10^{-5}\), and a KL coefficient of \(0.01\). It trained LoRA adapters with rank 16, alpha 32, and dropout 0.05. The random seed was 42, and the maximum completion length was 2,048 tokens.
+
+The best saved greedy checkpoint reached 65.1% on MBPP. The best saved MBPP+ checkpoint reached 53.2%. These are the final setup's strongest recorded benchmark scores. The failed attempts below explain why the prompt used one visible example and why the reward included partial test credit.
 
 #### SFT did not give a reliable improvement
 
@@ -95,7 +121,7 @@ A hand-written detector looked for programs that returned literal outputs for li
 
 ### 3. Results
 
-The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was Qwen2.5-Coder-0.5B-Instruct with a LoRA adapter. Each checkpoint had 16 sampled programs per task. Sampling used temperature 1.0. The verifier made its decisions before benchmark correctness labels were read.
+The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. Each checkpoint had 16 sampled programs per task. Sampling used temperature 1.0. The verifier made its decisions before benchmark correctness labels were read.
 
 The tables report two kinds of scores. Raw pass@K estimates whether at least one of K samples is correct. Verifier accuracy measures whether the selector chose a correct candidate, averaged over uniformly selected subsets of K candidates. These values answer different questions. A selector can score below raw pass@K because it must choose without knowing which candidates pass all tests.
 
@@ -105,7 +131,7 @@ Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best
 
 | Model or method | Checkpoint | Greedy pass@1 | pass@1 | pass@2 | pass@4 | pass@8 | pass@16 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Qwen2.5-Coder-0.5B-Instruct, official reference | — | 52.4% | — | — | — | — | — |
+| `Qwen2.5-Coder-0.5B-Instruct`, official reference | — | 52.4% | — | — | — | — | — |
 | Raw sampling | 630 | 64.0% | 58.85% | 65.96% | 71.42% | 76.27% | 80.42% |
 | Execution verifier | 630 | 64.0% | 58.85% | 64.86% | 69.11% | 72.69% | 75.40% |
 | Execution verifier plus joint output clustering | 630 | 64.0% | 58.85% | 64.87% | 69.20% | 72.70% | 76.19% |
@@ -119,7 +145,7 @@ The checkpoint 830 greedy result is 12.7 percentage points above the official 52
 
 | Model or method | Checkpoint | Greedy pass@1 | pass@1 | pass@2 | pass@4 | pass@8 | pass@16 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Qwen2.5-Coder-0.5B-Instruct, official reference | — | 43.7% | — | — | — | — | — |
+| `Qwen2.5-Coder-0.5B-Instruct`, official reference | — | 43.7% | — | — | — | — | — |
 | Raw sampling | 630 | 54.0% | 49.74% | 56.17% | 61.02% | 65.16% | 69.05% |
 | Execution verifier | 630 | 54.0% | 49.74% | 53.98% | 56.69% | 58.61% | 59.52% |
 | Execution verifier plus joint output clustering | 630 | 54.0% | 49.74% | 53.98% | 56.82% | 58.79% | 60.05% |
@@ -161,7 +187,7 @@ The benchmark run used W&B run `c4fthzd3` and source commit `ba8b794085828aef55d
 
 The Instruct model scores below give context for the 0.5B result. They also show what is gained by using a larger model without post-training or candidate selection. The small model uses less memory and disk space. Sampling it more can improve accuracy, but costs additional time and inference work.
 
-| Qwen2.5-Coder Instruct | Parameters | MBPP | MBPP+ |
+| `Qwen2.5-Coder Instruct` | Parameters | MBPP | MBPP+ |
 | --- | ---: | ---: | ---: |
 | 0.5B | 0.49B | 52.4% | 43.7% |
 | 1.5B | 1.54B | 69.2% | 59.4% |

@@ -89,3 +89,7 @@ Changed the published post title to “Teaching baby LLMs to code” in the webs
 ## 2026-10-03: Add introduction and align section structure
 
 Added an introduction before the two main sections to explain scaling, local compute constraints, and the motivation for testing a 0.5B coding model. Updated the summary to put the model name in parentheses and describe the verifier steps in one sentence without nested bullets. Reordered Section 2 to open with the combined execution and output-clustering method, then explain the pass@K diagnostic and unsuccessful learned-verifier alternatives, consistent with the promised section structure.
+
+## 2026-10-03: Clarify the post-training prompt and reward
+
+Applied the requested introduction wording and renamed Section 1 to “Post-training.” The working subsection now starts with a representative ChatML prompt block, followed by the hybrid reward equation and definitions, then the GRPO and LoRA hyperparameters from the saved training configuration. Wrapped Qwen2.5-Coder model identifiers in inline code throughout the post. The prompt template and settings were checked against `data.py`, the run configuration, and the saved evaluation report in post-training.
