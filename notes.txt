@@ -117,3 +117,7 @@ Expanded the SFT subsection with the response-only cross-entropy equation and th
 ## 2026-10-03: Clarify SFT decline and dense-reward comparison
 
 Added the verified SFT optimizer details from W&B, stated the full-epoch pass@1 drop in percentage points, and clarified that GRPO adds sampled responses rather than independent tasks. Identified the binary trial as an early GRPO attempt and added the follow-up dense-reward diagnostic: nonzero reward variance and gradients on all five steps, with mixed groups on all steps, but held-out pass@1 decreased from 21/75 to 19/75. This separates restored signal from improved benchmark performance.
+
+## 2026-10-03: Remove W&B links from the blog post
+
+Removed the two W&B hyperlinks from the SFT and binary-reward evidence paragraphs at the user's request. Kept the reported metrics and explanations in the post without linking to W&B.

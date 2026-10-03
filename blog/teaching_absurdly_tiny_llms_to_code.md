@@ -61,7 +61,7 @@ $$
 
 Here, $x$ is the prompt, $y_t$ is the next reference-code token, and $N$ is the number of response tokens. The run used one epoch over the 374 examples, a per-device batch size of 1, AdamW, a linear learning-rate schedule starting at `1e-5`, seed 42, and a maximum prompt length of 512 tokens. The held-out evaluation used greedy pass@1 on 90 examples.
 
-Before SFT, pass@1 was 35.6%. It fell to 32.2% at steps 94 and 187, then finished at 30.0% after one epoch. The [saved SFT run](https://wandb.ai/kunal-personal/grpo-mbpp/runs/ct96rhob) therefore shows that held-out performance did not improve. It fell by 5.6 percentage points after the full epoch.
+Before SFT, pass@1 was 35.6%. It fell to 32.2% at steps 94 and 187, then finished at 30.0% after one epoch. The SFT run therefore shows that held-out performance did not improve. It fell by 5.6 percentage points after the full epoch.
 
 One likely reason is that the training set was too small. It contained only 374 examples. The model fit the reference code, but its held-out score fell. This strongly suggests overfitting to the small set of demonstrations.
 
@@ -85,7 +85,7 @@ Here, $r_i$ is the reward for program $i$, $\bar{r}$ is the group's mean reward,
 
 If every program in a group has the same binary reward, each reward equals the group mean. Every advantage is then zero, so that group gives no relative signal for the policy update. With a binary reward, this happens when all sampled programs fail or all pass.
 
-An earlier five-step diagnostic used `Qwen3.5-0.8B` with four samples per prompt. Three of the five updates had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. The [saved run record](https://wandb.ai/kunal-personal/grpo-mbpp/runs/vizfiyn2) supports the sparse-signal explanation, although this was a short diagnostic on a different model. In the follow-up dense-reward diagnostic, all five updates had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
+An earlier five-step diagnostic used `Qwen3.5-0.8B` with four samples per prompt. Three of the five updates had zero reward variance, zero loss, and zero gradient norm. Pass@1 fell from 21/75 tasks at baseline to 20/75 at the end. These measurements support the sparse-signal explanation, although this was a short diagnostic on a different model. In the follow-up dense-reward diagnostic, all five updates had nonzero reward variance and gradient norm. Four updates had mixed rewards in all eight groups, and the fifth had mixed rewards in seven of eight groups. Held-out pass@1 still fell from 21/75 to 19/75. The denser reward restored a learning signal, but did not establish a correctness gain.
 
 #### Showing every expected answer led to lookup solutions
 
