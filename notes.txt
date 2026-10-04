@@ -601,3 +601,21 @@ The user asked to remove this paragraph from the blog post.
 ### Context
 
 No table values or method descriptions changed. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Clarify each results-table method
+
+### Commit name
+
+Clarify results-table method descriptions.
+
+### Description
+
+Rewrote the method list so every bullet starts with its method name and a colon. Defined the baseline model and sampled temperature first, then described greedy decoding as the same model with greedy decoding. Defined the GRPO-trained model and its greedy variant, followed by the execution-verifier and clustering selection rules.
+
+### Why
+
+The user asked for a clear progression where each method description states how it relates to the previous method.
+
+### Context
+
+The method definitions now include temperature 1.0 for sampled decoding and specify the fallback when no candidate passes the visible test. `git diff --check` passed; no tests were run.

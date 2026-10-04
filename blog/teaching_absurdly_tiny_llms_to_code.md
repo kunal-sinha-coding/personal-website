@@ -150,12 +150,12 @@ During evaluation, I can use greedy decoding or sampling. Greedy decoding select
 
 The methods whose results are reported in the tables are described below.
 
-- `Baseline (greedy)` is the Instruct model without post-training, using greedy decoding.
-- `Baseline` is the 0.5B Instruct model without post-training, using sampled decoding at temperature 1.0.
-- `Post-trained (greedy)` uses the post-trained model with greedy decoding.
-- `Post-trained` samples at temperature 1.0 and returns the first candidate.
-- `Post-trained + execution verifier` selects the first candidate that passes the visible test.
-- `Post-trained + execution verifier + clustering` uses the largest cluster of outputs on hidden inputs after filtering by the visible test.
+- `Baseline`: `Qwen2.5-Coder-0.5B-Instruct` without post-training, using sampled decoding at temperature 1.0.
+- `Baseline (greedy)`: the same base model, using greedy decoding.
+- `Post-trained`: the 0.5B model trained with GRPO, using sampled decoding at temperature 1.0 and returning the first candidate.
+- `Post-trained (greedy)`: the same GRPO-trained model, using greedy decoding.
+- `Post-trained + execution verifier`: the GRPO-trained model samples K candidates at temperature 1.0. The verifier runs each candidate against the visible test in a sandbox and returns the first candidate that passes. If none pass, it returns the first candidate.
+- `Post-trained + execution verifier + clustering`: uses the same GRPO-trained model and visible-test check, then selects a candidate from the largest cluster of outputs on hidden inputs.
 
 The bold rows show the best post-training result and the best result after scaling test-time generation.
 
