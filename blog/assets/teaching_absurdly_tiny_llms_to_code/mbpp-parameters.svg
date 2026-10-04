@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="630" viewBox="0 0 1180 630" role="img" aria-labelledby="title desc">
+<title id="title">MBPP: pass@1 by model size</title>
+<desc id="desc">Pass at one results for baseline and post-trained Qwen coding models, colored by method. Tooltips on each point show the number of generations and score.</desc>
+<rect width="100%" height="100%" fill="#fffdf9"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#292524}.grid{stroke:#e7e5e4;stroke-width:1}.axis{stroke:#57534e;stroke-width:1.5}.tick{font-size:14px}.small{font-size:12px}.title{font-size:24px;font-weight:700}.legend{font-size:15px}</style>
+<text class="title" x="105" y="34">MBPP: pass@1 by model size</text>
+<line class="grid" x1="105" y1="520.00" x2="765" y2="520.00"/>
+<text class="tick" x="93" y="525.00" text-anchor="end">20%</text>
+<line class="grid" x1="105" y1="459.33" x2="765" y2="459.33"/>
+<text class="tick" x="93" y="464.33" text-anchor="end">30%</text>
+<line class="grid" x1="105" y1="398.67" x2="765" y2="398.67"/>
+<text class="tick" x="93" y="403.67" text-anchor="end">40%</text>
+<line class="grid" x1="105" y1="338.00" x2="765" y2="338.00"/>
+<text class="tick" x="93" y="343.00" text-anchor="end">50%</text>
+<line class="grid" x1="105" y1="277.33" x2="765" y2="277.33"/>
+<text class="tick" x="93" y="282.33" text-anchor="end">60%</text>
+<line class="grid" x1="105" y1="216.67" x2="765" y2="216.67"/>
+<text class="tick" x="93" y="221.67" text-anchor="end">70%</text>
+<line class="grid" x1="105" y1="156.00" x2="765" y2="156.00"/>
+<text class="tick" x="93" y="161.00" text-anchor="end">80%</text>
+<line class="grid" x1="105" y1="95.33" x2="765" y2="95.33"/>
+<text class="tick" x="93" y="100.33" text-anchor="end">90%</text>
+<line class="grid" x1="134.08" y1="65" x2="134.08" y2="520"/>
+<line class="axis" x1="134.08" y1="520" x2="134.08" y2="526"/>
+<text class="tick" x="134.08" y="545" text-anchor="middle">0.49</text>
+<line class="grid" x1="298.20" y1="65" x2="298.20" y2="520"/>
+<line class="axis" x1="298.20" y1="520" x2="298.20" y2="526"/>
+<text class="tick" x="298.20" y="545" text-anchor="middle">1.54</text>
+<line class="grid" x1="398.01" y1="65" x2="398.01" y2="520"/>
+<line class="axis" x1="398.01" y1="520" x2="398.01" y2="526"/>
+<text class="tick" x="398.01" y="545" text-anchor="middle">3.09</text>
+<line class="grid" x1="527.18" y1="65" x2="527.18" y2="520"/>
+<line class="axis" x1="527.18" y1="520" x2="527.18" y2="526"/>
+<text class="tick" x="527.18" y="545" text-anchor="middle">7.61</text>
+<line class="grid" x1="621.53" y1="65" x2="621.53" y2="520"/>
+<line class="axis" x1="621.53" y1="520" x2="621.53" y2="526"/>
+<text class="tick" x="621.53" y="545" text-anchor="middle">14.7</text>
+<line class="grid" x1="735.24" y1="65" x2="735.24" y2="520"/>
+<line class="axis" x1="735.24" y1="520" x2="735.24" y2="526"/>
+<text class="tick" x="735.24" y="545" text-anchor="middle">32.5</text>
+<line class="axis" x1="105" y1="65" x2="105" y2="520"/>
+<line class="axis" x1="105" y1="520" x2="765" y2="520"/>
+<text class="tick" x="435.00" y="578" text-anchor="middle">Model parameters (billions, log scale)</text>
+<text class="tick" transform="translate(26 292.5) rotate(-90)" text-anchor="middle">Pass@1 accuracy</text>
+<g><title>MBPP; Baseline (greedy); parameters 0.49B; K=1; pass@1=52.4%</title><circle cx="134.08" cy="323.44" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Baseline (greedy); parameters 1.54B; K=1; pass@1=69.2%</title><circle cx="298.20" cy="221.52" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Baseline (greedy); parameters 3.09B; K=1; pass@1=73.6%</title><circle cx="398.01" cy="194.83" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Baseline (greedy); parameters 7.61B; K=1; pass@1=83.5%</title><circle cx="527.18" cy="134.77" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Baseline (greedy); parameters 14.7B; K=1; pass@1=86.2%</title><circle cx="621.53" cy="118.39" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Baseline (greedy); parameters 32.5B; K=1; pass@1=90.2%</title><circle cx="735.24" cy="94.12" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Baseline (sampled); parameters 0.49B; K=1; pass@1=28.6%</title><rect x="127.58" y="461.33" width="13" height="13" rx="1.5" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained (greedy); parameters 0.49B; K=1; pass@1=65.1%</title><path d="M134.08,238.39 L141.08,252.39 L127.08,252.39 Z" fill="#dc2626" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained (sampled, first candidate); parameters 0.49B; K=1,2,4,8,16; pass@1=60.63%</title><path d="M127.08,265.51 L134.08,273.51 L127.08,281.51 L120.08,273.51 Z" fill="#ea580c" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier; parameters 0.49B; K=1; pass@1=60.63%</title><path d="M127.08,267.51 L141.08,267.51 L134.08,281.51 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier; parameters 0.49B; K=2; pass@1=65.97%</title><path d="M127.08,235.12 L141.08,235.12 L134.08,249.12 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier; parameters 0.49B; K=4; pass@1=69.4%</title><path d="M127.08,214.31 L141.08,214.31 L134.08,228.31 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier; parameters 0.49B; K=8; pass@1=71.64%</title><path d="M127.08,200.72 L141.08,200.72 L134.08,214.72 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier; parameters 0.49B; K=16; pass@1=72.22%</title><path d="M127.08,197.20 L141.08,197.20 L134.08,211.20 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier + clustering; parameters 0.49B; K=1; pass@1=60.63%</title><polygon points="141.08,265.51 143.26,270.52 148.69,271.04 144.60,274.65 145.79,279.98 141.08,277.21 136.38,279.98 137.57,274.65 133.48,271.04 138.91,270.52" fill="#0891b2" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier + clustering; parameters 0.49B; K=2; pass@1=66.01%</title><polygon points="134.08,232.87 136.26,237.88 141.69,238.40 137.60,242.02 138.79,247.34 134.08,244.57 129.38,247.34 130.57,242.02 126.48,238.40 131.91,237.88" fill="#0891b2" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier + clustering; parameters 0.49B; K=4; pass@1=69.59%</title><polygon points="134.08,211.15 136.26,216.16 141.69,216.68 137.60,220.30 138.79,225.63 134.08,222.85 129.38,225.63 130.57,220.30 126.48,216.68 131.91,216.16" fill="#0891b2" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier + clustering; parameters 0.49B; K=8; pass@1=71.84%</title><polygon points="134.08,197.50 136.26,202.51 141.69,203.03 137.60,206.65 138.79,211.98 134.08,209.20 129.38,211.98 130.57,206.65 126.48,203.03 131.91,202.51" fill="#0891b2" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>MBPP; Post-trained + execution verifier + clustering; parameters 0.49B; K=16; pass@1=73.02%</title><polygon points="134.08,190.35 136.26,195.35 141.69,195.87 137.60,199.49 138.79,204.82 134.08,202.05 129.38,204.82 130.57,199.49 126.48,195.87 131.91,195.35" fill="#0891b2" stroke="#ffffff" stroke-width="2"/></g>
+<g><title>Baseline (greedy)</title><circle cx="813.00" cy="101.00" r="7" fill="#2563eb" stroke="#ffffff" stroke-width="2"/></g>
+<text class="legend" x="832" y="106">Baseline (greedy)</text>
+<g><title>Baseline (sampled)</title><rect x="806.50" y="166.50" width="13" height="13" rx="1.5" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/></g>
+<text class="legend" x="832" y="178">Baseline (sampled)</text>
+<g><title>Post-trained (greedy)</title><path d="M813.00,237.00 L820.00,251.00 L806.00,251.00 Z" fill="#dc2626" stroke="#ffffff" stroke-width="2"/></g>
+<text class="legend" x="832" y="250">Post-trained (greedy)</text>
+<g><title>Post-trained (sampled,</title><path d="M813.00,309.00 L820.00,317.00 L813.00,325.00 L806.00,317.00 Z" fill="#ea580c" stroke="#ffffff" stroke-width="2"/></g>
+<text class="legend" x="832" y="322">Post-trained (sampled,</text>
+<text class="legend" x="832" y="341">first candidate)</text>
+<g><title>Post-trained + execution</title><path d="M806.00,383.00 L820.00,383.00 L813.00,397.00 Z" fill="#16a34a" stroke="#ffffff" stroke-width="2"/></g>
+<text class="legend" x="832" y="394">Post-trained + execution</text>
+<text class="legend" x="832" y="413">verifier</text>
+<g><title>Post-trained + execution</title><polygon points="813.00,453.00 815.17,458.01 820.61,458.53 816.52,462.14 817.70,467.47 813.00,464.70 808.30,467.47 809.48,462.14 805.39,458.53 810.83,458.01" fill="#0891b2" stroke="#ffffff" stroke-width="2"/></g>
+<text class="legend" x="832" y="466">Post-trained + execution</text>
+<text class="legend" x="832" y="485">verifier + clustering</text>
+<text class="small" x="105" y="612">Coincident points are offset slightly for visibility. Hover over a point to see its method, K, model size, and score.</text>
+</svg>

@@ -185,6 +185,14 @@ The bold rows show the best post-training result and the best result after scali
 | Baseline (greedy) | 0.49B | 1 | 52.4% |
 | Baseline | 0.49B | 1 | 28.6% |
 
+![MBPP pass@1 by model size](assets/teaching_absurdly_tiny_llms_to_code/mbpp-parameters.svg)
+
+*Model size is on a logarithmic scale. Points with identical model sizes are offset slightly so that each method is visible.*
+
+![MBPP pass@1 by estimated relative FLOPs](assets/teaching_absurdly_tiny_llms_to_code/mbpp-relative-flops.svg)
+
+*Relative FLOPs are estimated from parameter count multiplied by the number of generations, with one 0.49B generation as the reference. The horizontal axis is logarithmic.*
+
 #### MBPP+
 
 | Method | Parameters | # of generations | Pass@1 |
@@ -212,6 +220,14 @@ The bold rows show the best post-training result and the best result after scali
 | Post-trained + execution verifier + clustering | 0.49B | 1 | 51.09% |
 | Baseline (greedy) | 0.49B | 1 | 43.7% |
 | Baseline | 0.49B | 1 | 22.2% |
+
+![MBPP+ pass@1 by model size](assets/teaching_absurdly_tiny_llms_to_code/mbpp-plus-parameters.svg)
+
+*Model size is on a logarithmic scale. Points with identical model sizes are offset slightly so that each method is visible.*
+
+![MBPP+ pass@1 by estimated relative FLOPs](assets/teaching_absurdly_tiny_llms_to_code/mbpp-plus-relative-flops.svg)
+
+*Relative FLOPs are estimated from parameter count multiplied by the number of generations, with one 0.49B generation as the reference. The horizontal axis is logarithmic.*
 
 #### Analysis
 
@@ -263,4 +279,4 @@ The results do not show a consistent accuracy advantage for the smaller model at
 
 However, the primary advantage of using a smaller model with multiple generations occurs in settings subject to memory or latency constraints. If memory is limited, sequentially sampling multiple programs from a small model can help when disk space or RAM is scarce, such as on a device. The model weights take up less disk space, and each forward pass uses less RAM. Latency increases, but K generations do not necessarily take K times as long as one generation from a larger model because each forward pass through the smaller model requires less computation.
 
-If memory is available but latency matters, the K generations can instead run in parallel. This can bring accuracy closer to that of a much larger model while keeping latency closer to that of one 0.5B generation. [vLLM supports parallel sampling and continuous batching](https://docs.vllm.ai/en/stable/), which can make it a good fit for this approach. Actual latency depends on the hardware and available memory, and we did not measure parallel-generation latency in these experiments.
+If memory is available but latency matters, the K generations can instead run in parallel. This can bring accuracy closer to that of a much larger model while keeping latency closer to that of one 0.5B generation. vLLM is well equipped for this approach because it supports parallel sampling and continuous batching.

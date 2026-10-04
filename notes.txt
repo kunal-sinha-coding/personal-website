@@ -709,3 +709,21 @@ The user requested a clearer explanation of how small models help under memory c
 ### Context
 
 The post notes that parallel latency was not measured and depends on hardware. The vLLM capability statement links to its official documentation. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Add MBPP results plots and simplify latency text
+
+### Commit name
+
+Add MBPP pass-at-one plots.
+
+### Description
+
+Added four SVG scatter plots under their matching result tables. MBPP and MBPP+ each show pass@1 by model size and by approximate relative model FLOPs. Each plot uses distinct colors and markers for the six methods, includes a legend, and gives point details on hover. The relative FLOPs axis uses parameter count multiplied by generation count, normalized to one 0.49B generation. Removed the vLLM documentation link and the sentence about unmeasured parallel latency, while retaining the requested statement about vLLM support for parallel sampling and continuous batching.
+
+### Why
+
+The user requested model-size and compute-scaled graphs below each corresponding benchmark table, plus the two wording changes.
+
+### Context
+
+The model-size axis and relative-FLOPs axis use logarithmic scales. Coincident points are offset slightly for visibility. Relative FLOPs are an estimate and exclude output-length differences and sandbox execution. `git diff --check` passed, image links were checked, and all SVG files parsed successfully as XML; no tests were run.
