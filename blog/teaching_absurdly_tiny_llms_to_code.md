@@ -146,14 +146,14 @@ The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen
 
 MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Each row reports the accuracy of one selected program.
 
-During evaluation, I can use greedy decoding or sampling. Greedy decoding selects the highest-probability next token at each step. Sampling selects tokens from the model's probability distribution, using a temperature to control how much variation it allows. Greedy decoding applies when I generate one answer. For K greater than one, I sample multiple answers. Verifier-enabled methods use the verifier to select one, while the plain post-trained rows return the first sample.
+During evaluation, I can use greedy decoding or sampling. Greedy decoding selects the highest-probability next token at each step. Sampling selects tokens from the model's probability distribution. These results use a temperature of 1.0. Greedy decoding applies when I generate one answer. For K greater than one, I sample multiple answers. Verifier-enabled methods use the verifier to select one, while the plain post-trained rows return the first sample.
 
 The methods whose results are reported in the tables are described below.
 
 - `Baseline (greedy)` is the Instruct model without post-training, using greedy decoding.
-- `Baseline` is the 0.5B Instruct model without post-training, using sampled decoding.
+- `Baseline` is the 0.5B Instruct model without post-training, using sampled decoding at temperature 1.0.
 - `Post-trained (greedy)` uses the post-trained model with greedy decoding.
-- `Post-trained` uses sampling and returns the first candidate.
+- `Post-trained` samples at temperature 1.0 and returns the first candidate.
 - `Post-trained + execution verifier` selects the first candidate that passes the visible test.
 - `Post-trained + execution verifier + clustering` uses the largest cluster of outputs on hidden inputs after filtering by the visible test.
 

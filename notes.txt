@@ -565,3 +565,21 @@ The user requested a sentence followed by separate bullets for easier scanning.
 ### Context
 
 This is a wording and formatting change to the results section. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: State sampling temperature in result methods
+
+### Commit name
+
+State sampling temperature in results.
+
+### Description
+
+Specified that the reported sampled results use temperature 1.0 in the decoding explanation and in the sampled baseline and post-trained method descriptions.
+
+### Why
+
+The user asked for the sampling temperature to be explicit.
+
+### Context
+
+The sampled baseline and post-trained candidate evaluation both used temperature 1.0. `git diff --check` passed; no tests were run.
