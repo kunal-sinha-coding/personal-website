@@ -110,11 +110,11 @@ To prevent the reward hacking described above, I removed all input and output ex
 
 This finding led me to the approach described at the start of the section: show the LLM only the first test in the prompt, but calculate reward using both this visible test and the other hidden tests. In this setup, hardcoding the answer to the visible test yields a reward slightly higher than a fully failing solution, but far less than a fully correct solution.
 
-### 2. Selecting among multiple generations
+### 2. Scaling test-time generation
 
 #### What worked: execution-based verifier and output clustering
 
-During the previous experiments, I noticed a curious phenomenon. Pass@1 could be low, but sampling more candidates greatly increased the chance of finding a correct solution. In an earlier 80-task rollout, the first candidate to pass the visible test was fully correct on 56.25% of tasks. Among 16 candidates, at least one was fully correct on 67.50% of tasks. On checkpoint 630, raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16. I wanted to investigate this effect more thoroughly.
+During the previous experiments, I noticed a curious phenomenon. Pass@1 could be low, but sampling more candidates greatly increased the chance of finding a correct solution. In an earlier 80-task rollout, the first candidate to pass the visible test was fully correct on 56.25% of tasks. Among 16 candidates, at least one was fully correct on 67.50% of tasks. On checkpoint 630, raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16. I wanted to investigate the impact of scaling up the number of generations during test time.
 
 ##### Execution-based filtering
 

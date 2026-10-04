@@ -385,3 +385,19 @@ This states the intended reason for the initial synthetic-example attempt's limi
 ## Context
 
 No other text changed.
+
+## Commit Name
+
+Rename the test-time generation section.
+
+## Description
+
+Changed section 2's title to “Scaling test-time generation” and revised its closing sentence to say that the experiments investigated the impact of increasing generations at test time.
+
+## Why
+
+This better describes the section's scope and motivation.
+
+## Context
+
+No metrics or method descriptions changed.
