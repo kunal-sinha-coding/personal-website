@@ -369,3 +369,19 @@ This replaces the qualitative claim about synthetic task difficulty with the ava
 ## Context
 
 The synthetic labeling and original validation metrics are recorded in `/workspace/post-training/logs/notes.txt` around entries for September 8, 2026. The old static lookup detector section was removed as requested.
+
+## Commit Name
+
+Clarify why the small model was not used for task generation.
+
+## Description
+
+Replaced “its output was not useful enough” with “the model was not designed for this task” in the synthetic-data subsection.
+
+## Why
+
+This states the intended reason for the initial synthetic-example attempt's limitation.
+
+## Context
+
+No other text changed.
