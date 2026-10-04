@@ -449,3 +449,19 @@ This follows the requested article structure and compares the accuracy of one se
 ## Context
 
 Relative FLOPs are estimated from nominal parameter count times generation count, normalized to a 0.5B generation. They exclude sandbox execution and differences in completion length. The Qwen Instruct reference scores and the checkpoint 830 EvalPlus results use different evaluation setups. Mermaid chart series colors use the documented XY chart palette configuration, blue for the perfect verifier and red for the measured selector. `git diff --check` passed; no tests were run.
+
+## Commit Name
+
+Sort result tables by score and emphasize our methods.
+
+## Description
+
+Sorted the MBPP and MBPP+ table rows from highest to lowest Pass@1. Added bold formatting to the post-trained, execution-verifier, and clustering method rows. The baseline rows remain unbolded.
+
+## Why
+
+The author requested descending score order and clear visual emphasis for all methods from this work.
+
+## Context
+
+Each benchmark table was sorted independently. All scores and relative FLOPs values remain unchanged.
