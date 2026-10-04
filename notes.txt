@@ -547,3 +547,21 @@ The table needs to distinguish greedy decoding from temperature sampling and giv
 ### Context
 
 The sampled baseline scored 28.6% on MBPP and 22.2% on MBPP+. It used one temperature-1.0 sample per task from Qwen2.5-Coder-0.5B-Instruct on the same EvalPlus 0.3.1 378-task split. The greedy report scores may use a different evaluation setup. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: List result-table methods in bullets
+
+### Commit name
+
+List result table methods clearly.
+
+### Description
+
+Replaced the inline method caption paragraph with a lead-in sentence and a bullet list. Each bullet defines one reported method. Kept the note that bold rows mark the best post-training result and the best result after test-time generation scaling.
+
+### Why
+
+The user requested a sentence followed by separate bullets for easier scanning.
+
+### Context
+
+This is a wording and formatting change to the results section. `git diff --check` passed; no tests were run.
