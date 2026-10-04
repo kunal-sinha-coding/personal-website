@@ -217,7 +217,7 @@ The bold rows show the best post-training result and the best result after scali
 
 #### Analysis
 
-Post-training improved the 0.5B model's pass@1 from 52.4% to 65.1% on MBPP and from 43.7% to 53.2% on MBPP+. It still trailed the 1.5B Instruct model, which has about three times as many parameters and scored 69.2% and 59.4%.
+Post-training improved the 0.5B model's pass@1 from 52.4% to 65.1% on MBPP, a gain of 12.7 percentage points, and from 43.7% to 53.2% on MBPP+, a gain of 9.5 percentage points. The gain is smaller on MBPP+ because its more demanding tests are harder to pass. The model still trailed the 1.5B Instruct model, which has about three times as many parameters and scored 69.2% on MBPP and 59.4% on MBPP+.
 
 Scaling up test-time generations and selecting with a verifier raised accuracy further. With 16 candidates, execution filtering plus clustering reached 73.02% on MBPP and 60.32% on MBPP+. Output clustering added a smaller gain on top of execution filtering: 0.80 percentage points on MBPP and 0.27 points on MBPP+ at 16 generations. Clustering requires roughly two to three times as many sandbox executions. If sandbox execution is a bottleneck, the execution filter alone may be the better choice.
 

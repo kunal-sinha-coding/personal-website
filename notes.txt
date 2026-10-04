@@ -619,3 +619,21 @@ The user asked for a clear progression where each method description states how 
 ### Context
 
 The method definitions now include temperature 1.0 for sampled decoding and specify the fallback when no candidate passes the visible test. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Quantify post-training gains in analysis
+
+### Commit name
+
+Quantify post-training gains.
+
+### Description
+
+Added the pass@1 gains in percentage points to the Analysis subsection: 12.7 points on MBPP and 9.5 points on MBPP+. Added one sentence that attributes the smaller MBPP+ gain to its more demanding tests.
+
+### Why
+
+The user requested explicit point gains and a concise explanation for the smaller MBPP+ improvement.
+
+### Context
+
+The comparison uses the baseline and post-trained greedy scores already shown in the tables. `git diff --check` passed; no tests were run.
