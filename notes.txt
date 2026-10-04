@@ -273,3 +273,19 @@ The revision follows the requested narrative from the verifier's binary classifi
 ## Context
 
 The CodeBERT data had 1,495 training candidates from 299 tasks and 375 validation candidates from 75 tasks. The best reported run reached 70.1% accuracy and 77.7% AUC; later checkpoint behavior included recall of 39.6% at the 0.5 threshold.
+
+## Commit Name
+
+Place candidate selection rationale under its method headings.
+
+## Description
+
+Moved the inference-time educated-guess explanation into the execution-based filtering subsection and shortened it to the requested visible-test procedure. Rewrote the joint output clustering introduction to explain running candidates on hidden inputs, building output signatures, and selecting from the largest cluster.
+
+## Why
+
+This organizes section 2 by method and follows the requested narrative without repeating the same filter explanation in the parent paragraph.
+
+## Context
+
+The existing 48-of-54 clustering observation remains as evidence for the heuristic, along with its limitation that incorrect programs can share outputs.

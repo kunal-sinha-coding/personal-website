@@ -116,17 +116,15 @@ This finding led me to the approach described at the start of the section: show 
 
 During the previous experiments, I noticed a curious phenomenon. Pass@1 could be low, but sampling more candidates greatly increased the chance of finding a correct solution. In an earlier 80-task rollout, the first candidate to pass the visible test was fully correct on 56.25% of tasks. Among 16 candidates, at least one was fully correct on 67.50% of tasks. On checkpoint 630, raw MBPP pass@K rose from 58.85% at K=1 to 80.42% at K=16. I wanted to investigate this effect more thoroughly.
 
-The problem is that even when a batch contains a correct program, we cannot identify it at inference time by checking the ground truth. Instead, I used the one visible test case in the prompt and an execution sandbox. The sandbox can run each candidate program on the known input. A candidate that fails the visible test is incorrect, so I filter it out. If more than one candidate passes, I select the first one. This is a useful but imperfect guess: a program can pass the visible test and still fail hidden tests. The results below show how well this simple check works.
-
 ##### Execution-based filtering
 
-The execution filter checks each candidate against the input and output pair shown in the prompt. It keeps the first candidate that passes. If no candidate passes, it keeps the first candidate generated. The filter does not run the full benchmark tests or read their expected outputs.
+Even when a batch contains a correct program, we cannot identify it at inference time by checking the ground truth. However, we can make an educated guess about which program is correct using the information available to us. In this setup, we know the ground-truth input and output for one test, and we can execute programs in a sandbox. We can filter out any program that does not produce the expected output on this test, then pick the first program that remains.
 
 ##### Joint output clustering
 
-For the hidden tests, I do not know the correct outputs. I can still use the sandbox to run candidate programs on the hidden inputs and compare their outputs. I record each candidate's outputs as a signature, then group candidates with identical signatures. The selector chooses the earliest candidate in the largest group among those that passed the visible test. If no candidate has a complete output signature, it falls back to the execution filter.
+For the other hidden tests, we do not know the ground-truth outputs. However, we can still execute the tests in the sandbox and apply simple heuristics to sharpen our educated guess. I used joint output clustering: for each candidate that passes the visible test, I ran it on the hidden inputs and recorded its outputs as a signature. I then grouped candidates with identical signatures and selected the earliest candidate in the largest cluster. If no candidate produced a complete signature, I used the execution-based filter's choice.
 
-The idea is that correct programs should produce the same outputs, while incorrect programs may fail in different ways and produce different outputs. This is only a heuristic. Incorrect programs can also agree on the same wrong outputs. In an earlier 80-task analysis, the largest group contained a correct program in 48 of the 54 tasks where at least one candidate was correct. It missed six tasks that an oracle with access to hidden-test labels could have solved.
+The idea is that correct programs should produce the same outputs, while incorrect programs may fail in different ways and produce different outputs. This is only a heuristic. Incorrect programs can also agree on the same wrong outputs. In an earlier 80-task analysis, the largest cluster contained a correct program in 48 of the 54 tasks where at least one candidate was correct. It missed six tasks that an oracle with access to hidden-test labels could have solved.
 
 #### Learned verifier: insufficient training data
 
