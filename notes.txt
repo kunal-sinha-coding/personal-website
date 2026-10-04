@@ -289,3 +289,19 @@ This organizes section 2 by method and follows the requested narrative without r
 ## Context
 
 The existing 48-of-54 clustering observation remains as evidence for the heuristic, along with its limitation that incorrect programs can share outputs.
+
+## Commit Name
+
+Use past tense in the clustering procedure.
+
+## Description
+
+Changed “candidate that passes the visible test” to “candidate that had passed the visible test” in the joint output clustering explanation.
+
+## Why
+
+The sentence describes the completed experiment and should use past tense.
+
+## Context
+
+This is a wording-only correction.
