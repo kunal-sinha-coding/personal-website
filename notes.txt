@@ -529,3 +529,21 @@ This adds the requested post-trained comparison across generation counts while p
 ## Context
 
 The no-verifier sampled score is the logged first-candidate Pass@1: 60.63% on MBPP and 51.09% on MBPP+. All methods still return one program. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Clarify decoding and compare sampled baseline
+
+### Commit name
+
+Add sampled baseline and clarify table methods.
+
+### Description
+
+Explained greedy decoding and sampling before the results tables. Added the untrained 0.5B model's sampled result on the same 378-task EvalPlus evaluation, labeled the Qwen report rows as greedy, and noted the difference in evaluation setup. Added a caption defining every method, changed the plain post-trained labels to remove the parenthetical, and bolded the best greedy post-training row and the best 16-generation verifier row in both tables.
+
+### Why
+
+The table needs to distinguish greedy decoding from temperature sampling and give readers the requested comparable sampled baseline. The method definitions and bolding identify the selection procedure and best results.
+
+### Context
+
+The sampled baseline scored 28.6% on MBPP and 22.2% on MBPP+. It used one temperature-1.0 sample per task from Qwen2.5-Coder-0.5B-Instruct on the same EvalPlus 0.3.1 378-task split. The greedy report scores may use a different evaluation setup. `git diff --check` passed; no tests were run.

@@ -144,63 +144,69 @@ Calibrating synthetic task difficulty seemed difficult, and aligning the distrib
 
 The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. The post-trained results use checkpoint 830, which had the highest saved greedy MBPP score. Checkpoint selection used the same benchmark family as the reported results, so these scores are optimistic as held-out estimates.
 
-MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Every row reports the accuracy of one returned program. For the post-trained method without a verifier, I return the first generation, so generating more candidates does not change its score.
+MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Each row reports the accuracy of one selected program.
+
+During evaluation, I can use greedy decoding or sampling. Greedy decoding selects the highest-probability next token at each step. Sampling selects tokens from the model's probability distribution, using a temperature to control how much variation it allows. Greedy decoding applies when I generate one answer. For K greater than one, I sample multiple answers. Verifier-enabled methods use the verifier to select one, while the plain post-trained rows return the first sample.
+
+**Table caption.** `Baseline (greedy)` is the instruct model without post-training, using greedy decoding. `Baseline` is the same 0.5B model with sampled decoding. `Post-trained (greedy)` uses the post-trained model with greedy decoding. `Post-trained` uses sampling and returns the first candidate. `Post-trained + execution verifier` selects the first candidate that passes the visible test. `Post-trained + execution verifier + clustering` also uses the largest cluster of outputs on hidden inputs. The bold rows show the best post-training result and the best result after scaling test-time generation.
 
 #### MBPP
 
 | Method | Parameters | # of generations | Pass@1 |
 | --- | ---: | ---: | ---: |
-| Baseline | 32.5B | 1 | 90.2% |
-| Baseline | 14.7B | 1 | 86.2% |
-| Baseline | 7.61B | 1 | 83.5% |
-| Baseline | 3.09B | 1 | 73.6% |
-| Post-trained + execution verifier + clustering | 0.49B | 16 | 73.02% |
+| Baseline (greedy) | 32.5B | 1 | 90.2% |
+| Baseline (greedy) | 14.7B | 1 | 86.2% |
+| Baseline (greedy) | 7.61B | 1 | 83.5% |
+| Baseline (greedy) | 3.09B | 1 | 73.6% |
+| **Post-trained + execution verifier + clustering** | 0.49B | 16 | **73.02%** |
 | Post-trained + execution verifier | 0.49B | 16 | 72.22% |
 | Post-trained + execution verifier + clustering | 0.49B | 8 | 71.84% |
 | Post-trained + execution verifier | 0.49B | 8 | 71.64% |
 | Post-trained + execution verifier + clustering | 0.49B | 4 | 69.59% |
 | Post-trained + execution verifier | 0.49B | 4 | 69.40% |
-| Baseline | 1.54B | 1 | 69.2% |
+| Baseline (greedy) | 1.54B | 1 | 69.2% |
 | Post-trained + execution verifier + clustering | 0.49B | 2 | 66.01% |
 | Post-trained + execution verifier | 0.49B | 2 | 65.97% |
-| Post-trained (greedy) | 0.49B | 1 | 65.1% |
-| Post-trained (no verifier, first candidate) | 0.49B | 1 | 60.63% |
-| Post-trained (no verifier, first candidate) | 0.49B | 2 | 60.63% |
-| Post-trained (no verifier, first candidate) | 0.49B | 4 | 60.63% |
-| Post-trained (no verifier, first candidate) | 0.49B | 8 | 60.63% |
-| Post-trained (no verifier, first candidate) | 0.49B | 16 | 60.63% |
+| **Post-trained (greedy)** | 0.49B | 1 | **65.1%** |
+| Post-trained | 0.49B | 1 | 60.63% |
+| Post-trained | 0.49B | 2 | 60.63% |
+| Post-trained | 0.49B | 4 | 60.63% |
+| Post-trained | 0.49B | 8 | 60.63% |
+| Post-trained | 0.49B | 16 | 60.63% |
 | Post-trained + execution verifier | 0.49B | 1 | 60.63% |
 | Post-trained + execution verifier + clustering | 0.49B | 1 | 60.63% |
-| Baseline | 0.49B | 1 | 52.4% |
+| Baseline (greedy) | 0.49B | 1 | 52.4% |
+| Baseline | 0.49B | 1 | 28.6% |
 
 #### MBPP+
 
 | Method | Parameters | # of generations | Pass@1 |
 | --- | ---: | ---: | ---: |
-| Baseline | 32.5B | 1 | 75.1% |
-| Baseline | 14.7B | 1 | 72.8% |
-| Baseline | 7.61B | 1 | 71.7% |
-| Baseline | 3.09B | 1 | 62.4% |
-| Post-trained + execution verifier + clustering | 0.49B | 16 | 60.32% |
+| Baseline (greedy) | 32.5B | 1 | 75.1% |
+| Baseline (greedy) | 14.7B | 1 | 72.8% |
+| Baseline (greedy) | 7.61B | 1 | 71.7% |
+| Baseline (greedy) | 3.09B | 1 | 62.4% |
+| **Post-trained + execution verifier + clustering** | 0.49B | 16 | **60.32%** |
 | Post-trained + execution verifier | 0.49B | 16 | 60.05% |
 | Post-trained + execution verifier + clustering | 0.49B | 8 | 59.51% |
 | Post-trained + execution verifier | 0.49B | 8 | 59.43% |
-| Baseline | 1.54B | 1 | 59.4% |
+| Baseline (greedy) | 1.54B | 1 | 59.4% |
 | Post-trained + execution verifier + clustering | 0.49B | 4 | 57.92% |
 | Post-trained + execution verifier | 0.49B | 4 | 57.80% |
 | Post-trained + execution verifier + clustering | 0.49B | 2 | 55.22% |
 | Post-trained + execution verifier | 0.49B | 2 | 55.21% |
-| Post-trained (greedy) | 0.49B | 1 | 53.2% |
-| Post-trained (no verifier, first candidate) | 0.49B | 1 | 51.09% |
-| Post-trained (no verifier, first candidate) | 0.49B | 2 | 51.09% |
-| Post-trained (no verifier, first candidate) | 0.49B | 4 | 51.09% |
-| Post-trained (no verifier, first candidate) | 0.49B | 8 | 51.09% |
-| Post-trained (no verifier, first candidate) | 0.49B | 16 | 51.09% |
+| **Post-trained (greedy)** | 0.49B | 1 | **53.2%** |
+| Post-trained | 0.49B | 1 | 51.09% |
+| Post-trained | 0.49B | 2 | 51.09% |
+| Post-trained | 0.49B | 4 | 51.09% |
+| Post-trained | 0.49B | 8 | 51.09% |
+| Post-trained | 0.49B | 16 | 51.09% |
 | Post-trained + execution verifier | 0.49B | 1 | 51.09% |
 | Post-trained + execution verifier + clustering | 0.49B | 1 | 51.09% |
-| Baseline | 0.49B | 1 | 43.7% |
+| Baseline (greedy) | 0.49B | 1 | 43.7% |
+| Baseline | 0.49B | 1 | 22.2% |
 
-The Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison.
+The greedy Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison. The sampled baseline uses the same 378-task EvalPlus evaluation as the post-trained results.
 
 #### Analysis
 
