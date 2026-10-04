@@ -497,3 +497,19 @@ This follows the latest table formatting direction while keeping model size in i
 ## Context
 
 No scores, methods, parameters, or generation counts changed.
+
+## Commit Name
+
+Clarify compute and latency trade-offs.
+
+## Description
+
+Rewrote the compute subsection to explain the rough model-size-times-generations estimate, compare the four-generation 0.5B selector with one 1.5B output, and separate the parallel and sequential latency cases.
+
+## Why
+
+The previous explanation combined compute, accuracy, and memory in a dense paragraph. The revision states the comparison and hardware-dependent trade-offs more directly.
+
+## Context
+
+The comparison excludes sandbox execution and output-length variation and uses evaluation results from different setups. Latency was not measured in these experiments. `git diff --check` passed; no tests were run.
