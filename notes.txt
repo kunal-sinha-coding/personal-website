@@ -321,3 +321,19 @@ This states the intuition behind the heuristic more clearly, as requested.
 ## Context
 
 No metrics or method details changed.
+
+## Commit Name
+
+Trim the plurality explanation.
+
+## Description
+
+Removed the clause about using plurality information to guess which program is correct.
+
+## Why
+
+The author requested a shorter opening sentence for the clustering rationale.
+
+## Context
+
+The sentence now only states the plurality correctness assumption.
