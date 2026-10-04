@@ -513,3 +513,19 @@ The previous explanation combined compute, accuracy, and memory in a dense parag
 ## Context
 
 The comparison excludes sandbox execution and output-length variation and uses evaluation results from different setups. Latency was not measured in these experiments. `git diff --check` passed; no tests were run.
+
+## Commit Name
+
+Show post-trained results across candidate counts.
+
+## Description
+
+Changed all generation-count placeholders to 1 and added K=1, 2, 4, 8, and 16 rows for the post-trained model without a verifier. These rows return the first candidate and therefore retain the same selected-program accuracy across K. Kept the greedy post-trained result as a separate row.
+
+## Why
+
+This adds the requested post-trained comparison across generation counts while preserving the distinction between a greedy output and sampled candidate selection.
+
+## Context
+
+The no-verifier sampled score is the logged first-candidate Pass@1: 60.63% on MBPP and 51.09% on MBPP+. All methods still return one program. `git diff --check` passed; no tests were run.

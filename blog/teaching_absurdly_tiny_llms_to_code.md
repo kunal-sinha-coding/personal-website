@@ -144,52 +144,61 @@ Calibrating synthetic task difficulty seemed difficult, and aligning the distrib
 
 The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. The post-trained results use checkpoint 830, which had the highest saved greedy MBPP score. Checkpoint selection used the same benchmark family as the reported results, so these scores are optimistic as held-out estimates.
 
-MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Every row reports the accuracy of one selected program. The generation count is the number of candidates available before choosing that program; a dash means one standard output without a candidate pool.
+MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Every row reports the accuracy of one returned program. For the post-trained method without a verifier, I return the first generation, so generating more candidates does not change its score.
 
 #### MBPP
 
 | Method | Parameters | # of generations | Pass@1 |
 | --- | ---: | ---: | ---: |
-| Baseline | 32.5B | — | 90.2% |
-| Baseline | 14.7B | — | 86.2% |
-| Baseline | 7.61B | — | 83.5% |
-| Baseline | 3.09B | — | 73.6% |
+| Baseline | 32.5B | 1 | 90.2% |
+| Baseline | 14.7B | 1 | 86.2% |
+| Baseline | 7.61B | 1 | 83.5% |
+| Baseline | 3.09B | 1 | 73.6% |
 | Post-trained + execution verifier + clustering | 0.49B | 16 | 73.02% |
 | Post-trained + execution verifier | 0.49B | 16 | 72.22% |
 | Post-trained + execution verifier + clustering | 0.49B | 8 | 71.84% |
 | Post-trained + execution verifier | 0.49B | 8 | 71.64% |
 | Post-trained + execution verifier + clustering | 0.49B | 4 | 69.59% |
 | Post-trained + execution verifier | 0.49B | 4 | 69.40% |
-| Baseline | 1.54B | — | 69.2% |
+| Baseline | 1.54B | 1 | 69.2% |
 | Post-trained + execution verifier + clustering | 0.49B | 2 | 66.01% |
 | Post-trained + execution verifier | 0.49B | 2 | 65.97% |
-| Post-trained | 0.49B | — | 65.1% |
+| Post-trained (greedy) | 0.49B | 1 | 65.1% |
+| Post-trained (no verifier, first candidate) | 0.49B | 1 | 60.63% |
+| Post-trained (no verifier, first candidate) | 0.49B | 2 | 60.63% |
+| Post-trained (no verifier, first candidate) | 0.49B | 4 | 60.63% |
+| Post-trained (no verifier, first candidate) | 0.49B | 8 | 60.63% |
+| Post-trained (no verifier, first candidate) | 0.49B | 16 | 60.63% |
 | Post-trained + execution verifier | 0.49B | 1 | 60.63% |
 | Post-trained + execution verifier + clustering | 0.49B | 1 | 60.63% |
-| Baseline | 0.49B | — | 52.4% |
+| Baseline | 0.49B | 1 | 52.4% |
 
 #### MBPP+
 
-
 | Method | Parameters | # of generations | Pass@1 |
 | --- | ---: | ---: | ---: |
-| Baseline | 32.5B | — | 75.1% |
-| Baseline | 14.7B | — | 72.8% |
-| Baseline | 7.61B | — | 71.7% |
-| Baseline | 3.09B | — | 62.4% |
+| Baseline | 32.5B | 1 | 75.1% |
+| Baseline | 14.7B | 1 | 72.8% |
+| Baseline | 7.61B | 1 | 71.7% |
+| Baseline | 3.09B | 1 | 62.4% |
 | Post-trained + execution verifier + clustering | 0.49B | 16 | 60.32% |
 | Post-trained + execution verifier | 0.49B | 16 | 60.05% |
 | Post-trained + execution verifier + clustering | 0.49B | 8 | 59.51% |
 | Post-trained + execution verifier | 0.49B | 8 | 59.43% |
-| Baseline | 1.54B | — | 59.4% |
+| Baseline | 1.54B | 1 | 59.4% |
 | Post-trained + execution verifier + clustering | 0.49B | 4 | 57.92% |
 | Post-trained + execution verifier | 0.49B | 4 | 57.80% |
 | Post-trained + execution verifier + clustering | 0.49B | 2 | 55.22% |
 | Post-trained + execution verifier | 0.49B | 2 | 55.21% |
-| Post-trained | 0.49B | — | 53.2% |
+| Post-trained (greedy) | 0.49B | 1 | 53.2% |
+| Post-trained (no verifier, first candidate) | 0.49B | 1 | 51.09% |
+| Post-trained (no verifier, first candidate) | 0.49B | 2 | 51.09% |
+| Post-trained (no verifier, first candidate) | 0.49B | 4 | 51.09% |
+| Post-trained (no verifier, first candidate) | 0.49B | 8 | 51.09% |
+| Post-trained (no verifier, first candidate) | 0.49B | 16 | 51.09% |
 | Post-trained + execution verifier | 0.49B | 1 | 51.09% |
 | Post-trained + execution verifier + clustering | 0.49B | 1 | 51.09% |
-| Baseline | 0.49B | — | 43.7% |
+| Baseline | 0.49B | 1 | 43.7% |
 
 The Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison.
 
