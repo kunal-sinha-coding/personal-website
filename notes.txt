@@ -417,3 +417,19 @@ This aligns the summary with the renamed section 2 and the revised experiment mo
 ## Context
 
 No other summary content changed.
+
+## Commit Name
+
+Restructure result tables around selected-program accuracy.
+
+## Description
+
+Removed the verifier-accuracy explanation and all checkpoint 630 results. Replaced the results tables with MBPP and MBPP+ tables containing Instruct model baselines, the post-trained greedy result, and selected-program accuracy for execution filtering and execution plus clustering at generation counts 1, 2, 4, 8, and 16. Updated the accuracy charts to checkpoint 830 selector results and removed the duplicate model-size table from the limitations section.
+
+## Why
+
+The requested presentation measures the accuracy of the one program returned by each method, while generation count describes the candidate pool size. It should not mix that quantity with raw pass@K, which measures whether any candidate in a pool is correct.
+
+## Context
+
+The MBPP and MBPP+ sections now state that the latter adds extra tests. Official Instruct baseline scores remain attributed to the Qwen2.5-Coder Technical Report, with a caveat that its evaluation setup may differ. `git diff --check` passed; no tests were run.

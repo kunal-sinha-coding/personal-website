@@ -142,63 +142,79 @@ Calibrating synthetic task difficulty seemed difficult, and aligning the distrib
 
 ### 3. Results
 
-The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. Each checkpoint had 16 sampled programs per task. Sampling used temperature 1.0. The verifier made its decisions before benchmark correctness labels were read.
+The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. Each checkpoint had 16 sampled programs per task. Sampling used temperature 1.0. The post-trained results below use checkpoint 830, which had the highest saved greedy MBPP score. Checkpoint selection used the same benchmark family as the reported results, so the scores are optimistic as held-out estimates.
 
-The tables report two kinds of scores. Raw pass@K estimates whether at least one of K samples is correct. Verifier accuracy measures whether the selector chose a correct candidate, averaged over uniformly selected subsets of K candidates. These values answer different questions. A selector can score below raw pass@K because it must choose without knowing which candidates pass all tests.
+MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Every row reports the accuracy of one selected program; the generation count is how many candidates were available before choosing that program.
 
-Checkpoint 830 had the best saved greedy MBPP score. Checkpoint 630 had the best saved greedy MBPP+ score. Both were selected from the same benchmark family used for reporting, so the results are optimistic as held-out estimates.
+#### MBPP
 
-#### MBPP base tests
+| Model or method | # of generations | Pass@1 |
+| --- | ---: | ---: |
+| Baseline: Qwen2.5-Coder Instruct 0.5B | — | 52.4% |
+| Baseline: Qwen2.5-Coder Instruct 1.5B | — | 69.2% |
+| Baseline: Qwen2.5-Coder Instruct 3B | — | 73.6% |
+| Baseline: Qwen2.5-Coder Instruct 7B | — | 83.5% |
+| Baseline: Qwen2.5-Coder Instruct 14B | — | 86.2% |
+| Baseline: Qwen2.5-Coder Instruct 32B | — | 90.2% |
+| Post-trained 0.5B | — | 65.1% |
+| Post-trained + execution verifier | 1 | 60.63% |
+| Post-trained + execution verifier | 2 | 65.97% |
+| Post-trained + execution verifier | 4 | 69.40% |
+| Post-trained + execution verifier | 8 | 71.64% |
+| Post-trained + execution verifier | 16 | 72.22% |
+| Post-trained + execution verifier + clustering | 1 | 60.63% |
+| Post-trained + execution verifier + clustering | 2 | 66.01% |
+| Post-trained + execution verifier + clustering | 4 | 69.59% |
+| Post-trained + execution verifier + clustering | 8 | 71.84% |
+| Post-trained + execution verifier + clustering | 16 | 73.02% |
 
-| Model or method | Checkpoint | Greedy pass@1 | pass@1 | pass@2 | pass@4 | pass@8 | pass@16 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `Qwen2.5-Coder-0.5B-Instruct`, official reference | — | 52.4% | — | — | — | — | — |
-| Raw sampling | 630 | 64.0% | 58.85% | 65.96% | 71.42% | 76.27% | 80.42% |
-| Execution verifier | 630 | 64.0% | 58.85% | 64.86% | 69.11% | 72.69% | 75.40% |
-| Execution verifier plus joint output clustering | 630 | 64.0% | 58.85% | 64.87% | 69.20% | 72.70% | 76.19% |
-| Raw sampling | 830 | 65.1% | 60.63% | 67.04% | 71.47% | 74.65% | 76.98% |
-| Execution verifier | 830 | 65.1% | 60.63% | 65.97% | 69.40% | 71.64% | 72.22% |
-| Execution verifier plus joint output clustering | 830 | 65.1% | 60.63% | 66.01% | 69.59% | 71.84% | 73.02% |
+#### MBPP+
 
-The checkpoint 830 greedy result is 12.7 percentage points above the official 52.4% Instruct reference. The checkpoint 630 selector result at K=16 is 23.79 points above it. The official report and our EvalPlus run use different evaluation setups. The model family matches, but these differences are not controlled estimates of the effects of GRPO or verification. The K=16 result also uses more inference work and a different checkpoint.
+| Model or method | # of generations | Pass@1 |
+| --- | ---: | ---: |
+| Baseline: Qwen2.5-Coder Instruct 0.5B | — | 43.7% |
+| Baseline: Qwen2.5-Coder Instruct 1.5B | — | 59.4% |
+| Baseline: Qwen2.5-Coder Instruct 3B | — | 62.4% |
+| Baseline: Qwen2.5-Coder Instruct 7B | — | 71.7% |
+| Baseline: Qwen2.5-Coder Instruct 14B | — | 72.8% |
+| Baseline: Qwen2.5-Coder Instruct 32B | — | 75.1% |
+| Post-trained 0.5B | — | 53.2% |
+| Post-trained + execution verifier | 1 | 51.09% |
+| Post-trained + execution verifier | 2 | 55.21% |
+| Post-trained + execution verifier | 4 | 57.80% |
+| Post-trained + execution verifier | 8 | 59.43% |
+| Post-trained + execution verifier | 16 | 60.05% |
+| Post-trained + execution verifier + clustering | 1 | 51.09% |
+| Post-trained + execution verifier + clustering | 2 | 55.22% |
+| Post-trained + execution verifier + clustering | 4 | 57.92% |
+| Post-trained + execution verifier + clustering | 8 | 59.51% |
+| Post-trained + execution verifier + clustering | 16 | 60.32% |
 
-#### MBPP+ base and extra tests
+The Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison.
 
-| Model or method | Checkpoint | Greedy pass@1 | pass@1 | pass@2 | pass@4 | pass@8 | pass@16 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `Qwen2.5-Coder-0.5B-Instruct`, official reference | — | 43.7% | — | — | — | — | — |
-| Raw sampling | 630 | 54.0% | 49.74% | 56.17% | 61.02% | 65.16% | 69.05% |
-| Execution verifier | 630 | 54.0% | 49.74% | 53.98% | 56.69% | 58.61% | 59.52% |
-| Execution verifier plus joint output clustering | 630 | 54.0% | 49.74% | 53.98% | 56.82% | 58.79% | 60.05% |
-| Raw sampling | 830 | 53.2% | 51.09% | 57.04% | 61.33% | 64.76% | 67.72% |
-| Execution verifier | 830 | 53.2% | 51.09% | 55.21% | 57.80% | 59.43% | 60.05% |
-| Execution verifier plus joint output clustering | 830 | 53.2% | 51.09% | 55.22% | 57.92% | 59.51% | 60.32% |
+#### Selected-program accuracy as the candidate pool grows
 
-Output clustering added less than one percentage point over execution-only selection at K=16. It added 0.79 points on MBPP and 0.53 points on MBPP+ for checkpoint 630. For checkpoint 830, the gains were 0.80 and 0.27 points. Most of the improvement came from combining the post-trained model with multiple samples and a selector. Clustering made a smaller further contribution.
-
-#### Accuracy as the candidate pool grows
-
-These charts show raw sampling and the combined execution and clustering selector for checkpoint 630. They do not show the oracle. Raw pass@K measures whether a correct program is present. The selector lines measure whether the method chose one.
+These curves show the accuracy of the single program selected from candidate pools of different sizes. They use checkpoint 830 and compare execution-only filtering with execution filtering plus joint output clustering.
 
 ```mermaid
 xychart-beta
-    title "MBPP accuracy by number of candidates"
-    x-axis "Candidates (K)" [1, 2, 4, 8, 16]
-    y-axis "Accuracy (%)" 55 --> 82
-    line "Raw sampling" [58.85, 65.96, 71.42, 76.27, 80.42]
-    line "Execution plus joint clustering" [58.85, 64.87, 69.20, 72.70, 76.19]
+    title "MBPP selected-program accuracy"
+    x-axis "Generations (K)" [1, 2, 4, 8, 16]
+    y-axis "Accuracy (%)" 58 --> 74
+    line "Execution verifier" [60.63, 65.97, 69.40, 71.64, 72.22]
+    line "Execution verifier plus clustering" [60.63, 66.01, 69.59, 71.84, 73.02]
 ```
 
 ```mermaid
 xychart-beta
-    title "MBPP+ accuracy by number of candidates"
-    x-axis "Candidates (K)" [1, 2, 4, 8, 16]
-    y-axis "Accuracy (%)" 45 --> 72
-    line "Raw sampling" [49.74, 56.17, 61.02, 65.16, 69.05]
-    line "Execution plus joint clustering" [49.74, 53.98, 56.82, 58.79, 60.05]
+    title "MBPP+ selected-program accuracy"
+    x-axis "Generations (K)" [1, 2, 4, 8, 16]
+    y-axis "Accuracy (%)" 49 --> 62
+    line "Execution verifier" [51.09, 55.21, 57.80, 59.43, 60.05]
+    line "Execution verifier plus clustering" [51.09, 55.22, 57.92, 59.51, 60.32]
 ```
 
-The gap between the lines is the cost of not knowing which candidate passes the full benchmark. Sampling increases the chance that the pool contains a correct program. The verifier uses available evidence to choose, but cannot reproduce a perfect oracle.
+At 16 generations, clustering adds 0.80 percentage points on MBPP and 0.27 points on MBPP+ over execution-only filtering. The score at each point is still the accuracy of one selected program.
 
 #### Reproduction details
 
@@ -206,18 +222,7 @@ The benchmark run used W&B run `c4fthzd3` and source commit `ba8b794085828aef55d
 
 ### 4. Model size, latency, and limits
 
-The Instruct model scores below give context for the 0.5B result. They also show what is gained by using a larger model without post-training or candidate selection. The small model uses less memory and disk space. Sampling it more can improve accuracy, but costs additional time and inference work.
-
-| `Qwen2.5-Coder Instruct` | Parameters | MBPP | MBPP+ |
-| --- | ---: | ---: | ---: |
-| 0.5B | 0.49B | 52.4% | 43.7% |
-| 1.5B | 1.54B | 69.2% | 59.4% |
-| 3B | 3.09B | 73.6% | 62.4% |
-| 7B | 7.61B | 83.5% | 71.7% |
-| 14B | 14.7B | 86.2% | 72.8% |
-| 32B | 32.5B | 90.2% | 75.1% |
-
-Source: [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186), Table 16. The report does not list an MBPP 3-shot score for Instruct models. Its evaluation setup may differ from our EvalPlus run, so these scores are a model-family reference, not a controlled comparison.
+The Instruct baseline rows above show what larger models can achieve without post-training or candidate selection. The 0.5B model uses less memory and disk space. Sampling it more can improve selected-program accuracy, but it costs additional time and inference work.
 
 A larger model may answer faster than 16 sequential samples from a smaller model, but it needs more memory and storage. A 0.5B model can fit on hardware with limited RAM or CUDA memory. If the model generates one candidate at a time, peak memory can remain lower than when it generates all candidates in parallel. The cost is increased response time.
 
