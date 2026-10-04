@@ -691,3 +691,21 @@ The user requested this wording adjustment.
 ### Context
 
 No results or method details changed. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Explain sequential and parallel generation trade-offs
+
+### Commit name
+
+Explain memory and latency trade-offs.
+
+### Description
+
+Rewrote the final compute and latency discussion to explain sequential sampling when disk space or RAM is limited, then parallel sampling when latency matters. Added that smaller forward passes make sequential generation cheaper than the same number of larger-model generations, and noted vLLM support for parallel sampling and continuous batching.
+
+### Why
+
+The user requested a clearer explanation of how small models help under memory constraints and how parallel generation can reduce latency when memory is available.
+
+### Context
+
+The post notes that parallel latency was not measured and depends on hardware. The vLLM capability statement links to its official documentation. `git diff --check` passed; no tests were run.
