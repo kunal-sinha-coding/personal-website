@@ -673,3 +673,21 @@ The user asked to retain the comparison without using the term "units."
 ### Context
 
 The FLOPs estimate remains a rough parameter-count-times-generation-count comparison and excludes sandbox execution and output-length differences. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Adjust execution-verifier method wording
+
+### Commit name
+
+Adjust verifier bullet wording.
+
+### Description
+
+Changed the execution-verifier bullet to use the requested wording, "but sampling K candidates at temperature 1.0."
+
+### Why
+
+The user requested this wording adjustment.
+
+### Context
+
+No results or method details changed. `git diff --check` passed; no tests were run.

@@ -152,7 +152,7 @@ The methods whose results are reported in the tables are described below.
 - `Baseline (greedy)`: the same base model, using greedy decoding.
 - `Post-trained`: the 0.5B model trained with GRPO, using sampled decoding at temperature 1.0 and returning the first candidate.
 - `Post-trained (greedy)`: the same GRPO-trained model, using greedy decoding.
-- `Post-trained + execution verifier`: the GRPO-trained model samples K candidates at temperature 1.0. The verifier runs each candidate against the visible test in a sandbox and returns the first candidate that passes. If none pass, it returns the first candidate.
+- `Post-trained + execution verifier`: the GRPO-trained model, but sampling K candidates at temperature 1.0. The verifier runs each candidate against the visible test in a sandbox and returns the first candidate that passes. If none pass, it returns the first candidate.
 - `Post-trained + execution verifier + clustering`: uses the same GRPO-trained model and visible-test check, then selects a candidate from the largest cluster of outputs on hidden inputs.
 
 The bold rows show the best post-training result and the best result after scaling test-time generation.
