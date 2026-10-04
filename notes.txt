@@ -305,3 +305,19 @@ The sentence describes the completed experiment and should use past tense.
 ## Context
 
 This is a wording-only correction.
+
+## Commit Name
+
+Clarify the plurality assumption in output clustering.
+
+## Description
+
+Reworded the opening of the joint output clustering rationale to explain that the plurality output is treated as likely correct, based on the assumption that correct programs agree and incorrect programs may fail differently. Left the caveat and supporting evidence unchanged.
+
+## Why
+
+This states the intuition behind the heuristic more clearly, as requested.
+
+## Context
+
+No metrics or method details changed.
