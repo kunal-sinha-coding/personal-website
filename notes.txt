@@ -337,3 +337,19 @@ The author requested a shorter opening sentence for the clustering rationale.
 ## Context
 
 The sentence now only states the plurality correctness assumption.
+
+## Commit Name
+
+Retitle verifier subsection and add dataset transition.
+
+## Description
+
+Changed the learned-verifier subsection title to “Learned verifier: insufficient performance” and added the requested transition to scaling up the dataset at its end.
+
+## Why
+
+This aligns the heading with the actual limitation described and creates a clear transition to the synthetic-data subsection.
+
+## Context
+
+The user's “verified” wording was treated as a typo for “verifier.”

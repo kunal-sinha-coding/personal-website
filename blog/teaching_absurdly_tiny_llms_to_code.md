@@ -126,13 +126,13 @@ For the other hidden tests, we do not know the ground-truth outputs. However, we
 
 The idea is that whichever output a plurality of programs produces is likely to be correct. We assume that correct programs produce the same outputs, while incorrect programs may fail in different ways and therefore produce different outputs. This is only a heuristic. Incorrect programs can also agree on the same wrong outputs. In an earlier 80-task analysis, the largest cluster contained a correct program in 48 of the 54 tasks where at least one candidate was correct. It missed six tasks that an oracle with access to hidden-test labels could have solved.
 
-#### Learned verifier: insufficient training data
+#### Learned verifier: insufficient performance
 
 One alternative I first tried was to train a small verifier to predict whether a program was correct. This is a binary classification problem. I ran an experiment with CodeBERT, a model trained to understand both source code and natural language, and fine-tuned it on MBPP candidates labeled by sandbox execution. The dataset contained 1,495 training examples from 299 tasks and 375 validation examples from 75 tasks.
 
 The best run reached 70.1% validation accuracy and 77.7% area under the ROC curve. A classifier at chance would reach about 50% accuracy, so this was only about 20 percentage points above chance. When I used the verifier's predictions to filter candidates at a 0.5 threshold, performance was poor. Later checkpoints had better AUC but recall as low as 39.6%, so they rejected many correct programs.
 
-We might have obtained better results with a more powerful verifier, but it would require more memory and compute. Those resources could also support a more powerful code-generation model, so a larger verifier would defeat the purpose.
+We might have obtained better results with a more powerful verifier, but it would require more memory and compute. Those resources could also support a more powerful code-generation model, so a larger verifier would defeat the purpose. Because scaling up the size of the verifier was not worthwhile, I next tried scaling up the size of the dataset.
 
 #### Synthetic examples did not solve the data problem
 
