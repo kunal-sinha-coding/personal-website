@@ -3,7 +3,7 @@
 I was able to take a very small LLM with under a billion parameters (`Qwen2.5-Coder-0.5B-Instruct`) and boost performance on MBPP through two approaches:
 
 1. Post-training the model through GRPO.
-2. Sampling multiple generations from the model and using a cheap verifier to filter them. The verifier required executing code in a sandbox and clustering similar outputs.
+2. Scaling the number of generations at test-time and using a cheap verifier to filter them. The verifier required executing code in a sandbox and clustering similar outputs.
 
 The first technique improved pass@1 by **12.2%** while the second improved by up to **21.6%**, albeit at the cost of higher latency.
 

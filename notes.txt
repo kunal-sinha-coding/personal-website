@@ -401,3 +401,19 @@ This better describes the section's scope and motivation.
 ## Context
 
 No metrics or method descriptions changed.
+
+## Commit Name
+
+Revise the second summary approach.
+
+## Description
+
+Changed summary item 2 to describe scaling the number of generations at test time, while retaining its existing sentence about the verifier.
+
+## Why
+
+This aligns the summary with the renamed section 2 and the revised experiment motivation.
+
+## Context
+
+No other summary content changed.
