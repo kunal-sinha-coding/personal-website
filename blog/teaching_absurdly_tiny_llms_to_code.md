@@ -142,101 +142,102 @@ Calibrating synthetic task difficulty seemed difficult, and aligning the distrib
 
 ### 3. Results
 
-The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. Each checkpoint had 16 sampled programs per task. Sampling used temperature 1.0. The post-trained results below use checkpoint 830, which had the highest saved greedy MBPP score. Checkpoint selection used the same benchmark family as the reported results, so the scores are optimistic as held-out estimates.
+The main evaluation used 378 tasks from EvalPlus 0.3.1 MBPP. The model was `Qwen2.5-Coder-0.5B-Instruct` with a LoRA adapter. The post-trained results use checkpoint 830, which had the highest saved greedy MBPP score. Checkpoint selection used the same benchmark family as the reported results, so these scores are optimistic as held-out estimates.
 
-MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Every row reports the accuracy of one selected program; the generation count is how many candidates were available before choosing that program.
+MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must pass a stricter set of checks. Every row reports the accuracy of one selected program. The generation count is the number of candidates available before choosing that program; a dash means one standard output without a candidate pool.
 
 #### MBPP
 
-| Model or method | # of generations | Pass@1 |
-| --- | ---: | ---: |
-| Baseline: Qwen2.5-Coder Instruct 0.5B | — | 52.4% |
-| Baseline: Qwen2.5-Coder Instruct 1.5B | — | 69.2% |
-| Baseline: Qwen2.5-Coder Instruct 3B | — | 73.6% |
-| Baseline: Qwen2.5-Coder Instruct 7B | — | 83.5% |
-| Baseline: Qwen2.5-Coder Instruct 14B | — | 86.2% |
-| Baseline: Qwen2.5-Coder Instruct 32B | — | 90.2% |
-| Post-trained 0.5B | — | 65.1% |
-| Post-trained + execution verifier | 1 | 60.63% |
-| Post-trained + execution verifier | 2 | 65.97% |
-| Post-trained + execution verifier | 4 | 69.40% |
-| Post-trained + execution verifier | 8 | 71.64% |
-| Post-trained + execution verifier | 16 | 72.22% |
-| Post-trained + execution verifier + clustering | 1 | 60.63% |
-| Post-trained + execution verifier + clustering | 2 | 66.01% |
-| Post-trained + execution verifier + clustering | 4 | 69.59% |
-| Post-trained + execution verifier + clustering | 8 | 71.84% |
-| Post-trained + execution verifier + clustering | 16 | 73.02% |
+| Method | Parameters | # of generations | Relative FLOPs | Pass@1 |
+| --- | ---: | ---: | ---: | ---: |
+| Baseline: Qwen2.5-Coder Instruct | 0.49B | — | 1.0 | 52.4% |
+| Baseline: Qwen2.5-Coder Instruct | 1.54B | — | ~3.1 | 69.2% |
+| Baseline: Qwen2.5-Coder Instruct | 3.09B | — | ~6.3 | 73.6% |
+| Baseline: Qwen2.5-Coder Instruct | 7.61B | — | ~15.5 | 83.5% |
+| Baseline: Qwen2.5-Coder Instruct | 14.7B | — | ~30.0 | 86.2% |
+| Baseline: Qwen2.5-Coder Instruct | 32.5B | — | ~66.3 | 90.2% |
+| Post-trained | 0.49B | — | 1.0 | 65.1% |
+| Post-trained + execution verifier | 0.49B | 1 | 1 | 60.63% |
+| Post-trained + execution verifier | 0.49B | 2 | 2 | 65.97% |
+| Post-trained + execution verifier | 0.49B | 4 | 4 | 69.40% |
+| Post-trained + execution verifier | 0.49B | 8 | 8 | 71.64% |
+| Post-trained + execution verifier | 0.49B | 16 | 16 | 72.22% |
+| Post-trained + execution verifier + clustering | 0.49B | 1 | 1 | 60.63% |
+| Post-trained + execution verifier + clustering | 0.49B | 2 | 2 | 66.01% |
+| Post-trained + execution verifier + clustering | 0.49B | 4 | 4 | 69.59% |
+| Post-trained + execution verifier + clustering | 0.49B | 8 | 8 | 71.84% |
+| Post-trained + execution verifier + clustering | 0.49B | 16 | 16 | 73.02% |
 
 #### MBPP+
 
-| Model or method | # of generations | Pass@1 |
-| --- | ---: | ---: |
-| Baseline: Qwen2.5-Coder Instruct 0.5B | — | 43.7% |
-| Baseline: Qwen2.5-Coder Instruct 1.5B | — | 59.4% |
-| Baseline: Qwen2.5-Coder Instruct 3B | — | 62.4% |
-| Baseline: Qwen2.5-Coder Instruct 7B | — | 71.7% |
-| Baseline: Qwen2.5-Coder Instruct 14B | — | 72.8% |
-| Baseline: Qwen2.5-Coder Instruct 32B | — | 75.1% |
-| Post-trained 0.5B | — | 53.2% |
-| Post-trained + execution verifier | 1 | 51.09% |
-| Post-trained + execution verifier | 2 | 55.21% |
-| Post-trained + execution verifier | 4 | 57.80% |
-| Post-trained + execution verifier | 8 | 59.43% |
-| Post-trained + execution verifier | 16 | 60.05% |
-| Post-trained + execution verifier + clustering | 1 | 51.09% |
-| Post-trained + execution verifier + clustering | 2 | 55.22% |
-| Post-trained + execution verifier + clustering | 4 | 57.92% |
-| Post-trained + execution verifier + clustering | 8 | 59.51% |
-| Post-trained + execution verifier + clustering | 16 | 60.32% |
+| Method | Parameters | # of generations | Relative FLOPs | Pass@1 |
+| --- | ---: | ---: | ---: | ---: |
+| Baseline: Qwen2.5-Coder Instruct | 0.49B | — | 1.0 | 43.7% |
+| Baseline: Qwen2.5-Coder Instruct | 1.54B | — | ~3.1 | 59.4% |
+| Baseline: Qwen2.5-Coder Instruct | 3.09B | — | ~6.3 | 62.4% |
+| Baseline: Qwen2.5-Coder Instruct | 7.61B | — | ~15.5 | 71.7% |
+| Baseline: Qwen2.5-Coder Instruct | 14.7B | — | ~30.0 | 72.8% |
+| Baseline: Qwen2.5-Coder Instruct | 32.5B | — | ~66.3 | 75.1% |
+| Post-trained | 0.49B | — | 1.0 | 53.2% |
+| Post-trained + execution verifier | 0.49B | 1 | 1 | 51.09% |
+| Post-trained + execution verifier | 0.49B | 2 | 2 | 55.21% |
+| Post-trained + execution verifier | 0.49B | 4 | 4 | 57.80% |
+| Post-trained + execution verifier | 0.49B | 8 | 8 | 59.43% |
+| Post-trained + execution verifier | 0.49B | 16 | 16 | 60.05% |
+| Post-trained + execution verifier + clustering | 0.49B | 1 | 1 | 51.09% |
+| Post-trained + execution verifier + clustering | 0.49B | 2 | 2 | 55.22% |
+| Post-trained + execution verifier + clustering | 0.49B | 4 | 4 | 57.92% |
+| Post-trained + execution verifier + clustering | 0.49B | 8 | 8 | 59.51% |
+| Post-trained + execution verifier + clustering | 0.49B | 16 | 16 | 60.32% |
 
 The Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison.
 
-#### Selected-program accuracy as the candidate pool grows
+#### Analysis
 
-These curves show the accuracy of the single program selected from candidate pools of different sizes. They use checkpoint 830 and compare execution-only filtering with execution filtering plus joint output clustering.
+Post-training improved the 0.5B model's pass@1 from 52.4% to 65.1% on MBPP and from 43.7% to 53.2% on MBPP+. It still trailed the 1.5B Instruct model, which has about three times as many parameters and scored 69.2% and 59.4%.
+
+Scaling up test-time generations and selecting with a verifier raised accuracy further. With 16 candidates, execution filtering plus clustering reached 73.02% on MBPP and 60.32% on MBPP+. Output clustering added a smaller gain on top of execution filtering: 0.80 percentage points on MBPP and 0.27 points on MBPP+ at 16 generations. Clustering requires roughly two to three times as many sandbox executions. If sandbox execution is a bottleneck, the execution filter alone may be the better choice.
+
+#### Verifier accuracy
+
+To measure verifier accuracy, I compared our selector with a hypothetical perfect verifier. The perfect verifier identifies a correct solution whenever one exists in the candidate pool. The graphs compare this upper bound with execution filtering plus joint output clustering on MBPP and MBPP+.
 
 ```mermaid
+---
+config:
+  themeVariables:
+    xyChart:
+      plotColorPalette: "#2563eb, #dc2626"
+---
 xychart-beta
-    title "MBPP selected-program accuracy"
+    title "MBPP verifier accuracy"
     x-axis "Generations (K)" [1, 2, 4, 8, 16]
-    y-axis "Accuracy (%)" 58 --> 74
-    line "Execution verifier" [60.63, 65.97, 69.40, 71.64, 72.22]
+    y-axis "Accuracy (%)" 58 --> 79
+    line "Perfect verifier" [60.63, 67.04, 71.47, 74.65, 76.98]
     line "Execution verifier plus clustering" [60.63, 66.01, 69.59, 71.84, 73.02]
 ```
 
 ```mermaid
+---
+config:
+  themeVariables:
+    xyChart:
+      plotColorPalette: "#2563eb, #dc2626"
+---
 xychart-beta
-    title "MBPP+ selected-program accuracy"
+    title "MBPP+ verifier accuracy"
     x-axis "Generations (K)" [1, 2, 4, 8, 16]
-    y-axis "Accuracy (%)" 49 --> 62
-    line "Execution verifier" [51.09, 55.21, 57.80, 59.43, 60.05]
+    y-axis "Accuracy (%)" 48 --> 70
+    line "Perfect verifier" [51.09, 57.04, 61.33, 64.76, 67.72]
     line "Execution verifier plus clustering" [51.09, 55.22, 57.92, 59.51, 60.32]
 ```
 
-At 16 generations, clustering adds 0.80 percentage points on MBPP and 0.27 points on MBPP+ over execution-only filtering. The score at each point is still the accuracy of one selected program.
+The gap between the lines represents verifier errors. It is larger on MBPP+, which suggests that verification is more difficult when correctness depends on the more complex MBPP+ tests.
 
-#### Reproduction details
+#### Compute and latency trade-offs
 
-The benchmark run used W&B run `c4fthzd3` and source commit `ba8b794085828aef55d617ac1d2b7a20dd2dee89`. It used Python 3.12, PyTorch 2.8.0+cu128, and one NVIDIA RTX 2000 Ada Generation GPU with 16,380 MiB of memory. The data was EvalPlus 0.3.1 MBPP with 378 tasks and hash `ee43ecabebf20deef4bb776a405ac5b1`. Sampling used vLLM 0.10.2, temperature 1.0, top-p 1.0, seed 42, and a 2,048-token output limit.
+Scaling test-time generation can raise accuracy substantially. Relative FLOPs estimate model-generation compute from parameter count and generation count, normalized to one 0.5B generation. Thus, one 1.5B generation costs about three relative FLOPs, as do three 0.5B generations. These estimates do not include sandbox execution.
 
-### 4. Model size, latency, and limits
+At similar relative FLOPs, the verifier strategy did not give higher accuracy per FLOP. For example, the 1.5B baseline uses about three relative FLOPs and scores 69.2% on MBPP and 59.4% on MBPP+. The two-generation 0.5B selector uses two relative FLOPs and scores 66.01% and 55.22%. These comparisons are approximate because the baseline report and our EvalPlus evaluation use different setups.
 
-The Instruct baseline rows above show what larger models can achieve without post-training or candidate selection. The 0.5B model uses less memory and disk space. Sampling it more can improve selected-program accuracy, but it costs additional time and inference work.
-
-A larger model may answer faster than 16 sequential samples from a smaller model, but it needs more memory and storage. A 0.5B model can fit on hardware with limited RAM or CUDA memory. If the model generates one candidate at a time, peak memory can remain lower than when it generates all candidates in parallel. The cost is increased response time.
-
-The benchmark run generated all 16 candidates before scoring. It did not measure sequential early stopping after the first candidate passed the execution filter. The saved results also do not give a reliable average number of generations to the first pass, per-request token counts, or matched wall-clock and FLOP measurements against the larger models. I therefore cannot claim that this method is more compute-efficient at equal FLOPs.
-
-The method may be useful when model memory or storage is the main constraint and response time can increase. It may be less suitable when users need a fast answer or when a larger model fits the available hardware. A deployment should measure latency, energy, and generation count with its own prompts and sandbox limits.
-
-Four limits shape these results:
-
-- The training and verifier evaluations used one seed. The gains need replication.
-- Checkpoints were selected using the same benchmark family used for reporting. This creates selection bias.
-- The verifier uses MBPP inputs and one prompt-visible assertion. Its output agreement may not transfer to a different input distribution.
-- Output agreement does not prove correctness. Several wrong programs can agree with one another.
-
-The experiments suggest a practical route for a small coding model. GRPO can improve the model when its reward gives partial feedback and its prompt hides most expected answers. Sampling can expose correct programs that greedy decoding misses. A sandbox check and output clustering can select among some of those programs without reading hidden answers.
-
-The tradeoff is clear in the current evidence: a small model can reach higher benchmark accuracy by spending more inference work, but these results do not show a general compute advantage. The next step is an evaluation with a separate checkpoint-selection split and measurements of sequential verifier latency and generation counts.
+If the GPU has enough memory to generate candidates in parallel, the 0.5B model can produce several candidates with latency closer to one small-model generation while approaching the accuracy of a larger model. If candidates are generated sequentially, latency increases. The model weights still need only the disk space and CUDA memory of the 0.5B model, which can help when those resources are limited.

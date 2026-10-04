@@ -433,3 +433,19 @@ The requested presentation measures the accuracy of the one program returned by 
 ## Context
 
 The MBPP and MBPP+ sections now state that the latter adds extra tests. Official Instruct baseline scores remain attributed to the Qwen2.5-Coder Technical Report, with a caveat that its evaluation setup may differ. `git diff --check` passed; no tests were run.
+
+## Commit Name
+
+Reframe results around analysis, verifier accuracy, and compute tradeoffs.
+
+## Description
+
+Added separate method and parameter columns plus relative FLOPs to the MBPP and MBPP+ tables. Replaced post-table prose with an Analysis subsection, replaced candidate-pool charts with perfect-verifier versus measured-selector charts using blue and red series, and condensed the hardware discussion into Compute and latency trade-offs. Removed the reproduction details and former standalone model-size section.
+
+## Why
+
+This follows the requested article structure and compares the accuracy of one selected program against both larger models and a perfect selection upper bound. Relative FLOPs make approximate model-generation cost visible alongside accuracy.
+
+## Context
+
+Relative FLOPs are estimated from nominal parameter count times generation count, normalized to a 0.5B generation. They exclude sandbox execution and differences in completion length. The Qwen Instruct reference scores and the checkpoint 830 EvalPlus results use different evaluation setups. Mermaid chart series colors use the documented XY chart palette configuration, blue for the perfect verifier and red for the measured selector. `git diff --check` passed; no tests were run.
