@@ -215,8 +215,6 @@ The bold rows show the best post-training result and the best result after scali
 | Baseline (greedy) | 0.49B | 1 | 43.7% |
 | Baseline | 0.49B | 1 | 22.2% |
 
-The greedy Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison. The sampled baseline uses the same 378-task EvalPlus evaluation as the post-trained results.
-
 #### Analysis
 
 Post-training improved the 0.5B model's pass@1 from 52.4% to 65.1% on MBPP and from 43.7% to 53.2% on MBPP+. It still trailed the 1.5B Instruct model, which has about three times as many parameters and scored 69.2% and 59.4%.

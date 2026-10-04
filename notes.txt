@@ -583,3 +583,21 @@ The user asked for the sampling temperature to be explicit.
 ### Context
 
 The sampled baseline and post-trained candidate evaluation both used temperature 1.0. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Remove baseline source caveat from results
+
+### Commit name
+
+Remove baseline source caveat.
+
+### Description
+
+Deleted the explanatory paragraph about the source and evaluation comparability of the greedy and sampled baseline scores.
+
+### Why
+
+The user asked to remove this paragraph from the blog post.
+
+### Context
+
+No table values or method descriptions changed. `git diff --check` passed; no tests were run.
