@@ -148,47 +148,48 @@ MBPP uses the benchmark's base tests. MBPP+ adds extra tests, so programs must p
 
 #### MBPP
 
-| Method | Parameters | # of generations | Relative FLOPs | Pass@1 |
-| --- | ---: | ---: | ---: | ---: |
-| Baseline: Qwen2.5-Coder Instruct | 32.5B | — | ~66.3 | 90.2% |
-| Baseline: Qwen2.5-Coder Instruct | 14.7B | — | ~30.0 | 86.2% |
-| Baseline: Qwen2.5-Coder Instruct | 7.61B | — | ~15.5 | 83.5% |
-| Baseline: Qwen2.5-Coder Instruct | 3.09B | — | ~6.3 | 73.6% |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **16** | **16** | **73.02%** |
-| **Post-trained + execution verifier** | **0.49B** | **16** | **16** | **72.22%** |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **8** | **8** | **71.84%** |
-| **Post-trained + execution verifier** | **0.49B** | **8** | **8** | **71.64%** |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **4** | **4** | **69.59%** |
-| **Post-trained + execution verifier** | **0.49B** | **4** | **4** | **69.40%** |
-| Baseline: Qwen2.5-Coder Instruct | 1.54B | — | ~3.1 | 69.2% |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **2** | **2** | **66.01%** |
-| **Post-trained + execution verifier** | **0.49B** | **2** | **2** | **65.97%** |
-| **Post-trained** | **0.49B** | **—** | **1.0** | **65.1%** |
-| **Post-trained + execution verifier** | **0.49B** | **1** | **1** | **60.63%** |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **1** | **1** | **60.63%** |
-| Baseline: Qwen2.5-Coder Instruct | 0.49B | — | 1.0 | 52.4% |
+| Method | Parameters | # of generations | Pass@1 |
+| --- | ---: | ---: | ---: |
+| Baseline | 32.5B | — | 90.2% |
+| Baseline | 14.7B | — | 86.2% |
+| Baseline | 7.61B | — | 83.5% |
+| Baseline | 3.09B | — | 73.6% |
+| Post-trained + execution verifier + clustering | 0.49B | 16 | 73.02% |
+| Post-trained + execution verifier | 0.49B | 16 | 72.22% |
+| Post-trained + execution verifier + clustering | 0.49B | 8 | 71.84% |
+| Post-trained + execution verifier | 0.49B | 8 | 71.64% |
+| Post-trained + execution verifier + clustering | 0.49B | 4 | 69.59% |
+| Post-trained + execution verifier | 0.49B | 4 | 69.40% |
+| Baseline | 1.54B | — | 69.2% |
+| Post-trained + execution verifier + clustering | 0.49B | 2 | 66.01% |
+| Post-trained + execution verifier | 0.49B | 2 | 65.97% |
+| Post-trained | 0.49B | — | 65.1% |
+| Post-trained + execution verifier | 0.49B | 1 | 60.63% |
+| Post-trained + execution verifier + clustering | 0.49B | 1 | 60.63% |
+| Baseline | 0.49B | — | 52.4% |
 
 #### MBPP+
 
-| Method | Parameters | # of generations | Relative FLOPs | Pass@1 |
-| --- | ---: | ---: | ---: | ---: |
-| Baseline: Qwen2.5-Coder Instruct | 32.5B | — | ~66.3 | 75.1% |
-| Baseline: Qwen2.5-Coder Instruct | 14.7B | — | ~30.0 | 72.8% |
-| Baseline: Qwen2.5-Coder Instruct | 7.61B | — | ~15.5 | 71.7% |
-| Baseline: Qwen2.5-Coder Instruct | 3.09B | — | ~6.3 | 62.4% |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **16** | **16** | **60.32%** |
-| **Post-trained + execution verifier** | **0.49B** | **16** | **16** | **60.05%** |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **8** | **8** | **59.51%** |
-| **Post-trained + execution verifier** | **0.49B** | **8** | **8** | **59.43%** |
-| Baseline: Qwen2.5-Coder Instruct | 1.54B | — | ~3.1 | 59.4% |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **4** | **4** | **57.92%** |
-| **Post-trained + execution verifier** | **0.49B** | **4** | **4** | **57.80%** |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **2** | **2** | **55.22%** |
-| **Post-trained + execution verifier** | **0.49B** | **2** | **2** | **55.21%** |
-| **Post-trained** | **0.49B** | **—** | **1.0** | **53.2%** |
-| **Post-trained + execution verifier** | **0.49B** | **1** | **1** | **51.09%** |
-| **Post-trained + execution verifier + clustering** | **0.49B** | **1** | **1** | **51.09%** |
-| Baseline: Qwen2.5-Coder Instruct | 0.49B | — | 1.0 | 43.7% |
+
+| Method | Parameters | # of generations | Pass@1 |
+| --- | ---: | ---: | ---: |
+| Baseline | 32.5B | — | 75.1% |
+| Baseline | 14.7B | — | 72.8% |
+| Baseline | 7.61B | — | 71.7% |
+| Baseline | 3.09B | — | 62.4% |
+| Post-trained + execution verifier + clustering | 0.49B | 16 | 60.32% |
+| Post-trained + execution verifier | 0.49B | 16 | 60.05% |
+| Post-trained + execution verifier + clustering | 0.49B | 8 | 59.51% |
+| Post-trained + execution verifier | 0.49B | 8 | 59.43% |
+| Baseline | 1.54B | — | 59.4% |
+| Post-trained + execution verifier + clustering | 0.49B | 4 | 57.92% |
+| Post-trained + execution verifier | 0.49B | 4 | 57.80% |
+| Post-trained + execution verifier + clustering | 0.49B | 2 | 55.22% |
+| Post-trained + execution verifier | 0.49B | 2 | 55.21% |
+| Post-trained | 0.49B | — | 53.2% |
+| Post-trained + execution verifier | 0.49B | 1 | 51.09% |
+| Post-trained + execution verifier + clustering | 0.49B | 1 | 51.09% |
+| Baseline | 0.49B | — | 43.7% |
 
 The Instruct baseline scores come from Table 16 of the [Qwen2.5-Coder Technical Report](https://arxiv.org/pdf/2409.12186). Its evaluation setup may differ from our EvalPlus run, so these scores provide model-family context rather than a controlled comparison.
 
