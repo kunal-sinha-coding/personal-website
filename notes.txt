@@ -637,3 +637,21 @@ The user requested explicit point gains and a concise explanation for the smalle
 ### Context
 
 The comparison uses the baseline and post-trained greedy scores already shown in the tables. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Remove decoding preamble and quantify verifier gains
+
+### Commit name
+
+Quantify verifier gains in analysis.
+
+### Description
+
+Removed the standalone decoding explanation before the tables. Added absolute pass@1 gains for the 16-candidate execution-plus-clustering method over the sampled post-trained result: 12.39 percentage points on MBPP and 9.23 points on MBPP+.
+
+### Why
+
+The user asked to delete the decoding paragraph and explicitly report the verifier improvement in percentage points.
+
+### Context
+
+The comparison uses the 16-generation selector scores and the sampled post-trained Pass@1 rows already in the tables. `git diff --check` passed; no tests were run.
