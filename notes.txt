@@ -465,3 +465,19 @@ The author requested descending score order and clear visual emphasis for all me
 ## Context
 
 Each benchmark table was sorted independently. All scores and relative FLOPs values remain unchanged.
+
+## Commit Name
+
+Clarify the relative-FLOPs comparison.
+
+## Description
+
+Replaced the compute paragraph's mismatched two-generation comparison with a more direct comparison between the 1.5B baseline and four generations from the 0.5B model at similar relative FLOPs.
+
+## Why
+
+The revised comparison supports a careful conclusion: the selector is nearly tied on MBPP and lower on MBPP+ despite slightly higher estimated model compute, with the distinct evaluation setups disclosed.
+
+## Context
+
+The comparison uses table values of 69.2% and 59.4% for the 1.5B baseline at approximately 3.1 relative FLOPs, versus 69.59% and 57.92% for the 0.5B selector with four generations at 4 relative FLOPs.
