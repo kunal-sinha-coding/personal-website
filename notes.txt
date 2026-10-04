@@ -655,3 +655,21 @@ The user asked to delete the decoding paragraph and explicitly report the verifi
 ### Context
 
 The comparison uses the 16-generation selector scores and the sampled post-trained Pass@1 rows already in the tables. `git diff --check` passed; no tests were run.
+
+## 2026-10-04: Express compute comparison as FLOPs ratios
+
+### Commit name
+
+Use FLOPs ratios in compute comparison.
+
+### Description
+
+Removed the compute "units" language from the latency and compute subsection. Rephrased the comparison as approximate model FLOPs ratios, including about 3.1 times for one 1.54B generation versus one 0.49B generation and about 1.3 times for four 0.49B generations versus one 1.54B generation.
+
+### Why
+
+The user asked to retain the comparison without using the term "units."
+
+### Context
+
+The FLOPs estimate remains a rough parameter-count-times-generation-count comparison and excludes sandbox execution and output-length differences. `git diff --check` passed; no tests were run.
