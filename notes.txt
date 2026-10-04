@@ -353,3 +353,19 @@ This aligns the heading with the actual limitation described and creates a clear
 ## Context
 
 The user's “verified” wording was treated as a typo for “verifier.”
+
+## Commit Name
+
+Revise synthetic verifier data discussion.
+
+## Description
+
+Renamed and rewrote the synthetic-data subsection with results comparing the synthetic-task candidate pass rate (7/1,000, or 0.7%) to an earlier original MBPP validation candidate pass rate (298/900, or 33.1%). Added a caveat that sampling setups differed, retained the concern about difficulty and distribution alignment, and added the requested reason for not pursuing the method further. Removed the static lookup detector subsection.
+
+## Why
+
+This replaces the qualitative claim about synthetic task difficulty with the available measured evidence, while making clear that the comparison was not controlled.
+
+## Context
+
+The synthetic labeling and original validation metrics are recorded in `/workspace/post-training/logs/notes.txt` around entries for September 8, 2026. The old static lookup detector section was removed as requested.

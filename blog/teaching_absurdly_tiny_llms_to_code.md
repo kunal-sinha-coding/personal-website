@@ -134,15 +134,11 @@ The best run reached 70.1% validation accuracy and 77.7% area under the ROC curv
 
 We might have obtained better results with a more powerful verifier, but it would require more memory and compute. Those resources could also support a more powerful code-generation model, so a larger verifier would defeat the purpose. Because scaling up the size of the verifier was not worthwhile, I next tried scaling up the size of the dataset.
 
-#### Synthetic examples did not solve the data problem
+#### Learned verifier with synthetic data: mismatch in data distribution
 
-I also considered adding synthetic examples to the verifier data. The 0.5B model was not strong enough to produce consistently useful examples. GPT-5 mini produced stronger examples, but those examples came from a different source than the benchmark tasks and candidate programs. They also appeared harder to solve than the existing cases.
+As such, my next experiment involved adding synthetic examples to the verifier data. I first tried using `Qwen2.5-Coder-0.5B-Instruct` to generate synthetic examples, but its output was not useful enough. I then used GPT-5.4 Mini to generate synthetic tasks and asked the Qwen model to solve them. It passed 7 of 1,000 synthetic-task candidates, a 0.7% pass rate. In an earlier MBPP validation run, 298 of 900 sampled programs passed, a 33.1% pass rate. These runs used different sampling setups, so this is not a controlled comparison, but the large gap suggests the synthetic tasks were much harder for the model.
 
-I did not find a controlled numerical difficulty comparison in the saved reports. The difficulty difference is a qualitative observation, not a measured result. Calibrating synthetic difficulty would have required more work, and it was unclear whether the resulting examples would match the cases the verifier needed to distinguish.
-
-#### A static lookup detector rejected no candidates
-
-A hand-written detector looked for programs that returned literal outputs for literal test inputs. It was meant to reject lookup solutions that passed the visible assertion. In an 80-task sample, 516 candidates passed that assertion, and the detector rejected none. The rules needed more than one matching example to identify a lookup table, but the verifier had only one visible example. This detector therefore added no filtering value.
+Calibrating synthetic task difficulty seemed difficult, and aligning the distribution of synthetic tasks with existing MBPP tasks was a broader challenge. I did not explore this approach further because the simpler verifier strategies described above performed better without the added cost of generating and exploring synthetic data. Training a verifier remains an open strategy to explore in the future.
 
 ### 3. Results
 
