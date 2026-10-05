@@ -1,4 +1,4 @@
-Welcome! I'm an ML engineer based out of San Francisco. In this blog, I run cool experiments on post-training and evaluation, and report them here.
+Welcome! I'm an ML engineer based out of San Francisco. In this blog, I run experiments on post-training and evaluation, then discuss them here
 
 I currently work at Fieldguide, building Claude Code for financial auditors. My work focuses on improving Agent quality. Some recent work includes building retrieval systems, running large-scale evaluation pipelines, and optimizing Agent harnesses for hill-climbing.
 

@@ -839,3 +839,7 @@ The plotted scores match the MBPP verifier accuracy graph in the article. The PN
 ## 2026-10-05: Update homepage introduction
 
 Updated the homepage introduction with the user's new description of their ML engineering work, role at Fieldguide, and Stanford education and research. The website loads this copy from `header/personal_intro.md` and renders its paragraphs on the homepage.
+
+## 2026-10-05: Refine homepage introduction wording
+
+Replaced the homepage introduction's sentence about experiments with the user's preferred wording. This keeps the introduction concise and reflects that the blog discusses the experiments.
