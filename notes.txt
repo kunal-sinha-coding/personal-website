@@ -817,3 +817,21 @@ Social crawlers need metadata in the initial HTML response because the post body
 ### Context
 
 The site uses raw HTML and client-side Markdown, not a static site generator. Social crawlers can read the new tags without executing the page's JavaScript. X may cache prior previews; adding a query string such as `?v=1` to the shared URL can request a distinct URL. `git diff --check` passed; no tests were run.
+
+## 2026-10-05: Use verifier comparison chart as social preview image
+
+### Commit name
+
+Use verifier chart for social preview.
+
+### Description
+
+Created a 1200 by 630 PNG that plots MBPP pass@1 for the perfect-verifier oracle and execution verifier plus output clustering at K=1, 2, 4, 8, and 16. Updated Open Graph and X Card metadata to use this static chart and added image alt text.
+
+### Why
+
+The user asked to use one of the verifier accuracy graphs as the social preview image for this post.
+
+### Context
+
+The plotted scores match the MBPP verifier accuracy graph in the article. The PNG is stored at `blog/assets/mbpp-verifier-comparison.png` and is served from an absolute URL. `git diff --check` passed and the generated image was visually inspected; no tests were run.
