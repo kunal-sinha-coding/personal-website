@@ -1,5 +1,5 @@
-Welcome! I'm an ML engineer based out of San Francisco. This blog covers various topics in LLM post-training and evaluation I find important.
+Welcome! I'm an ML engineer based out of San Francisco. In this blog, I run cool experiments on post-training and evaluation, and report them here.
 
-I'm currently working at Fieldguide, where I strengthen the performance of our Agents for financial audit and advisory. Some recent work includes designing robust retrieval systems, running large-scale evaluation pipelines, and extracting preference signals from production data.
+I currently work at Fieldguide, building Claude Code for financial auditors. My work focuses on improving Agent quality. Some recent work includes building retrieval systems, running large-scale evaluation pipelines, and optimizing Agent harnesses for hill-climbing.
 
 In 2025, I completed my Bachelors and Masters at Stanford University. I did research with their NLP Group on topics such as neural graph retrieval, chain-of-thought reasoning, and visual question answering, as well as computational linguistics.
