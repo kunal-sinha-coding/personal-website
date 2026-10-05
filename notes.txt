@@ -745,3 +745,21 @@ The user changed direction and asked to delete the plots.
 ### Context
 
 The result tables and analysis remain unchanged. `git diff --check` passed; no tests were run.
+
+## 2026-10-05: Correct percentage-point gains in summary and analysis
+
+### Commit name
+
+Correct pass-at-one gain figures.
+
+### Description
+
+Updated the summary to report GRPO's 12.7 percentage-point gain on MBPP and the 16-generation verifier's 20.62-point total gain over baseline. Expanded Analysis to report both the incremental gain over sampled post-training and total gain over baseline for MBPP and MBPP+.
+
+### Why
+
+The user requested accurate percentage-point gains in the summary and total baseline comparisons in Analysis.
+
+### Context
+
+The calculations use the table values: MBPP baseline 52.4%, post-trained greedy 65.1%, sampled post-trained 60.63%, and 16-generation clustering 73.02%; MBPP+ values are 43.7%, 53.2%, 51.09%, and 60.32%. `git diff --check` passed; no tests were run.

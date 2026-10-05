@@ -5,7 +5,7 @@ I was able to take a very small LLM with under a billion parameters (`Qwen2.5-Co
 1. Post-training the model through GRPO.
 2. Scaling the number of generations at test-time and using a cheap verifier to filter them. The verifier required executing code in a sandbox and clustering similar outputs.
 
-The first technique improved pass@1 by **12.2%** while the second improved by up to **21.6%**, albeit at the cost of higher latency.
+On MBPP, GRPO raised greedy pass@1 from 52.4% to 65.1%, a gain of **12.7 percentage points**. Scaling to 16 generations and selecting with execution verification and output clustering raised pass@1 to 73.02%, a total gain of **20.62 percentage points** over the baseline, at the cost of higher latency.
 
 ### Introduction
 
@@ -217,7 +217,7 @@ The bold rows show the best post-training result and the best result after scali
 
 Post-training improved the 0.5B model's pass@1 from 52.4% to 65.1% on MBPP, a gain of 12.7 percentage points, and from 43.7% to 53.2% on MBPP+, a gain of 9.5 percentage points. The gain is smaller on MBPP+ because its more demanding tests are harder to pass. The model still trailed the 1.5B Instruct model, which has about three times as many parameters and scored 69.2% on MBPP and 59.4% on MBPP+.
 
-Scaling up test-time generations and selecting with a verifier raised accuracy further. With 16 candidates, execution filtering plus clustering raised pass@1 from 60.63% to 73.02% on MBPP, a gain of 12.39 percentage points, and from 51.09% to 60.32% on MBPP+, a gain of 9.23 percentage points. Output clustering added a smaller gain on top of execution filtering: 0.80 percentage points on MBPP and 0.27 points on MBPP+ at 16 generations. Clustering requires roughly two to three times as many sandbox executions. If sandbox execution is a bottleneck, the execution filter alone may be the better choice.
+Scaling up test-time generations and selecting with a verifier raised accuracy further. With 16 candidates, execution filtering plus clustering raised pass@1 from 60.63% to 73.02% on MBPP, a gain of 12.39 percentage points over sampled post-training and 20.62 points over the 52.4% baseline. On MBPP+, it raised pass@1 from 51.09% to 60.32%, a gain of 9.23 points over sampled post-training and 16.62 points over the 43.7% baseline. Output clustering added a smaller gain on top of execution filtering: 0.80 percentage points on MBPP and 0.27 points on MBPP+ at 16 generations. Clustering requires roughly two to three times as many sandbox executions. If sandbox execution is a bottleneck, the execution filter alone may be the better choice.
 
 #### Verifier accuracy
 
