@@ -1,4 +1,4 @@
-### Summary
+### TL;DR
 
 I was able to take a very small LLM with under a billion parameters (`Qwen2.5-Coder-0.5B-Instruct`) and boost performance on MBPP through two approaches:
 

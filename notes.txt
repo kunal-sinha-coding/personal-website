@@ -781,3 +781,21 @@ The user clarified that the published URL itself should use the updated baby LLM
 ### Context
 
 The new canonical post URL is `/blog/teaching_baby_llms_to_code.html`. The old URL redirects to it for existing links. `git diff --check` passed; no tests were run.
+
+## 2026-10-05: Rename Summary heading to TL;DR
+
+### Commit name
+
+Rename summary heading to TL;DR.
+
+### Description
+
+Changed the blog post heading from `Summary` to `TL;DR`.
+
+### Why
+
+The user requested this heading change.
+
+### Context
+
+No summary text changed. `git diff --check` passed; no tests were run.
