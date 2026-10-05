@@ -763,3 +763,21 @@ The user requested accurate percentage-point gains in the summary and total base
 ### Context
 
 The calculations use the table values: MBPP baseline 52.4%, post-trained greedy 65.1%, sampled post-trained 60.63%, and 16-generation clustering 73.02%; MBPP+ values are 43.7%, 53.2%, 51.09%, and 60.32%. `git diff --check` passed; no tests were run.
+
+## 2026-10-05: Rename published post URL to baby LLMs slug
+
+### Commit name
+
+Rename tiny coding post URL.
+
+### Description
+
+Renamed the post Markdown and HTML files to `teaching_baby_llms_to_code`, updated the blog index slug and HTML Markdown fetch path, and left a redirect at the previous HTML URL.
+
+### Why
+
+The user clarified that the published URL itself should use the updated baby LLMs title.
+
+### Context
+
+The new canonical post URL is `/blog/teaching_baby_llms_to_code.html`. The old URL redirects to it for existing links. `git diff --check` passed; no tests were run.

@@ -1,6 +1,6 @@
 [
   {
-    "slug": "teaching_absurdly_tiny_llms_to_code",
+    "slug": "teaching_baby_llms_to_code",
     "title": "Teaching baby LLMs to code",
     "date": "October 3, 2026",
     "summary": "Experiments with GRPO and answer-blind candidate selection for a 0.5B coding model.",
