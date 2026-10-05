@@ -727,3 +727,21 @@ The user requested model-size and compute-scaled graphs below each corresponding
 ### Context
 
 The model-size axis and relative-FLOPs axis use logarithmic scales. Coincident points are offset slightly for visibility. Relative FLOPs are an estimate and exclude output-length differences and sandbox execution. `git diff --check` passed, image links were checked, and all SVG files parsed successfully as XML; no tests were run.
+
+## 2026-10-05: Remove results plots
+
+### Commit name
+
+Remove results plots.
+
+### Description
+
+Removed the four MBPP and MBPP+ SVG plots, their Markdown embeds, and their captions.
+
+### Why
+
+The user changed direction and asked to delete the plots.
+
+### Context
+
+The result tables and analysis remain unchanged. `git diff --check` passed; no tests were run.

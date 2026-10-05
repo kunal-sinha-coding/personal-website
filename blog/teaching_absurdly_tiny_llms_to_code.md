@@ -185,14 +185,6 @@ The bold rows show the best post-training result and the best result after scali
 | Baseline (greedy) | 0.49B | 1 | 52.4% |
 | Baseline | 0.49B | 1 | 28.6% |
 
-![MBPP pass@1 by model size](assets/teaching_absurdly_tiny_llms_to_code/mbpp-parameters.svg)
-
-*Model size is on a logarithmic scale. Points with identical model sizes are offset slightly so that each method is visible.*
-
-![MBPP pass@1 by estimated relative FLOPs](assets/teaching_absurdly_tiny_llms_to_code/mbpp-relative-flops.svg)
-
-*Relative FLOPs are estimated from parameter count multiplied by the number of generations, with one 0.49B generation as the reference. The horizontal axis is logarithmic.*
-
 #### MBPP+
 
 | Method | Parameters | # of generations | Pass@1 |
@@ -220,14 +212,6 @@ The bold rows show the best post-training result and the best result after scali
 | Post-trained + execution verifier + clustering | 0.49B | 1 | 51.09% |
 | Baseline (greedy) | 0.49B | 1 | 43.7% |
 | Baseline | 0.49B | 1 | 22.2% |
-
-![MBPP+ pass@1 by model size](assets/teaching_absurdly_tiny_llms_to_code/mbpp-plus-parameters.svg)
-
-*Model size is on a logarithmic scale. Points with identical model sizes are offset slightly so that each method is visible.*
-
-![MBPP+ pass@1 by estimated relative FLOPs](assets/teaching_absurdly_tiny_llms_to_code/mbpp-plus-relative-flops.svg)
-
-*Relative FLOPs are estimated from parameter count multiplied by the number of generations, with one 0.49B generation as the reference. The horizontal axis is logarithmic.*
 
 #### Analysis
 
