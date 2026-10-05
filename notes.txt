@@ -799,3 +799,21 @@ The user requested this heading change.
 ### Context
 
 No summary text changed. `git diff --check` passed; no tests were run.
+
+## 2026-10-05: Add static metadata for social previews
+
+### Commit name
+
+Add social preview metadata to post.
+
+### Description
+
+Added Open Graph article metadata and X/Twitter Card title, description, canonical URL, and large-image card tags directly to the static head of the post HTML. Both image tags use the site's public JPEG profile image, which returns HTTP 200, rather than the invalid `https://github.io` placeholder.
+
+### Why
+
+Social crawlers need metadata in the initial HTML response because the post body is rendered from Markdown in the browser.
+
+### Context
+
+The site uses raw HTML and client-side Markdown, not a static site generator. Social crawlers can read the new tags without executing the page's JavaScript. X may cache prior previews; adding a query string such as `?v=1` to the shared URL can request a distinct URL. `git diff --check` passed; no tests were run.
