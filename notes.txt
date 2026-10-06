@@ -843,3 +843,7 @@ Updated the homepage introduction with the user's new description of their ML en
 ## 2026-10-05: Refine homepage introduction wording
 
 Replaced the homepage introduction's sentence about experiments with the user's preferred wording. This keeps the introduction concise and reflects that the blog discusses the experiments.
+
+Commit name: Sync mandatory interruption continuation.
+
+Synchronized `AGENTS.md` with the post-training repository. The shared instructions now require active-task checks after every user message and every response, and require immediate resumption of unfinished authorized work after answering an interruption.

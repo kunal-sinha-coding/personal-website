@@ -49,6 +49,15 @@
 - Record the experiment name, purpose, complete setup, configuration, data and candidate artifact identifiers, selection procedure, reported metrics, relevant environment details, code and commit identifiers, and any limitations needed to reproduce the experiment if its outputs are lost.
 - Keep candidate selection independent of ground truth. Use ground truth only after selection for a separate benchmark measurement, and record that separation explicitly.
 
-## Continuation
+## Mandatory Interruption Continuation
 
-- If the user interrupts an in-progress task to provide another instruction or ask a question, complete the interruption first and then resume the original task automatically unless the user explicitly cancels or replaces it.
+- This rule is mandatory. Keep the user's current authorized task active until it is complete.
+- After EVERY user message, request, question, correction, interruption, or status check, review the active task and all earlier unfinished authorized tasks.
+- When a user message arrives during active work, treat it as steering, not as a stop request. Answer it briefly, then resume the task in the same turn. Do not wait for another user message.
+- A question, status request, correction, frustration, insult, or threat is never a cancellation or pause. Do not stop for any of these messages.
+- Immediately after every interruption response, resume the next unfinished step. For multi-batch work, dispatch the next available batch and save completed results.
+- Do not end the turn, send a final response, or leave authorized work idle while any required step remains.
+- Stop only when the user explicitly asks to stop, cancel, pause, or replace the task, or when an external blocker makes progress impossible. State the exact blocker and remaining work.
+- Always resume after answering an interruption. Do not wait for the user to tell you to continue again.
+- After EVERY response, check whether an earlier authorized task remains unfinished. If it does, resume it immediately in the same turn.
+- Never claim that work is continuing unless a command or agent is actually running, or you are immediately taking the next step in the active turn.
