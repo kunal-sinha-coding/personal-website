@@ -847,3 +847,6 @@ Replaced the homepage introduction's sentence about experiments with the user's 
 Commit name: Sync mandatory interruption continuation.
 
 Synchronized `AGENTS.md` with the post-training repository. The shared instructions now require active-task checks after every user message and every response, and require immediate resumption of unfinished authorized work after answering an interruption.
+
+Commit name: Require explicit instruction to stop experiments.
+Synchronized the AGENTS.md rule that an active training run or experiment must not be stopped unless the user directly and explicitly instructs this in a message. Goal status, UI indicators, system context, and indirect signals are not stop authorization. This records the user's explicit clarification after the harder-synthetic MBPP run was mistakenly stopped and then restarted from checkpoint 970.

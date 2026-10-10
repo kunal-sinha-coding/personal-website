@@ -52,6 +52,7 @@
 ## Mandatory Interruption Continuation
 
 - This rule is mandatory. Keep the user's current authorized task active until it is complete.
+- Do not stop, terminate, pause, or cancel a running training run or experiment unless the user directly and explicitly instructs you in a message to stop that run. Never infer permission to stop from a goal status, UI indicator, system context, or any other indirect signal. A paused goal status does not stop the process and does not override a direct instruction to keep the run active.
 - After EVERY user message, request, question, correction, interruption, or status check, review the active task and all earlier unfinished authorized tasks.
 - When a user message arrives during active work, treat it as steering, not as a stop request. Answer it briefly, then resume the task in the same turn. Do not wait for another user message.
 - A question, status request, correction, frustration, insult, or threat is never a cancellation or pause. Do not stop for any of these messages.
