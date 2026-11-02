@@ -1,8 +1,8 @@
 ### TL;DR
 
-I fine-tuned a 1.5B parameter Qwen model to strengthen performance on When2Call, a benchmark evaluating an Agent's ability to decide when to make tool calls. This model achieved 77.45% accuracy, matching or exceeding the performance of decision models at least 18x larger: Cloudflare's Clef (70.96%), OpenAI's GPT-6 Luna with the Decision API (74.06%), and Perplexity's Decider v1.1 27B (76.5%)
+I fine-tuned a 1.5B Qwen model to strengthen performance on When2Call, a benchmark evaluating an Agent's ability to decide when to make tool calls. This model **achieved 77.45% accuracy, matching or exceeding the performance of decision models at least 18x larger:** Cloudflare's Clef (70.96%), OpenAI's GPT-6 Luna with the Decision API (74.06%), and Perplexity's Decider v1.1 27B (76.5%)
 
-I was able to obtain these results more quickly after building an auto-research loop, allowing Codex to automatically explore strategies for optimizing training and inference. The second half of this blog post will dive into the design of the loop, highlighting what worked well and what did not.
+I was able to obtain these results more quickly after **building an auto-research loop**, allowing Codex to automatically explore strategies for optimizing training and inference. The second half of this blog post will dive into the design of the loop, highlighting what worked well and what did not.
 
 ### Part One: training a decision model
 
@@ -62,7 +62,7 @@ Artificial Analysis evaluates 3,423 When2Call examples. It excludes 229 “ask f
 | Jev 1.14 | — | 80.84% | 41.53 |
 | Jev 1.13 | — | 80.66% | 41.53 |
 | Mercury Decide | — | 79.26% | 15.20 |
-| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **3.09 (estimated)** |
+| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **18.61 (estimated)** |
 | d1 | — | 77.42% | 15.14 |
 | Decider v1.1 27B | 27 | 76.48% | 16.53 |
 | Decider Flash v1.2 | — | 74.41% | 8.23 |
@@ -83,9 +83,9 @@ The main takeaways are:
 - Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised accuracy to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
 - Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
 
-The cost estimate for Qwen depends on the local inference setup. Artificial Analysis reports cost at its current published prices, so its hosted-model figures are not a direct deployment quote for another provider or hardware setup.[2](#ref-2)
+I estimated Qwen's cost from measured evaluation time, rather than scaling cost by parameter count. On the same 3,652-example test set, a fine-tuned 0.5B Qwen took 302 seconds, while three fine-tuned 1.5B Qwen runs took 395 to 424 seconds. The median 1.5B runtime was 422 seconds, only 1.4 times the 0.5B runtime despite having three times as many parameters. At RunPod's listed $0.58 per hour for an A4500 serverless GPU, the 1.5B runtime implies about $18.61 per million tasks.[4](#ref-4) This estimate uses batch size 1 evaluation times and the listed GPU rate. It does not include storage or other service costs, and a different serving stack or batching strategy may change the result. Artificial Analysis calculates hosted-model costs from its own token prices and evaluation method, so those figures are not direct deployment quotes for this setup.[2](#ref-2)
 
-This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the earlier $3.09 per million task estimate for the local model setup. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above.[2](#ref-2)
+This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the measured-runtime estimate above. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above.[2](#ref-2)
 
 ![When2Call accuracy versus estimated cost per million tasks. The star marks the fine-tuned Qwen model.](assets/when2call-cost-accuracy.png)
 
@@ -171,6 +171,10 @@ The synthetic-data phase showed the value and the limits of this process. The un
 <a id="ref-3"></a>
 
 3. Rich Sutton. [“The Bitter Lesson.”](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)
+
+<a id="ref-4"></a>
+
+4. [RunPod, GPU Cloud Pricing.](https://www.runpod.io/pricing)
 
 #### Appendix
 
