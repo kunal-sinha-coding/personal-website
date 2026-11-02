@@ -76,9 +76,10 @@ The Qwen original-data row uses the full 3,652-example test score. The synthetic
 
 The main takeaways are:
 
-- Our model is 18 times smaller than Clef (27B), but its accuracy is higher by 6.49 percentage points (77.45% versus 70.96%).
-- Our model is an order of magnitude smaller than GPT-6 Luna Decisions, but its accuracy is higher by 3.39 percentage points (77.45% versus 74.06%).
-- Our model is 18 times smaller than Perplexity's Decider v1.1 (27B), but its accuracy is higher by 0.97 percentage points (77.45% versus 76.48%).
+- Our model is the smallest model in this comparison that still matches or exceeds several larger decision models.
+  - It is 18 times smaller than Clef (27B), but its accuracy is higher by 6.49 percentage points (77.45% versus 70.96%).
+  - It is an order of magnitude smaller than GPT-6 Luna Decisions, but its accuracy is higher by 3.39 percentage points (77.45% versus 74.06%).
+  - It is 18 times smaller than Perplexity's Decider v1.1 (27B), but its accuracy is higher by 0.97 percentage points (77.45% versus 76.48%).
 - Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised accuracy to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
 - Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
 
@@ -149,17 +150,14 @@ The synthetic-data phase showed the value and the limits of this process. The un
 
 #### Learnings
 
-The system still needed human direction. I usually chose the broad family, such as synthetic data or ensembling. The researcher was useful at exploring variants within that family, but it did not reliably decide which new family should come next. I acted more like a research lead setting a direction than a fully hands-off user.
 
-The choice of researcher model also mattered in practice. GPT-6 Luna at medium reasoning was affordable enough to leave active for long runs, but I do not know whether a stronger model would have proposed better experiment families or analyzed results more efficiently. A future loop could reserve a more capable model for idea generation and error analysis while using a cheaper model for routine implementation. The cost of repeatedly sending a large context would need to be measured.
-
-Continuous experimentation also changes how the work feels. The machine can run for long periods, while the human checks in periodically to see whether the current direction remains useful. This is less like one focused coding session and more like supervising a process over time.
-
-The hardest open question was how long to stay within one family. The researcher tended to keep trying variants after I would have moved on. A fixed experiment budget would prevent that, but it could also cut off a promising direction too early. A better system would estimate when a family has stopped producing useful results and explain why it should switch.
-
-Long sessions raised a context-retention problem. The researcher sometimes lost earlier guidance after a long run. A searchable record of prior sessions could let a fresh session retrieve decisions and results without carrying the full history in its active context.
-
-Finally, the system was better at combining familiar techniques than proposing genuinely novel ones. Prompting for creativity did not solve this. An adversarial idea-generation or critique stage may help, but it would need to be judged by whether it proposes useful experiments, not whether the ideas sound unusual.
+- The system still depended on my direction. I usually chose the family of approaches to explore, such as synthetic data or ensembling. Once I chose a family, the researcher explored variants, wrote the code, ran the experiments, and reported the results. This made me more like a research lead assigning a direction to a junior researcher. A more autonomous system would propose and prioritize the broader families itself, so a person could give it a general goal and take a smaller role. Even in its current form, it reduced the work I had to do because I could give it a broad idea instead of specifying each experiment.
+- The choice of researcher model may have limited the results. I used GPT-6 Luna because it was affordable enough to run for long periods on my $20-per-month Codex Pro plan. When I tried the stronger Soul model, it used most of my remaining five-hour quota in about one to two hours. A stronger model might have proposed better experiment families or analyzed failures more efficiently, but leaving it in a continuous loop would have been expensive. A future system could use a cheap model for implementation and reserve a stronger model for brainstorming and error analysis. That could still cost more because error analysis requires reading a lot of context. Switching models may also reduce the benefit of prompt caching.
+- Continuous experimentation changes the work pattern. The agent can run in the background for long periods, so sitting at the computer and waiting for each experiment is not productive. The human still needs to check in and redirect the work when the researcher gets stuck or follows an unproductive direction. The work becomes more distributed over time and requires periodic monitoring.
+- The researcher tended to keep exploring one family rather than move on. This is an exploration versus exploitation trade-off. A fixed experiment limit could stop a promising direction too early, but an open-ended instruction can keep the researcher in a weak direction indefinitely. A useful future system would estimate how many experiments a family deserves based on the evidence so far.
+- Long sessions caused context loss. I kept the researcher in one session so it could use the history of prior experiments, but after about a day it sometimes forgot earlier guidance. One option is to rely on longer context windows as models improve. Another is to start a new session when the context grows and let it search saved transcripts from earlier sessions. My setup used Codex CLI and Tmux, which made it possible to start and control new sessions from the terminal.
+- The researcher had access to internet search through Exa, but it rarely used it unless I asked. A research agent should review relevant work and the current state of the art during brainstorming because that can provide useful ideas for experiments.
+- The researcher was better at recommending familiar approaches than proposing novel ones. Asking it to be creative was not enough. A future loop could add an adversarial idea-generation or critique stage, while judging ideas by whether they suggest useful experiments rather than whether they sound unusual.
 
 #### References
 

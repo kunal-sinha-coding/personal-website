@@ -916,3 +916,7 @@ Removed the Macro F1 column and its values from the Part One results table becau
 Commit name: Match results takeaways to the requested comparison format.
 
 Rewrote the Part One takeaways to give one parameter-size and accuracy comparison for each model in the executive summary. Each comparison now names the larger model, states the size ratio, and gives the accuracy difference in percentage points. Kept the full-test original-data versus synthetic-continuation gain and Elephant 9B caveat as separate bullets. `git diff --check` passed; no tests were run.
+
+Commit name: Restore outline bullet structure in results and learnings.
+
+Reformatted the Part One takeaways to follow the outline's nested structure: one lead claim, separate model-size and accuracy comparisons for Clef, Luna, and Decider, the standard-data versus synthetic-data gain, and the Elephant caveat. Rewrote all seven Learnings points from the outline as full bullets while retaining their key details. Kept heading names and order unchanged. Verified the article heading sequence against the outline and ran `git diff --check`; no tests were run.
