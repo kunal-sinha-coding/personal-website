@@ -76,10 +76,11 @@ The Qwen original-data row uses the full 3,652-example test score. The synthetic
 
 The main takeaways are:
 
-- The 1.5B Qwen is about 18 times smaller than Clef and the 27B Decider v1.1. It scores 6.49 percentage points higher than Clef and 0.97 points higher than Decider v1.1 in the comparison above.
-- The Qwen is an order of magnitude smaller than GPT-6 Luna, and its score is close to the Decision API result.
-- Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised it to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
-- The Qwen does not beat every larger model. Baseten's Elephant 9B is six times larger and scores 94.77%, 17.32 percentage points higher than the Qwen.[2](#ref-2)
+- Our model is 18 times smaller than Clef (27B), but its accuracy is higher by 6.49 percentage points (77.45% versus 70.96%).
+- Our model is an order of magnitude smaller than GPT-6 Luna Decisions, but its accuracy is higher by 3.39 percentage points (77.45% versus 74.06%).
+- Our model is 18 times smaller than Perplexity's Decider v1.1 (27B), but its accuracy is higher by 0.97 percentage points (77.45% versus 76.48%).
+- Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised accuracy to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
+- Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
 
 The cost estimate for Qwen depends on the local inference setup. Artificial Analysis reports cost at its current published prices, so its hosted-model figures are not a direct deployment quote for another provider or hardware setup.[2](#ref-2)
 

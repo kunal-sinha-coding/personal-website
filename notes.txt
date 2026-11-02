@@ -912,3 +912,7 @@ Replaced the Mermaid accuracy curve with a step plot rebuilt from 70 chronologic
 Commit name: Remove macro F1 from the model comparison table.
 
 Removed the Macro F1 column and its values from the Part One results table because the benchmark comparison does not provide macro F1 for most models. Kept the separate discussion of full-test Qwen macro F1 intact. `git diff --check` passed; no tests were run.
+
+Commit name: Match results takeaways to the requested comparison format.
+
+Rewrote the Part One takeaways to give one parameter-size and accuracy comparison for each model in the executive summary. Each comparison now names the larger model, states the size ratio, and gives the accuracy difference in percentage points. Kept the full-test original-data versus synthetic-continuation gain and Elephant 9B caveat as separate bullets. `git diff --check` passed; no tests were run.
