@@ -850,3 +850,22 @@ Synchronized `AGENTS.md` with the post-training repository. The shared instructi
 
 Commit name: Require explicit instruction to stop experiments.
 Synchronized the AGENTS.md rule that an active training run or experiment must not be stopped unless the user directly and explicitly instructs this in a message. Goal status, UI indicators, system context, and indirect signals are not stop authorization. This records the user's explicit clarification after the harder-synthetic MBPP run was mistakenly stopped and then restarted from checkpoint 970.
+
+
+## Draft decision-model blog post
+
+### Commit name
+
+Add decision-model blog post draft
+
+### Description
+
+Added an unpublished post with the requested title and approved executive summary, plus its matching HTML shell and hidden manifest entry. The summary reports 74.18% Qwen2.5-1.5B accuracy on When2Call, an estimated $3.09 per million tasks, and corrected cost and parameter ratios against Jev, Clef, and Decider Flash.
+
+### Why
+
+The user asked to begin a new blog post with its title and executive summary.
+
+### Context
+
+The post is unpublished while the remaining article is being drafted. The headline accuracy and Jev comparison come from the post-training repository leaderboard and inference report. The Clef comparison and estimated cost scaling follow the supplied chart.
