@@ -62,7 +62,7 @@ Artificial Analysis evaluates 3,423 When2Call examples. It excludes 229 “ask f
 | Jev 1.14 | — | 80.84% | 41.53 |
 | Jev 1.13 | — | 80.66% | 41.53 |
 | Mercury Decide | — | 79.26% | 15.20 |
-| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **18.61 (estimated)** |
+| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **31.57 (estimated)** |
 | d1 | — | 77.42% | 15.14 |
 | Decider v1.1 27B | 27 | 76.48% | 16.53 |
 | Decider Flash v1.2 | — | 74.41% | 8.23 |
@@ -83,9 +83,9 @@ The main takeaways are:
 - Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised accuracy to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
 - Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
 
-I estimated Qwen's cost from measured evaluation time, rather than scaling cost by parameter count. On the same 3,652-example test set, a fine-tuned 0.5B Qwen took 302 seconds, while three fine-tuned 1.5B Qwen runs took 395 to 424 seconds. The median 1.5B runtime was 422 seconds, only 1.4 times the 0.5B runtime despite having three times as many parameters. At RunPod's listed $0.58 per hour for an A4500 serverless GPU, the 1.5B runtime implies about $18.61 per million tasks.[4](#ref-4) This estimate uses batch size 1 evaluation times and the listed GPU rate. It does not include storage or other service costs, and a different serving stack or batching strategy may change the result. Artificial Analysis calculates hosted-model costs from its own token prices and evaluation method, so those figures are not direct deployment quotes for this setup.[2](#ref-2)
+Artificial Analysis includes several decision models fine-tuned from Qwen, including Elephant 9B, Clef-Flash 9B, Clef 27B, and Perplexity Decider v1.1 27B.[4](#ref-4) Their listed costs vary widely, from $8.39 to $199.41 per million tasks.[2](#ref-2) For a conservative estimate, I use the higher cost of the two 9B Qwen-based models, Clef-Flash at $31.57 per million tasks. This keeps the estimate anchored to the closest model size in the comparison and does not assume that the 1.5B model's cost falls in direct proportion to its parameter count. The actual cost will depend on the serving system and model implementation.
 
-This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the measured-runtime estimate above. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above.[2](#ref-2)
+This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the conservative estimate based on the 9B Qwen fine-tunes. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above.[2](#ref-2)
 
 ![When2Call accuracy versus estimated cost per million tasks. The star marks the fine-tuned Qwen model.](assets/when2call-cost-accuracy.png)
 
@@ -174,7 +174,7 @@ The synthetic-data phase showed the value and the limits of this process. The un
 
 <a id="ref-4"></a>
 
-4. [RunPod, GPU Cloud Pricing.](https://www.runpod.io/pricing)
+4. Base Labs, [“Mammoth-1 and Elephant-1: frontier decision models.”](https://labs.baseten.co/articles/mammoth-1-and-elephant-1-frontier-decision-models); Cloudflare, [“Introducing Clef: our open-source decision models.”](https://blog.cloudflare.com/clef-decision-models/); Perplexity, [pplx-decider-v1.1-27b model card](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b).
 
 #### Appendix
 

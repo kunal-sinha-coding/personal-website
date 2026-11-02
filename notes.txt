@@ -932,3 +932,7 @@ Mapped completed candidate configurations by the method each candidate tested an
 Commit: Replace Qwen cost estimate with measured-runtime estimate
 
 Removed the unsupported $3.09 per million task estimate. Used logged full-test evaluation durations for fine-tuned Qwen models: 302 seconds for the 0.5B model and 395 to 424 seconds for three 1.5B runs, all over 3,652 examples at batch size 1. The 1.5B median runtime is 422 seconds, about 1.4 times the 0.5B runtime despite three times the parameters. Applied RunPod's listed $0.58 per hour A4500 serverless GPU price to estimate $18.61 per million tasks. Updated the benchmark table, cost explanation, source references, and cost-versus-accuracy chart. The text identifies the estimate's serving and billing limits.
+
+Commit: Estimate Qwen cost from Artificial Analysis Qwen fine-tunes
+
+Corrected the comparison basis after review. Removed the hardware-runtime estimate and instead used Artificial Analysis costs for decision models with documented Qwen backbones. The closest-size comparisons are Elephant 9B at $8.39 and Clef-Flash 9B at $31.57 per million tasks. Used the higher 9B cost as a conservative estimate for the 1.5B fine-tune, without assuming linear parameter scaling. Added citations for the Qwen model lineage, updated the table and cost chart, and removed the prior cost estimate.
