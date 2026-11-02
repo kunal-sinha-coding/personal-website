@@ -126,16 +126,17 @@ The watchdog was implemented as a Python process that read the research state, c
 The loop made it practical to explore many variants without manually writing each training command or waiting beside the machine. Across the complete test evaluations, performance moved from 51.51% in the first logged evaluation to 74.18% at the best full-set result. That number includes a broad sequence of encoder, Qwen, and synthetic-data work. It should not be read as a controlled measure of the auto-research loop alone. The model, data, and evaluation strategy all changed during the project.
 
 
-The work fell into four research families. I define an experiment as a distinct candidate or method, rather than a validation or test screen. The experiment ledger does not record that distinction consistently: it contains repeated evaluation runs, data-generation jobs, and multiple candidates launched by the same script. I therefore cannot give reliable per-family experiment counts from the ledger without manually mapping each candidate to its hypothesis. The run totals previously shown here grouped commands, not research families, so I removed them.
+I counted one experiment as a distinct candidate configuration or inference policy with a completed result. I deduplicated repeated records by experiment ID. I excluded validation and test confirmation screens, data-generation and merge jobs, and support records. These counts describe candidate configurations, not total run events. The ledger has no family field, so I grouped each candidate by the method it tested.
 
 | Experiment family | Experiments | What I tried |
 | --- | ---: | --- |
-| Supervised model training and data design | Not reliably countable | Trained small Qwen models with the original When2Call data, other datasets, and synthetic examples. I varied data mixtures, synthetic-data strategies and amounts, training objectives, learning rates, and checkpoint continuations. |
-| Embedding and ranking models | Not reliably countable | Tested MiniLM and Jina representations, classification and pairwise-ranking objectives, and feature changes such as tool-schema and required-argument cues. |
-| Inference-time routing and retrieval | Not reliably countable | Tested rules, similarity-based retrieval, and hybrid systems that route decisions between learned models and existing methods. |
-| Ensembles and model fusion | Not reliably countable | Combined predictions from multiple checkpoints and encoders, tested voting and fusion rules, and trained learned stackers. |
+| Learned classifiers and ranking models | 148 | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |
+| Qwen supervised fine-tuning and data mixtures | 231 | Compared training objectives and model sizes, then varied real and synthetic data sources, mixture ratios, data amounts, learning rates, and checkpoint continuations. |
+| Inference fusion, routing, and ensembles | 80 | Combined model predictions with fixed and adaptive fusion, voting, routing rules, and learned stackers. |
+| Retrieval-augmented policies | 56 | Tested dynamic retrieval and similarity-gated retrieval policies for When2Call decisions. |
+| **Total** | **515** | **Distinct completed candidate configurations.** |
 
-The ledger records 809 distinct experiment IDs whose latest status is completed. That total includes evaluation and support records, so it is not a count of research experiments. The graph below has a narrower scope: it shows 70 completed evaluations on the full test set, not 70 independent methods.
+The full ledger has 809 distinct IDs whose latest status is completed. The remaining 294 are confirmation or evaluation screens, data-generation or merge jobs, and support records. The graph below has a narrower scope: it shows 70 completed evaluations on the full test set, not 70 independent methods.
 
 
 I rebuilt this curve from the chronological experiment ledger. It includes 70 completed evaluations, each on all 3,652 test examples. The graph plots the best accuracy reached so far after each full-set evaluation. It is a step plot: the record increased on evaluations 1, 2, 3, 6, 8, 25, 28, 30, 35, 61, 64, and 70, and stayed flat on the other 58. The points are not interpolated between runs. The 76.2% unsupported-capability pilot used only 500 examples, so it is not included.

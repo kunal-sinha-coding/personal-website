@@ -924,3 +924,7 @@ Reformatted the Part One takeaways to follow the outline's nested structure: one
 Commit: Correct auto-research experiment-family table
 
 Changed the experiment-family table in the When2Call blog post. The prior rows grouped completed runs by command workflow, which merged different research questions and counted evaluation/support work inconsistently. Replaced those rows with four method families and stated that the current ledger cannot support reliable per-family experiment counts without mapping each candidate configuration to its hypothesis. Clarified that 809 completed IDs include non-experiment records and that the 70-point chart counts full-test evaluations, not independent methods. Left the user-provided outline untouched.
+
+Commit: Add candidate-level family counts to auto-research table
+
+Mapped completed candidate configurations by the method each candidate tested and updated the article table with four family counts: 148 learned classifier/ranking candidates, 231 Qwen supervised training/data-mixture candidates, 80 inference fusion/routing/ensemble candidates, and 56 retrieval-augmented candidates. The table defines its count unit and exclusions. The counts sum to 515; 294 other completed IDs are confirmation/evaluation screens, data-generation/merge jobs, or support records. The full-test graph remains explicitly described as 70 evaluations rather than 70 independent methods.
