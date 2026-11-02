@@ -869,3 +869,22 @@ The user asked to begin a new blog post with its title and executive summary.
 ### Context
 
 The post is unpublished while the remaining article is being drafted. The headline accuracy and Jev comparison come from the post-training repository leaderboard and inference report. The Clef comparison and estimated cost scaling follow the supplied chart.
+
+
+## Correct decision-model benchmark comparisons
+
+### Commit name
+
+Correct decision-model benchmark comparisons
+
+### Description
+
+Filled the benchmark score placeholders and reordered the model comparisons by increasing cost in the two requested sentences. Used current Artificial Analysis Decision Index figures and updated the estimated cost comparison.
+
+### Why
+
+The user asked to keep the revised executive summary wording and change only the missing numbers and model order.
+
+### Context
+
+The summary remains an unpublished draft.
