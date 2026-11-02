@@ -47,30 +47,30 @@ The main continuation used one epoch per synthetic data family. The training cod
 
 Artificial Analysis evaluates 3,423 When2Call examples. It excludes 229 “ask for more information” examples that it considers ambiguous, and it shuffles the answer choices.[2](#ref-2) The scores below for its decision models use that evaluation. Artificial Analysis publishes accuracy for this benchmark, but not macro F1, so those cells are left blank. Model size is shown only where it is available from the model name or the cited model description.
 
-| Model | Parameters (B) | Accuracy | Macro F1 | Cost per 1M tasks (USD) |
-| --- | ---: | ---: | ---: | ---: |
-| Elephant 9B | 9 | 94.77% | — | 8.39 |
-| SubQ Snap 1.1 | — | 94.57% | — | 30.34 |
-| Drex Max | — | 93.98% | — | 23.03 |
-| d1-ultra | — | 92.58% | — | 31.80 |
-| Decider v1.2 | — | 87.70% | — | 15.14 |
-| Drex 2.0 | — | 86.15% | — | 41.36 |
-| Drex 1.5 | — | 84.81% | — | 34.47 |
-| Celeris-1 Decision | — | 83.70% | — | 31.57 |
-| GLiDE | — | 83.67% | — | 119.02 |
-| Microsoft-Decision-1 | — | 81.92% | — | 30.71 |
-| Jev 1.14 | — | 80.84% | — | 41.53 |
-| Jev 1.13 | — | 80.66% | — | 41.53 |
-| Mercury Decide | — | 79.26% | — | 15.20 |
-| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **—** | **3.09 (estimated)** |
-| d1 | — | 77.42% | — | 15.14 |
-| Decider v1.1 27B | 27 | 76.48% | — | 16.53 |
-| Decider Flash v1.2 | — | 74.41% | — | 8.23 |
-| GPT-6 Luna (Decisions) | — | 74.06% | — | 78.87 |
-| Clef | 27 | 70.96% | — | 199.41 |
-| **Fine-tuned Qwen, original data only** | **1.5** | **70.24%** | **52.78%** | **—** |
-| Clef-Flash | — | 64.36% | — | 31.57 |
-| Clef-Omni | — | 62.05% | — | 123.08 |
+| Model | Parameters (B) | Accuracy | Cost per 1M tasks (USD) |
+| --- | ---: | ---: | ---: |
+| Elephant 9B | 9 | 94.77% | 8.39 |
+| SubQ Snap 1.1 | — | 94.57% | 30.34 |
+| Drex Max | — | 93.98% | 23.03 |
+| d1-ultra | — | 92.58% | 31.80 |
+| Decider v1.2 | — | 87.70% | 15.14 |
+| Drex 2.0 | — | 86.15% | 41.36 |
+| Drex 1.5 | — | 84.81% | 34.47 |
+| Celeris-1 Decision | — | 83.70% | 31.57 |
+| GLiDE | — | 83.67% | 119.02 |
+| Microsoft-Decision-1 | — | 81.92% | 30.71 |
+| Jev 1.14 | — | 80.84% | 41.53 |
+| Jev 1.13 | — | 80.66% | 41.53 |
+| Mercury Decide | — | 79.26% | 15.20 |
+| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **3.09 (estimated)** |
+| d1 | — | 77.42% | 15.14 |
+| Decider v1.1 27B | 27 | 76.48% | 16.53 |
+| Decider Flash v1.2 | — | 74.41% | 8.23 |
+| GPT-6 Luna (Decisions) | — | 74.06% | 78.87 |
+| Clef | 27 | 70.96% | 199.41 |
+| **Fine-tuned Qwen, original data only** | **1.5** | **70.24%** | **—** |
+| Clef-Flash | — | 64.36% | 31.57 |
+| Clef-Omni | — | 62.05% | 123.08 |
 
 The Qwen original-data row uses the full 3,652-example test score. The synthetic continuation reached 74.18% on that same full test set. Its 77.45% score above is the later rescore on Artificial Analysis's 3,423-example subset. The full-set and subset scores use different denominators, so the difference is not a direct measure of model improvement. Macro F1 for the full-set Qwen evaluations uses all four labels.
 

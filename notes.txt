@@ -908,3 +908,7 @@ Reduced the Markdown heading levels to the blog's existing convention and aligne
 Commit name: Clarify experiment chart, takeaways, and prompt appendix.
 
 Replaced the Mermaid accuracy curve with a step plot rebuilt from 70 chronological aggregate evaluations, each covering the complete 3,652-example test set. The figure marks the 12 record-setting evaluations and the article now states their iteration numbers. Added responsive image sizing and reduced the cost chart dimensions. Replaced machine-local prompt references with public prompt templates and the edited stable researcher instructions. Converted Part One takeaways to bullets, added the 70.24% to 74.18% full-test gain from synthetic continuation, and sorted the benchmark table by descending accuracy with both Qwen rows bolded. `git diff --check` passed; no tests were run.
+
+Commit name: Remove macro F1 from the model comparison table.
+
+Removed the Macro F1 column and its values from the Part One results table because the benchmark comparison does not provide macro F1 for most models. Kept the separate discussion of full-test Qwen macro F1 intact. `git diff --check` passed; no tests were run.
