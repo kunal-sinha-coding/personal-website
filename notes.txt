@@ -920,3 +920,7 @@ Rewrote the Part One takeaways to give one parameter-size and accuracy compariso
 Commit name: Restore outline bullet structure in results and learnings.
 
 Reformatted the Part One takeaways to follow the outline's nested structure: one lead claim, separate model-size and accuracy comparisons for Clef, Luna, and Decider, the standard-data versus synthetic-data gain, and the Elephant caveat. Rewrote all seven Learnings points from the outline as full bullets while retaining their key details. Kept heading names and order unchanged. Verified the article heading sequence against the outline and ran `git diff --check`; no tests were run.
+
+Commit: Correct auto-research experiment-family table
+
+Changed the experiment-family table in the When2Call blog post. The prior rows grouped completed runs by command workflow, which merged different research questions and counted evaluation/support work inconsistently. Replaced those rows with four method families and stated that the current ledger cannot support reliable per-family experiment counts without mapping each candidate configuration to its hypothesis. Clarified that 809 completed IDs include non-experiment records and that the 70-point chart counts full-test evaluations, not independent methods. Left the user-provided outline untouched.

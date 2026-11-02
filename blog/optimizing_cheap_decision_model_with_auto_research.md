@@ -126,18 +126,16 @@ The watchdog was implemented as a Python process that read the research state, c
 The loop made it practical to explore many variants without manually writing each training command or waiting beside the machine. Across the complete test evaluations, performance moved from 51.51% in the first logged evaluation to 74.18% at the best full-set result. That number includes a broad sequence of encoder, Qwen, and synthetic-data work. It should not be read as a controlled measure of the auto-research loop alone. The model, data, and evaluation strategy all changed during the project.
 
 
-The table counts distinct completed training runs in the experiment ledger. I grouped runs by their training workflow, so each run is counted once. The counts exclude validation-only screens, evaluation-only runs, queued work, and failed or incomplete runs.
+The work fell into four research families. I define an experiment as a distinct candidate or method, rather than a validation or test screen. The experiment ledger does not record that distinction consistently: it contains repeated evaluation runs, data-generation jobs, and multiple candidates launched by the same script. I therefore cannot give reliable per-family experiment counts from the ledger without manually mapping each candidate to its hypothesis. The run totals previously shown here grouped commands, not research families, so I removed them.
 
-| Experiment family | Completed runs | What I tried |
+| Experiment family | Experiments | What I tried |
 | --- | ---: | --- |
-| Initial Qwen SFT and RPO | 7 | Compared supervised fine-tuning and reward-aware preference optimization on the original When2Call data at small model sizes. |
-| Qwen full-data training and continuations | 197 | Tested preference-data sample sizes, source mixtures, synthetic strategies and doses, learning rates, and checkpoint continuations with the Qwen 1.5B workflow. |
-| Glaive and When2Call mixtures | 13 | Added Glaive examples to When2Call training and tested whether this broader mixture improved the decision task. |
-| General dataset continuations | 8 | Continued training on additional datasets and checked whether their distributions transferred to When2Call. |
-| BFCL and When2Call mixture | 1 | Tested a combined training set from BFCL and When2Call. |
-| Learned ensemble stackers | 2 | Trained small learned combiners to combine model predictions. |
+| Supervised model training and data design | Not reliably countable | Trained small Qwen models with the original When2Call data, other datasets, and synthetic examples. I varied data mixtures, synthetic-data strategies and amounts, training objectives, learning rates, and checkpoint continuations. |
+| Embedding and ranking models | Not reliably countable | Tested MiniLM and Jina representations, classification and pairwise-ranking objectives, and feature changes such as tool-schema and required-argument cues. |
+| Inference-time routing and retrieval | Not reliably countable | Tested rules, similarity-based retrieval, and hybrid systems that route decisions between learned models and existing methods. |
+| Ensembles and model fusion | Not reliably countable | Combined predictions from multiple checkpoints and encoders, tested voting and fusion rules, and trained learned stackers. |
 
-These counts describe training runs, not the 70 full-test evaluations shown in the chart below. The ledger also contains other completed runs outside this table, such as data preparation and model evaluation.
+The ledger records 809 distinct experiment IDs whose latest status is completed. That total includes evaluation and support records, so it is not a count of research experiments. The graph below has a narrower scope: it shows 70 completed evaluations on the full test set, not 70 independent methods.
 
 
 I rebuilt this curve from the chronological experiment ledger. It includes 70 completed evaluations, each on all 3,652 test examples. The graph plots the best accuracy reached so far after each full-set evaluation. It is a step plot: the record increased on evaluations 1, 2, 3, 6, 8, 25, 28, 30, 35, 61, 64, and 70, and stayed flat on the other 58. The points are not interpolated between runs. The 76.2% unsupported-capability pilot used only 500 examples, so it is not included.
