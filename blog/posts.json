@@ -3,8 +3,8 @@
     "slug": "optimizing_cheap_decision_model_with_auto_research",
     "title": "Optimizing a Cheap Decision Model with Auto Research",
     "date": "November 1, 2026",
-    "summary": "A fine-tuned 1.5B Qwen model reaches 74.18% accuracy on When2Call, with much lower estimated cost and parameter count.",
-    "published": false
+    "summary": "A fine-tuned 1.5B Qwen model reaches 77.45% accuracy on When2Call and compares favorably with larger decision models.",
+    "published": true
   },
   {
     "slug": "teaching_baby_llms_to_code",

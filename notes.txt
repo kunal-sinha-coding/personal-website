@@ -896,3 +896,7 @@ Recreated `blog/optimizing_cheap_decision_model_with_auto_research.md` from the 
 Commit name: Add auto research experiment families and cost comparison chart.
 
 Moved the 70 full-test accuracy sequence into Auto Research > Results and added a table of completed training-run counts by workflow family. Added a cost-versus-accuracy scatter plot for the 20 Artificial Analysis decision models and the estimated local Qwen cost. Added published cost-per-million-task values to the model table. The post now states that family counts exclude evaluation-only, validation-only, queued, failed, and incomplete records, and distinguishes the chart's 70 full-test evaluations from total training runs. The TL;DR remains unchanged. `git diff --check` passed; no tests were run.
+
+Commit name: Publish the When2Call auto-research post.
+
+Changed the blog manifest entry for `optimizing_cheap_decision_model_with_auto_research` to published so it appears on the public site. Updated its card summary to match the article's 77.45% Artificial Analysis subset result. The article TL;DR remains unchanged. The site deploys from the main branch. No tests were run.
