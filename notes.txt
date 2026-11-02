@@ -888,3 +888,7 @@ The user asked to keep the revised executive summary wording and change only the
 ### Context
 
 The summary remains an unpublished draft.
+
+Commit name: Complete the When2Call auto-research blog post.
+
+Recreated `blog/optimizing_cheap_decision_model_with_auto_research.md` from the rough outline while preserving its TL;DR verbatim. Added a research-report-style article with linked numbered citations, an Artificial Analysis comparison table, a 70-evaluation full-test progress chart, the synthetic-data and fine-tuning setup, and the auto-research architecture and learnings. Distinguished full 3,652-example test results from 500-example pilot screens and Artificial Analysis's 3,423-example evaluation. Left the outline file untouched. `git diff --check` passed; no tests were run.
