@@ -904,3 +904,7 @@ Changed the blog manifest entry for `optimizing_cheap_decision_model_with_auto_r
 Commit name: Match the When2Call post outline and heading style.
 
 Reduced the Markdown heading levels to the blog's existing convention and aligned every article section heading, name, and order with the outline. Removed extra subsection headings while keeping their content within Results. Updated the page title and social metadata to sentence case and replaced the preview sentence with the user's exact wording. Updated the rendered page's title and date. The outline remains untouched. `git diff --check` passed; heading order was compared with the outline; no tests were run.
+
+Commit name: Clarify experiment chart, takeaways, and prompt appendix.
+
+Replaced the Mermaid accuracy curve with a step plot rebuilt from 70 chronological aggregate evaluations, each covering the complete 3,652-example test set. The figure marks the 12 record-setting evaluations and the article now states their iteration numbers. Added responsive image sizing and reduced the cost chart dimensions. Replaced machine-local prompt references with public prompt templates and the edited stable researcher instructions. Converted Part One takeaways to bullets, added the 70.24% to 74.18% full-test gain from synthetic continuation, and sorted the benchmark table by descending accuracy with both Qwen rows bolded. `git diff --check` passed; no tests were run.

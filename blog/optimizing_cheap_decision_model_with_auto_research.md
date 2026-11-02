@@ -49,37 +49,41 @@ Artificial Analysis evaluates 3,423 When2Call examples. It excludes 229 “ask f
 
 | Model | Parameters (B) | Accuracy | Macro F1 | Cost per 1M tasks (USD) |
 | --- | ---: | ---: | ---: | ---: |
-| Fine-tuned Qwen, synthetic continuation | 1.5 | 77.45% | — | 3.09 (estimated) |
-| Fine-tuned Qwen, original data only | 1.5 | 70.24% | 52.78% | — |
 | Elephant 9B | 9 | 94.77% | — | 8.39 |
+| SubQ Snap 1.1 | — | 94.57% | — | 30.34 |
+| Drex Max | — | 93.98% | — | 23.03 |
+| d1-ultra | — | 92.58% | — | 31.80 |
+| Decider v1.2 | — | 87.70% | — | 15.14 |
+| Drex 2.0 | — | 86.15% | — | 41.36 |
+| Drex 1.5 | — | 84.81% | — | 34.47 |
 | Celeris-1 Decision | — | 83.70% | — | 31.57 |
+| GLiDE | — | 83.67% | — | 119.02 |
+| Microsoft-Decision-1 | — | 81.92% | — | 30.71 |
+| Jev 1.14 | — | 80.84% | — | 41.53 |
+| Jev 1.13 | — | 80.66% | — | 41.53 |
+| Mercury Decide | — | 79.26% | — | 15.20 |
+| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **—** | **3.09 (estimated)** |
+| d1 | — | 77.42% | — | 15.14 |
+| Decider v1.1 27B | 27 | 76.48% | — | 16.53 |
+| Decider Flash v1.2 | — | 74.41% | — | 8.23 |
+| GPT-6 Luna (Decisions) | — | 74.06% | — | 78.87 |
 | Clef | 27 | 70.96% | — | 199.41 |
+| **Fine-tuned Qwen, original data only** | **1.5** | **70.24%** | **52.78%** | **—** |
 | Clef-Flash | — | 64.36% | — | 31.57 |
 | Clef-Omni | — | 62.05% | — | 123.08 |
-| GLiDE | — | 83.67% | — | 119.02 |
-| Mercury Decide | — | 79.26% | — | 15.20 |
-| d1 | — | 77.42% | — | 15.14 |
-| d1-ultra | — | 92.58% | — | 31.80 |
-| Drex Max | — | 93.98% | — | 23.03 |
-| Drex 1.5 | — | 84.81% | — | 34.47 |
-| Drex 2.0 | — | 86.15% | — | 41.36 |
-| GPT-6 Luna (Decisions) | — | 74.06% | — | 78.87 |
-| Microsoft-Decision-1 | — | 81.92% | — | 30.71 |
-| Decider Flash v1.2 | — | 74.41% | — | 8.23 |
-| Decider v1.1 27B | 27 | 76.48% | — | 16.53 |
-| Decider v1.2 | — | 87.70% | — | 15.14 |
-| SubQ Snap 1.1 | — | 94.57% | — | 30.34 |
-| Jev 1.13 | — | 80.66% | — | 41.53 |
-| Jev 1.14 | — | 80.84% | — | 41.53 |
 
 The Qwen original-data row uses the full 3,652-example test score. The synthetic continuation reached 74.18% on that same full test set. Its 77.45% score above is the later rescore on Artificial Analysis's 3,423-example subset. The full-set and subset scores use different denominators, so the difference is not a direct measure of model improvement. Macro F1 for the full-set Qwen evaluations uses all four labels.
 
-The results support a narrower claim than “small models are always better.” At 1.5B parameters, the fine-tuned Qwen is about 18 times smaller than Clef and the 27B Decider v1.1. It scores 6.49 and 0.97 percentage points higher, respectively, in the comparison reported in the summary. It is also substantially smaller than the roughly 20B GPT-6 Luna model family, while its score is close to the Decision API result. However, larger systems still lead the benchmark. Elephant 9B scores 94.77%, more than 17 points above the fine-tuned Qwen.[2](#ref-2)
+The main takeaways are:
 
-The cost estimate for Qwen depends on the local inference setup. Artificial Analysis reports cost at its current published prices, so its hosted-model figures are not a direct deployment quote for another provider or hardware setup. The chart is a practical cost and accuracy comparison, not a universal ranking of serving costs.[2](#ref-2)
+- The 1.5B Qwen is about 18 times smaller than Clef and the 27B Decider v1.1. It scores 6.49 percentage points higher than Clef and 0.97 points higher than Decider v1.1 in the comparison above.
+- The Qwen is an order of magnitude smaller than GPT-6 Luna, and its score is close to the Decision API result.
+- Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised it to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
+- The Qwen does not beat every larger model. Baseten's Elephant 9B is six times larger and scores 94.77%, 17.32 percentage points higher than the Qwen.[2](#ref-2)
 
+The cost estimate for Qwen depends on the local inference setup. Artificial Analysis reports cost at its current published prices, so its hosted-model figures are not a direct deployment quote for another provider or hardware setup.[2](#ref-2)
 
-This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the earlier $3.09 per million task estimate for the local model setup. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above. [2](#ref-2)
+This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the earlier $3.09 per million task estimate for the local model setup. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above.[2](#ref-2)
 
 ![When2Call accuracy versus estimated cost per million tasks. The star marks the fine-tuned Qwen model.](assets/when2call-cost-accuracy.png)
 
@@ -134,20 +138,11 @@ The table counts distinct completed training runs in the experiment ledger. I gr
 These counts describe training runs, not the 70 full-test evaluations shown in the chart below. The ledger also contains other completed runs outside this table, such as data preparation and model evaluation.
 
 
-The post-training log contains 70 aggregate evaluations on the complete 3,652-example test set. The chart shows the best full-set accuracy seen so far after each evaluation, ordered by its recorded timestamp. It excludes smaller 500-example screens, including the 76.2% pilot result, because they are not directly comparable to the full-set scores.
+I rebuilt this curve from the chronological experiment ledger. It includes 70 completed evaluations, each on all 3,652 test examples. The graph plots the best accuracy reached so far after each full-set evaluation. It is a step plot: the record increased on evaluations 1, 2, 3, 6, 8, 25, 28, 30, 35, 61, 64, and 70, and stayed flat on the other 58. The points are not interpolated between runs. The 76.2% unsupported-capability pilot used only 500 examples, so it is not included.
 
-```mermaid
----
-title: "Best full-test accuracy by evaluation"
----
-xychart-beta
-    x-axis "Full-test evaluation number" [1, 70]
-    y-axis "Best accuracy (%)" 50 --> 75
-    line "Best observed so far" [51.51, 68.35, 69.19, 69.19, 69.19, 69.44, 69.44, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 70.24, 70.24, 70.24, 70.84, 70.84, 71.14, 71.14, 71.14, 71.14, 71.14, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.60, 71.60, 71.60, 73.14, 73.14, 73.14, 73.14, 73.14, 73.14, 74.18]
-```
+![Cumulative best accuracy across 70 chronological evaluations on the complete 3,652-example test set. Red markers show the 12 evaluations that set a new record.](assets/when2call-full-test-accuracy.png)
 
-The full-set experiment sequence began with encoder and fusion baselines. It then moved to Qwen fine-tuning, routing and ensemble variants, and finally synthetic-data continuations. The final synthetic continuation set the full-test record at 74.18%. The 500-example unsupported-capability pilot scored 76.2%, but that result was a screening measurement and did not determine the final full-set score.
-
+The full-set sequence began with an encoder baseline, moved through fusion, Qwen training, and routing experiments, and ended with synthetic-data continuation. It reached 74.18% at evaluation 70. The earlier 76.2% score came from the 500-example screen. It did not set the full-set record.
 
 The synthetic-data phase showed the value and the limits of this process. The unsupported-capability pilot reached 76.2% on a 500-example screen, which justified a larger run under the then-current experiment rule. Other synthetic families did not produce the same signal. The larger experiments used the complete test set, and their best result was 74.18%. This demonstrates why a promising pilot needs a larger, consistently evaluated follow-up.
 
@@ -183,8 +178,79 @@ Finally, the system was better at combining familiar techniques than proposing g
 
 ##### Prompts for synthetic dataset generation
 
-The generator used real When2Call training examples as anchors. It generated new requests around tool availability, missing required arguments, unsupported capabilities, and composed tool sets. A separate label check and structural validation filtered the outputs before training. The full generation prompts and accepted-data definitions are in `post-training/experiments/generate_when2call_synthetic_pilots.py` and the corresponding run records.
+The generator used real training requests and tool schemas as context. The shared instruction and each strategy-specific instruction are shown below. The model returned one new request and structured metadata. A separate judge classified the request using only the request and available tools. Structural checks then verified the target label and tool arguments.
+
+```text
+Action labels:
+- cannot_answer: The request needs a capability that none of the tools provide, and it cannot be answered directly from the request.
+- request_for_info: A tool can do the task, but a required input is missing and cannot be inferred.
+- tool_call: A listed tool is needed and the request gives enough information to use it.
+- direct: The request can be answered without a tool.
+
+Create a genuinely new user request, not a paraphrase or small edit of the source request. Stay close to the source task style and complexity. Keep every available tool schema exactly as provided. Return one request only, with no answer.
+
+Strategy instruction:
+- New tool call: The target action is tool_call. Choose one listed tool. The request must clearly require it and include all facts needed for the required arguments.
+- Missing required information: The target action is request_for_info. Choose one listed tool with a required field that has no default. The request must need that tool, provide the other required facts, and omit one required value that cannot be inferred. Name the omitted field.
+- Unsupported capability: The target action is cannot_answer. Ask for an action that none of the listed tools can perform and that cannot be answered from stable knowledge in the request. Do not ask for a tool-supported task.
+- Composed tools: The target action is tool_call. The available tools combine two source tool sets. Choose one tool and create a new request that needs that tool, distinguishes it from the other tools, and supplies all facts required for its arguments.
+
+Source context:
+{"source_requests": ["<source request>", "<source request>"], "available_tools": ["<unchanged tool schemas>"], "target_action": "<target label>"}
+```
+
+The generator required a structured response with these fields:
+
+```json
+{
+  "request": "A new user request",
+  "action_label": "tool_call | request_for_info | cannot_answer | direct",
+  "selected_tool_name": "A listed tool, if required",
+  "arguments_json": "A JSON object encoded as a string",
+  "missing_required_argument": "The omitted required field, if any",
+  "new_scenario_note": "A short note about what makes the scenario new"
+}
+```
+
+The independent label check hid the requested target action from the judge:
+
+```text
+Classify the required assistant action for this new example. Decide from the request and tools only.
+{"request": "<generated request>", "available_tools": ["<unchanged tool schemas>"]}
+```
 
 ##### Prompts for auto-research loop
 
-The full researcher instructions are in `post-training/auto-research-prompt.md`. They include the task objective, experiment process, data constraints, evaluation requirements, and logging rules.
+The operating prompt changed as the project moved through new experiment families. The version below combines the standing instructions used in the open-ended research phase. It omits stale queue entries and machine-specific commands, but preserves the research and monitoring rules that shaped the loop.
+
+```text
+You are an autonomous AI research engineer. Improve performance on the When2Call benchmark through empirical research. Do not stop after one successful or unsuccessful experiment.
+
+Research loop
+1. Review the latest experiment records, metrics, and unresolved errors.
+2. Propose distinct, falsifiable hypotheses across data, training, models, and inference. Explain why each may help and define a success criterion.
+3. Start with a small number of low-cost, structurally different tests. Expand a direction only when results support it. Do not repeat an experiment with only a different random seed.
+4. Change one relevant factor at a time when practical. Keep other settings fixed. Justify changes to learning rate, batch size, optimizer, weight decay, or epoch count with recorded evidence.
+5. Implement the experiment, verify that the intended process is running, and record its configuration, data, checkpoint, metrics, and outcome.
+6. After a worker finishes, analyze the result and plan the next useful experiment. An empty queue is a request for research planning, not a reason to stop.
+
+Evaluation rules
+- Use clean held-out validation and declared training diagnostics to select checkpoints and methods.
+- Treat the official test set as a black-box evaluator. Report only aggregate accuracy, macro F1, example count, and runtime. Do not inspect or save individual test examples, labels, predictions, correctness, confusion matrices, or error slices.
+- Keep test results separate from candidate selection unless a specific experiment has an explicit test-based continuation rule.
+- Record limitations and evaluation-set differences with each reported result.
+
+Data and execution
+- Generate new examples from training data only. Keep the task format and complexity close to When2Call while testing new scenarios.
+- Validate generated examples for structure and labels before training.
+- Keep API spend within the approved budget and record usage.
+- Run one GPU training or evaluation worker at a time. Keep experiment records durable and resumable.
+
+Monitoring
+- A watchdog checks the declared worker, operating-system process state, research state, and heartbeat every 30 seconds.
+- A separate supervisor restarts the watchdog if it exits or its heartbeat becomes stale.
+- Verify every launch and restart by checking the process, command, and updated log or heartbeat. Record recovery actions.
+- The watchdog recovers execution. The researcher plans experiments. When the queue is empty, the researcher must review results and add the next justified experiment.
+```
+
+This is an edited public version of the working prompt. The original prompt accumulated run-specific instructions as the research progressed.
