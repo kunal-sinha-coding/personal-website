@@ -49,52 +49,42 @@ The main continuation used one epoch per synthetic data family. The training cod
 
 Artificial Analysis evaluates 3,423 When2Call examples. It excludes 229 “ask for more information” examples that it considers ambiguous, and it shuffles the answer choices.[2](#ref-2) The scores below for its decision models use that evaluation. Artificial Analysis publishes accuracy for this benchmark, but not macro F1, so those cells are left blank. Model size is shown only where it is available from the model name or the cited model description.
 
-| Model | Parameters (B) | Accuracy | Macro F1 |
-| --- | ---: | ---: | ---: |
-| Fine-tuned Qwen, synthetic continuation | 1.5 | 77.45% | — |
-| Fine-tuned Qwen, original data only | 1.5 | 70.24% | 52.78% |
-| Elephant 9B | 9 | 94.77% | — |
-| Celeris-1 Decision | — | 83.70% | — |
-| Clef | 27 | 70.96% | — |
-| Clef-Flash | — | 64.36% | — |
-| Clef-Omni | — | 62.05% | — |
-| GLiDE | — | 83.67% | — |
-| Mercury Decide | — | 79.26% | — |
-| d1 | — | 77.42% | — |
-| d1-ultra | — | 92.58% | — |
-| Drex Max | — | 93.98% | — |
-| Drex 1.5 | — | 84.81% | — |
-| Drex 2.0 | — | 86.15% | — |
-| GPT-6 Luna (Decisions) | — | 74.06% | — |
-| Microsoft-Decision-1 | — | 81.92% | — |
-| Decider Flash v1.2 | — | 74.41% | — |
-| Decider v1.1 27B | 27 | 76.48% | — |
-| Decider v1.2 | — | 87.70% | — |
-| SubQ Snap 1.1 | — | 94.57% | — |
-| Jev 1.13 | — | 80.66% | — |
-| Jev 1.14 | — | 80.84% | — |
+| Model | Parameters (B) | Accuracy | Macro F1 | Cost per 1M tasks (USD) |
+| --- | ---: | ---: | ---: | ---: |
+| Fine-tuned Qwen, synthetic continuation | 1.5 | 77.45% | — | 3.09 (estimated) |
+| Fine-tuned Qwen, original data only | 1.5 | 70.24% | 52.78% | — |
+| Elephant 9B | 9 | 94.77% | — | 8.39 |
+| Celeris-1 Decision | — | 83.70% | — | 31.57 |
+| Clef | 27 | 70.96% | — | 199.41 |
+| Clef-Flash | — | 64.36% | — | 31.57 |
+| Clef-Omni | — | 62.05% | — | 123.08 |
+| GLiDE | — | 83.67% | — | 119.02 |
+| Mercury Decide | — | 79.26% | — | 15.20 |
+| d1 | — | 77.42% | — | 15.14 |
+| d1-ultra | — | 92.58% | — | 31.80 |
+| Drex Max | — | 93.98% | — | 23.03 |
+| Drex 1.5 | — | 84.81% | — | 34.47 |
+| Drex 2.0 | — | 86.15% | — | 41.36 |
+| GPT-6 Luna (Decisions) | — | 74.06% | — | 78.87 |
+| Microsoft-Decision-1 | — | 81.92% | — | 30.71 |
+| Decider Flash v1.2 | — | 74.41% | — | 8.23 |
+| Decider v1.1 27B | 27 | 76.48% | — | 16.53 |
+| Decider v1.2 | — | 87.70% | — | 15.14 |
+| SubQ Snap 1.1 | — | 94.57% | — | 30.34 |
+| Jev 1.13 | — | 80.66% | — | 41.53 |
+| Jev 1.14 | — | 80.84% | — | 41.53 |
 
 The Qwen original-data row uses the full 3,652-example test score. The synthetic continuation reached 74.18% on that same full test set. Its 77.45% score above is the later rescore on Artificial Analysis's 3,423-example subset. The full-set and subset scores use different denominators, so the difference is not a direct measure of model improvement. Macro F1 for the full-set Qwen evaluations uses all four labels.
 
 The results support a narrower claim than “small models are always better.” At 1.5B parameters, the fine-tuned Qwen is about 18 times smaller than Clef and the 27B Decider v1.1. It scores 6.49 and 0.97 percentage points higher, respectively, in the comparison reported in the summary. It is also substantially smaller than the roughly 20B GPT-6 Luna model family, while its score is close to the Decision API result. However, larger systems still lead the benchmark. Elephant 9B scores 94.77%, more than 17 points above the fine-tuned Qwen.[2](#ref-2)
 
-Parameter count is an imperfect cost proxy. Actual latency and cost depend on hardware, batching, quantization, and serving implementation. The published table therefore compares accuracy and available model sizes, not operating cost.
+The cost estimate for Qwen depends on the local inference setup. Artificial Analysis reports cost at its current published prices, so its hosted-model figures are not a direct deployment quote for another provider or hardware setup. The chart is a practical cost and accuracy comparison, not a universal ranking of serving costs.[2](#ref-2)
 
-### Accuracy over the experiment sequence
+### Cost and accuracy
 
-The post-training log contains 70 aggregate evaluations on the complete 3,652-example test set. The chart shows the best full-set accuracy seen so far after each evaluation, ordered by its recorded timestamp. It excludes smaller 500-example screens, including the 76.2% pilot result, because they are not directly comparable to the full-set scores.
+This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the earlier $3.09 per million task estimate for the local model setup. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above. [2](#ref-2)
 
-```mermaid
----
-title: "Best full-test accuracy by evaluation"
----
-xychart-beta
-    x-axis "Full-test evaluation number" [1, 70]
-    y-axis "Best accuracy (%)" 50 --> 75
-    line "Best observed so far" [51.51, 68.35, 69.19, 69.19, 69.19, 69.44, 69.44, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 70.24, 70.24, 70.24, 70.84, 70.84, 71.14, 71.14, 71.14, 71.14, 71.14, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.60, 71.60, 71.60, 73.14, 73.14, 73.14, 73.14, 73.14, 73.14, 74.18]
-```
-
-The full-set experiment sequence began with encoder and fusion baselines. It then moved to Qwen fine-tuning, routing and ensemble variants, and finally synthetic-data continuations. The final synthetic continuation set the full-test record at 74.18%. The 500-example unsupported-capability pilot scored 76.2%, but that result was a screening measurement and did not determine the final full-set score.
+![When2Call accuracy versus estimated cost per million tasks. The star marks the fine-tuned Qwen model.](assets/when2call-cost-accuracy.png)
 
 # Part Two: auto research
 
@@ -131,6 +121,38 @@ The watchdog was implemented as a Python process that read the research state, c
 ## Results
 
 The loop made it practical to explore many variants without manually writing each training command or waiting beside the machine. Across the complete test evaluations, performance moved from 51.51% in the first logged evaluation to 74.18% at the best full-set result. That number includes a broad sequence of encoder, Qwen, and synthetic-data work. It should not be read as a controlled measure of the auto-research loop alone. The model, data, and evaluation strategy all changed during the project.
+
+### Experiment families
+
+The table counts distinct completed training runs in the experiment ledger. I grouped runs by their training workflow, so each run is counted once. The counts exclude validation-only screens, evaluation-only runs, queued work, and failed or incomplete runs.
+
+| Experiment family | Completed runs | What I tried |
+| --- | ---: | --- |
+| Initial Qwen SFT and RPO | 7 | Compared supervised fine-tuning and reward-aware preference optimization on the original When2Call data at small model sizes. |
+| Qwen full-data training and continuations | 197 | Tested preference-data sample sizes, source mixtures, synthetic strategies and doses, learning rates, and checkpoint continuations with the Qwen 1.5B workflow. |
+| Glaive and When2Call mixtures | 13 | Added Glaive examples to When2Call training and tested whether this broader mixture improved the decision task. |
+| General dataset continuations | 8 | Continued training on additional datasets and checked whether their distributions transferred to When2Call. |
+| BFCL and When2Call mixture | 1 | Tested a combined training set from BFCL and When2Call. |
+| Learned ensemble stackers | 2 | Trained small learned combiners to combine model predictions. |
+
+These counts describe training runs, not the 70 full-test evaluations shown in the chart below. The ledger also contains other completed runs outside this table, such as data preparation and model evaluation.
+
+### Accuracy over the experiment sequence
+
+The post-training log contains 70 aggregate evaluations on the complete 3,652-example test set. The chart shows the best full-set accuracy seen so far after each evaluation, ordered by its recorded timestamp. It excludes smaller 500-example screens, including the 76.2% pilot result, because they are not directly comparable to the full-set scores.
+
+```mermaid
+---
+title: "Best full-test accuracy by evaluation"
+---
+xychart-beta
+    x-axis "Full-test evaluation number" [1, 70]
+    y-axis "Best accuracy (%)" 50 --> 75
+    line "Best observed so far" [51.51, 68.35, 69.19, 69.19, 69.19, 69.44, 69.44, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 69.47, 70.24, 70.24, 70.24, 70.84, 70.84, 71.14, 71.14, 71.14, 71.14, 71.14, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.55, 71.60, 71.60, 71.60, 73.14, 73.14, 73.14, 73.14, 73.14, 73.14, 74.18]
+```
+
+The full-set experiment sequence began with encoder and fusion baselines. It then moved to Qwen fine-tuning, routing and ensemble variants, and finally synthetic-data continuations. The final synthetic continuation set the full-test record at 74.18%. The 500-example unsupported-capability pilot scored 76.2%, but that result was a screening measurement and did not determine the final full-set score.
+
 
 The synthetic-data phase showed the value and the limits of this process. The unsupported-capability pilot reached 76.2% on a 500-example screen, which justified a larger run under the then-current experiment rule. Other synthetic families did not produce the same signal. The larger experiments used the complete test set, and their best result was 74.18%. This demonstrates why a promising pilot needs a larger, consistently evaluated follow-up.
 
