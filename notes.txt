@@ -958,3 +958,7 @@ Changed the original-data Qwen point label to use the same red as the synthetic-
 Removed the empty third column from the Part Two experiment table. The table now has two properly formatted columns, with its existing row text unchanged.
 
 Correction: The prior commit added this note but did not change the table. This commit applies the two-column formatting fix.
+
+## Format the synthetic dataset generation list
+
+Reformatted the synthetic dataset strategy as a numbered list with nested bullet points and sub-bullet points. The list wording is unchanged.

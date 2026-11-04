@@ -43,27 +43,26 @@ I first tried introducing several existing open datasets to the training mixture
 
 The failure of these datasets pushed me towards generating synthetic data. if we could not find an open-source dataset drawn from the correct distribution, why not create one ourselves? Although we tried various approaches to generating synthetic examples, we eventually landed on the following approach. We use GPT-6 Luna as our dataset generator model.
 1. Select an existing example from the dataset as a "source" example.
-   a. The standard approach was to select uniformly at random.
-   a. Optionally: sort examples from highest to lowest with respect to the number of available tools in the example, then do selections in that order. Intuitively, this metric is likely a proxy for example difficulty. 
+   - The standard approach was to select uniformly at random.
+   - Optionally: sort examples from highest to lowest with respect to the number of available tools in the example, then do selections in that order. Intuitively, this metric is likely a proxy for example difficulty.
 2. Feed the source example into the dataset generator LLM.
-   a. Specifically, we give the LLM the source example, the tool schemas, and the selected tool name.
-   b. There are then two possible paths for generation:
-      i. If the example is labeled `tool_call`:
-         - Generate a new example in the same broad domain as the source, but not paraphrase. 
-         - Generate a second example near-identical to the first but with one modification: omit exactly one required input with no default. The correct action is to ask for missing information.
-      ii. If the example is labeled `cannot_answer`: 
-         - Generate a new example in the same broad domain as the source, but the where the content of the user request is such that none of the tools can handle it. The correct action is to refuse to answer.
-      iii. If not, skip.
-3. Send the generated examples and the tool schemas to a separate verifier LLM. 
-   a. The verifier does not see the intended labels. Instead, the verifier must independently confirm the actions. 
-   b. For a pair, the verifier must additionally confirm that both examples express the same task and differ by only one missing required input. 
-   c. Filter out all examples that the verifier does not assign a high-confidence judgment to.
-4. Have the verifier LLM apply a second round of filtering: 
-   a. For pairs, check that the selected tool, missing required input, and argument objects match the supplied schema. Reject structurally invalid or duplicate requests. 
+   - Specifically, we give the LLM the source example, the tool schemas, and the selected tool name.
+   - There are then two possible paths for generation:
+     - If the example is labeled `tool_call`:
+       - Generate a new example in the same broad domain as the source, but not paraphrase.
+       - Generate a second example near-identical to the first but with one modification: omit exactly one required input with no default. The correct action is to ask for missing information.
+     - If the example is labeled `cannot_answer`:
+       - Generate a new example in the same broad domain as the source, but the where the content of the user request is such that none of the tools can handle it. The correct action is to refuse to answer.
+     - If not, skip.
+3. Send the generated examples and the tool schemas to a separate verifier LLM.
+   - The verifier does not see the intended labels. Instead, the verifier must independently confirm the actions.
+   - For a pair, the verifier must additionally confirm that both examples express the same task and differ by only one missing required input.
+   - Filter out all examples that the verifier does not assign a high-confidence judgment to.
+4. Have the verifier LLM apply a second round of filtering:
+   - For pairs, check that the selected tool, missing required input, and argument objects match the supplied schema. Reject structurally invalid or duplicate requests.
 5. Move all non-filtered rows into the synthetic training set.
 6. Optionally: pick only the most similar synthetic examples.
-   i. Rank all synthetic examples by lexical Jaccard similarity to their corresponding source examples. Then prioritize selecting the examples in order of this rank.
-
+   - Rank all synthetic examples by lexical Jaccard similarity to their corresponding source examples. Then prioritize selecting the examples in order of this rank.
 
 #### Experimental details
 
