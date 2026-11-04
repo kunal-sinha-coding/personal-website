@@ -948,3 +948,7 @@ Changed the two Qwen labels in the Results table and parameter chart to “SFT-Q
 ## Remove Qwen cost estimate from the Results section
 
 Committed the user's remaining Results-section edit, which removes the hosted-cost estimate paragraph and uses the 77.45% filtered score for the synthetic-data row. No other blog text was changed in this commit.
+
+## Match the Qwen chart label colors
+
+Changed the original-data Qwen point label to use the same red as the synthetic-data Qwen label. The plotted point and the rest of the chart are unchanged.
