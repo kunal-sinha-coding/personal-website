@@ -944,3 +944,7 @@ Updated the When2Call results table to report disclosed model parameter counts w
 ## Rename Qwen entries in the parameter chart
 
 Changed the two Qwen labels in the Results table and parameter chart to “SFT-Qwen (original + synthetic data)” and “SFT-Qwen (original data).” Removed the chart legend and placed those names beside their data points, without accuracy values in the labels.
+
+## Remove Qwen cost estimate from the Results section
+
+Committed the user's remaining Results-section edit, which removes the hosted-cost estimate paragraph and uses the 77.45% filtered score for the synthetic-data row. No other blog text was changed in this commit.

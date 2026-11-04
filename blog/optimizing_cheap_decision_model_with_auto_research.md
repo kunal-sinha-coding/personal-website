@@ -111,7 +111,7 @@ Training code and evaluation records are in the [post-training repository](https
 | Jev 1.14 | 80.84% | Not Found |
 | Jev 1.13 | 80.66% | Not Found |
 | Mercury Decide | 79.26% | Not Found |
-| **SFT-Qwen (original + synthetic data)** | **77.45%** filtered / 74.12% full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
+| **SFT-Qwen (original + synthetic data)** | **77.45%** | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | d1 | 77.42% | Not Found |
 | Decider v1.1 27B | 76.48% | [27B](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b) |
 | Decider Flash v1.2 | 74.41% | [4B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
@@ -120,8 +120,6 @@ Training code and evaluation records are in the [post-training repository](https
 | **SFT-Qwen (original data)** | **70.24%** full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | Clef-Flash | 64.36% | [9B](https://blog.cloudflare.com/clef-decision-models/) |
 | Clef-Omni | 62.05% | [30B total (3B active)](https://developers.cloudflare.com/workers-ai/models/clef-omni/) |
-
-The Qwen hosted-cost estimate is **$76.03 per million tasks**: the 3,423 scored prompts averaged 759.28 input tokens, with one output token budgeted for the label, priced at Together’s listed [$0.10 per million input and output tokens](https://pricepertoken.com/pricing-page/model/qwen-qwen2.5-1.5b-instruct). This uses our prompt and hosted base-model pricing, excluding fine-tuning and hosting overhead. It is not directly comparable with Artificial Analysis (AA)’s Decider estimate of $16.53 per million tasks: AA uses its own evaluation prompts and input-only billing for decision models. The public figures do not give enough detail to separate the effect of prompt length from provider rates.
 
 The main takeaways are:
 
