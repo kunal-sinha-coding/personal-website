@@ -952,3 +952,7 @@ Committed the user's remaining Results-section edit, which removes the hosted-co
 ## Match the Qwen chart label colors
 
 Changed the original-data Qwen point label to use the same red as the synthetic-data Qwen label. The plotted point and the rest of the chart are unchanged.
+
+## Fix Part Two experiment table formatting
+
+Removed the empty third column from the Part Two experiment table. The table now has two properly formatted columns, with its existing row text unchanged.
