@@ -936,3 +936,7 @@ Removed the unsupported $3.09 per million task estimate. Used logged full-test e
 Commit: Estimate Qwen cost from Artificial Analysis Qwen fine-tunes
 
 Corrected the comparison basis after review. Removed the hardware-runtime estimate and instead used Artificial Analysis costs for decision models with documented Qwen backbones. The closest-size comparisons are Elephant 9B at $8.39 and Clef-Flash 9B at $31.57 per million tasks. Used the higher 9B cost as a conservative estimate for the 1.5B fine-tune, without assuming linear parameter scaling. Added citations for the Qwen model lineage, updated the table and cost chart, and removed the prior cost estimate.
+
+## Replace cost comparison with parameter-size analysis
+
+Updated the When2Call results table to report disclosed model parameter counts with source links, and marked unavailable counts as “Not Found.” Replaced the cost-versus-accuracy chart with a parameter-count-versus-accuracy chart that includes only models with disclosed sizes. Added result takeaways about parameter coverage and the synthetic-data gain. Removed the old chart asset. Preserved the existing takeaway wording after restoring the prior Elephant 9B sentence.

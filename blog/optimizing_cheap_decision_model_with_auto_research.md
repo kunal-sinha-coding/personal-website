@@ -8,15 +8,17 @@ I was able to obtain these results more quickly after **building an auto-researc
 
 #### Motivation
 
-A tool-using agent must decide on each turn whether to answer, call a tool, ask for missing information, or say that it cannot help with the available tools. This is a frequent decision, so even a small per-turn cost can add up across a long agent run.
+Throughout multiple steps of the Agent loop, the Agent must decide whether to answer the user's request, call a tool, ask for missing information, or refuse the request. This decision occurs frequently enough that even a small per-turn cost can add up across a long horizon. As such, offloading this decision to a cheap model is an attractive option. This blog post focuses on squeezing the best performance out of one of the cheapest models.
 
-A small model is an attractive option for this task. The output has only a few valid choices, so the model does not need to generate a long response. The same constraint also makes training data easier to label and evaluation easier to automate. These properties make tool-use decisions a useful target for task-specific fine-tuning.
+Supervised Fine-tuning (SFT) on open-source models is often used to match the performance of frontier models on specialized tasks at cheaper cost. SFT is especially attractive for decision models due to the ease of obtaining and learning from supervised labels here. The output only has a few discrete valid options. As such, producing the labels does not require as much effort, either in the form of labor cost from human data labelers or compute costs from synthetic dataset generation.
 
 #### Dataset
 
-When2Call measures whether a model chooses the right action, rather than whether it can produce a valid tool call once it has decided to call one. Each example describes a conversation and available tools. The model chooses among four responses: answer directly, call a tool, ask for more information, or say that it cannot answer with the available tools.[1](#ref-1)
+**Original Dataset:**
 
-A simplified example is:
+When2Call measures whether a model selects the correct action when deciding whether or not to invoke tool calls. Each example describes a conversation and available tools. The model chooses among four responses: answer directly (`direct`), call a tool (`tool_call`), ask for more information (`request_info`), or say that it cannot answer with the available tools (`cannot_answer`).[1](#ref-1)
+
+A simplified example is as follows:
 
 ```text
 User: What is the sum of 133 and 34?
@@ -31,48 +33,95 @@ D. Say that the assistant cannot perform calculations.
 Correct choice: A
 ```
 
-The original When2Call training data was enough to fit its own distribution. On a held-out split from that source, the model reached above 95% accuracy on both training and validation. The remaining errors on the external test set therefore appeared to be a data-distribution problem, rather than a sign that the training objective or inference procedure needed a major redesign.
+We trained on the 9,000-example `train_pref` split of the [When2Call dataset](https://huggingface.co/datasets/nvidia/When2Call) and evaluated on its 3,652-example `test/mcq` split. To match the [Artificial Analysis evaluation](https://artificialanalysis.ai/evaluations/when2call), we excluded the 229 ambiguous `request_for_info` examples, leaving 3,423 scored examples.
 
-I tried adding several existing open datasets to the training mixture. They did not improve external test performance. Their examples differed from When2Call in format and decision boundaries, so they did not provide the kind of additional signal the model needed. This led me to generate new examples that retained When2Call's task format while varying the underlying scenarios.
+**Synthetic dataset**
 
-The synthetic data covered four strategies: requests that require a tool call with a new request and existing tool set, requests that omit a required argument, requests for capabilities that no available tool can provide, and requests over composed tool sets. I anchored generation in real training prompts and tool schemas, then asked a model to produce a new scenario with a specified correct action. A separate label check and structural validation filtered the generated candidates. The prompts are included in the appendix.
+When training on the original When2Call training dataset, our model quickly learned the data distribution. We split out the `train_pref` data into training data and a smaller held-out validation set, and after a single epoch of training, we achieved above 95% accuracy on both splits. However, the accuracy on the actual test data was lower at approximately 70%. These results together suggested that although the training setup was close to optimal, the underlying data came from a different distribution than the test set.
 
-#### Setup
+I first tried introducing several existing open datasets to the training mixture. They did not improve test performance. Their examples differed from When2Call in format and decision boundaries, and therefore they did not provide the kind of additional signal the model needed. The open datasets we tested included [Glaive](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2), [BFCL](https://gorilla.cs.berkeley.edu/leaderboard), [APIGen-MT](https://huggingface.co/datasets/Salesforce/APIGen-MT-5k), and [ToolACE](https://huggingface.co/datasets/Team-ACE/ToolACE). None improved the full When2Call test score when mixed into training.
 
-I first fine-tuned `Qwen2.5-1.5B-Instruct` on the original When2Call preference data. I then continued from the selected original-data checkpoint using only the synthetic examples. This isolated the effect of the new data from replaying the original training set.
+The failure of these datasets pushed me towards generating synthetic data. if we could not find an open-source dataset drawn from the correct distribution, why not create one ourselves? Although we tried various approaches to generating synthetic examples, we eventually landed on the following approach. We use GPT-6 Luna as our dataset generator model.
+1. Select an existing example from the dataset as a "source" example.
+   a. The standard approach was to select uniformly at random.
+   a. Optionally: sort examples from highest to lowest with respect to the number of available tools in the example, then do selections in that order. Intuitively, this metric is likely a proxy for example difficulty. 
+2. Feed the source example into the dataset generator LLM.
+   a. Specifically, we give the LLM the source example, the tool schemas, and the selected tool name.
+   b. There are then two possible paths for generation:
+      i. If the example is labeled `tool_call`:
+         - Generate a new example in the same broad domain as the source, but not paraphrase. 
+         - Generate a second example near-identical to the first but with one modification: omit exactly one required input with no default. The correct action is to ask for missing information.
+      ii. If the example is labeled `cannot_answer`: 
+         - Generate a new example in the same broad domain as the source, but the where the content of the user request is such that none of the tools can handle it. The correct action is to refuse to answer.
+      iii. If not, skip.
+3. Send the generated examples and the tool schemas to a separate verifier LLM. 
+   a. The verifier does not see the intended labels. Instead, the verifier must independently confirm the actions. 
+   b. For a pair, the verifier must additionally confirm that both examples express the same task and differ by only one missing required input. 
+   c. Filter out all examples that the verifier does not assign a high-confidence judgment to.
+4. Have the verifier LLM apply a second round of filtering: 
+   a. For pairs, check that the selected tool, missing required input, and argument objects match the supplied schema. Reject structurally invalid or duplicate requests. 
+5. Move all non-filtered rows into the synthetic training set.
+6. Optionally: pick only the most similar synthetic examples.
+   i. Rank all synthetic examples by lexical Jaccard similarity to their corresponding source examples. Then prioritize selecting the examples in order of this rank.
 
-The main continuation used one epoch per synthetic data family. The training code used supervised fine-tuning with AdamW, a learning rate of 2 × 10⁻⁵, weight decay of 0.01, batch size 1, sequence length 4,096, and LoRA rank 16. The fixed clean-validation sample contained up to 500 examples. Synthetic training diagnostics also used up to 500 rows. Later full-test evaluations contained 3,652 examples. The training setup and evaluation records are in the post-training repository.
+
+#### Experimental details
+
+The highest performing experiment involved multiple epochs of fine-tuning on different mixes of data.
+1. Train for 2 epochs on all 9,000 examples in the When2Call `train_pref` split.
+2. Train for 1 epoch on 900 sampled When2Call `train_pref` examples and 450 synthetic examples.
+   a. During synthetic dataset generation, the source examples were selected uniformly at random and the synthetic examples were prioritized by similarity.
+3. Train for 1 epoch on a new pool of 994 synthetic examples.
+   a. During synthetic dataset generation, the source examples were selected according to number of tool, and the synthetic examples were not prioritized by similarity.
+4. Train for 1 epoch on another fresh pool of 983 synthetic examples.
+   a. Synthetic dataset generation process was the same as above.
+
+The original-data baseline and synthetic continuation used these hyperparameters:
+
+| Setting | Value |
+| --- | --- |
+| Base model | Qwen2.5-1.5B-Instruct |
+| Original-data baseline | 1 epoch on When2Call preference data |
+| Best synthetic continuation | 1 epoch on 983 fresh tool-rich synthetic examples |
+| Starting checkpoint | Epoch 1 of an earlier synthetic-only tool-rich run |
+| Optimizer | AdamW |
+| Learning rate | 2 × 10⁻⁵ for original-data training; 5 × 10⁻⁶ for the best continuation |
+| Weight decay | 0.01 |
+| Batch size | 1 |
+| Maximum sequence length | 4,096 tokens |
+| LoRA rank | 16 |
+| Clean validation sample | Up to 500 examples |
+
+Training code and evaluation records are in the [post-training repository](https://github.com/kunal-sinha-coding/post-training).
 
 #### Results
 
-Artificial Analysis evaluates 3,423 When2Call examples. It excludes 229 “ask for more information” examples that it considers ambiguous, and it shuffles the answer choices.[2](#ref-2) The scores below for its decision models use that evaluation. Artificial Analysis publishes accuracy for this benchmark, but not macro F1, so those cells are left blank. Model size is shown only where it is available from the model name or the cited model description.
+| Model | Accuracy | Parameters |
+| --- | ---: | ---: |
+| Elephant 9B | 94.77% | [9B](https://www.baseten.co/library/elephant-1/) |
+| SubQ Snap 1.1 | 94.57% | Not Found |
+| Drex Max | 93.98% | [27B](https://huggingface.co/nace-ai/drex-max-v1) |
+| d1-ultra | 92.58% | Not Found |
+| Decider v1.2 | 87.70% | [27B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
+| Drex 2.0 | 86.15% | [35B total](https://huggingface.co/nace-ai/drex-max-v1); [3B active](https://console.nace.ai/docs/drex/reference/models) |
+| Drex 1.5 | 84.81% | [9B](https://huggingface.co/nace-ai/drex-v1.5) |
+| Celeris-1 Decision | 83.70% | Not Found |
+| GLiDE | 83.67% | Not Found |
+| Microsoft-Decision-1 | 81.92% | [9B](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/) |
+| Jev 1.14 | 80.84% | Not Found |
+| Jev 1.13 | 80.66% | Not Found |
+| Mercury Decide | 79.26% | Not Found |
+| **Fine-tuned Qwen, synthetic continuation** | **77.45%** filtered / 74.12% full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
+| d1 | 77.42% | Not Found |
+| Decider v1.1 27B | 76.48% | [27B](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b) |
+| Decider Flash v1.2 | 74.41% | [4B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
+| GPT-6 Luna (Decisions) | 74.06% | Not Found |
+| Clef | 70.96% | [27B](https://blog.cloudflare.com/clef-decision-models/) |
+| **Fine-tuned Qwen, original data only** | **70.24%** full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
+| Clef-Flash | 64.36% | [9B](https://blog.cloudflare.com/clef-decision-models/) |
+| Clef-Omni | 62.05% | [30B total (3B active)](https://developers.cloudflare.com/workers-ai/models/clef-omni/) |
 
-| Model | Parameters (B) | Accuracy | Cost per 1M tasks (USD) |
-| --- | ---: | ---: | ---: |
-| Elephant 9B | 9 | 94.77% | 8.39 |
-| SubQ Snap 1.1 | — | 94.57% | 30.34 |
-| Drex Max | — | 93.98% | 23.03 |
-| d1-ultra | — | 92.58% | 31.80 |
-| Decider v1.2 | — | 87.70% | 15.14 |
-| Drex 2.0 | — | 86.15% | 41.36 |
-| Drex 1.5 | — | 84.81% | 34.47 |
-| Celeris-1 Decision | — | 83.70% | 31.57 |
-| GLiDE | — | 83.67% | 119.02 |
-| Microsoft-Decision-1 | — | 81.92% | 30.71 |
-| Jev 1.14 | — | 80.84% | 41.53 |
-| Jev 1.13 | — | 80.66% | 41.53 |
-| Mercury Decide | — | 79.26% | 15.20 |
-| **Fine-tuned Qwen, synthetic continuation** | **1.5** | **77.45%** | **31.57 (estimated)** |
-| d1 | — | 77.42% | 15.14 |
-| Decider v1.1 27B | 27 | 76.48% | 16.53 |
-| Decider Flash v1.2 | — | 74.41% | 8.23 |
-| GPT-6 Luna (Decisions) | — | 74.06% | 78.87 |
-| Clef | 27 | 70.96% | 199.41 |
-| **Fine-tuned Qwen, original data only** | **1.5** | **70.24%** | **—** |
-| Clef-Flash | — | 64.36% | 31.57 |
-| Clef-Omni | — | 62.05% | 123.08 |
-
-The Qwen original-data row uses the full 3,652-example test score. The synthetic continuation reached 74.18% on that same full test set. Its 77.45% score above is the later rescore on Artificial Analysis's 3,423-example subset. The full-set and subset scores use different denominators, so the difference is not a direct measure of model improvement. Macro F1 for the full-set Qwen evaluations uses all four labels.
+The Qwen hosted-cost estimate is **$76.03 per million tasks**: the 3,423 scored prompts averaged 759.28 input tokens, with one output token budgeted for the label, priced at Together’s listed [$0.10 per million input and output tokens](https://pricepertoken.com/pricing-page/model/qwen-qwen2.5-1.5b-instruct). This uses our prompt and hosted base-model pricing, excluding fine-tuning and hosting overhead. It is not directly comparable with Artificial Analysis (AA)’s Decider estimate of $16.53 per million tasks: AA uses its own evaluation prompts and input-only billing for decision models. The public figures do not give enough detail to separate the effect of prompt length from provider rates.
 
 The main takeaways are:
 
@@ -80,14 +129,12 @@ The main takeaways are:
   - It is 18 times smaller than Clef (27B), but its accuracy is higher by 6.49 percentage points (77.45% versus 70.96%).
   - It is an order of magnitude smaller than GPT-6 Luna Decisions, but its accuracy is higher by 3.39 percentage points (77.45% versus 74.06%).
   - It is 18 times smaller than Perplexity's Decider v1.1 (27B), but its accuracy is higher by 0.97 percentage points (77.45% versus 76.48%).
-- Training on the original When2Call data alone reached 70.24% accuracy on the full test set. Continuing training on synthetic data raised accuracy to 74.18%, a gain of 3.94 percentage points on the same 3,652 examples. The 77.45% result is the later score on Artificial Analysis's smaller 3,423-example subset.
 - Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
+- The addition of synthetic training data boosts accuracy by 7.21 percentage points (77.45% versus 70.24%).
 
-Artificial Analysis includes several decision models fine-tuned from Qwen, including Elephant 9B, Clef-Flash 9B, Clef 27B, and Perplexity Decider v1.1 27B.[4](#ref-4) Their listed costs vary widely, from $8.39 to $199.41 per million tasks.[2](#ref-2) For a conservative estimate, I use the higher cost of the two 9B Qwen-based models, Clef-Flash at $31.57 per million tasks. This keeps the estimate anchored to the closest model size in the comparison and does not assume that the 1.5B model's cost falls in direct proportion to its parameter count. The actual cost will depend on the serving system and model implementation.
+The chart below compares accuracy with published model size, includes only entries with disclosed parameter counts. The logarithmic horizontal axis shows total parameters; active parameter counts for the two mixture-of-experts models are noted in the table. The star marks our synthetic-continuation model and the diamond marks our original-data model.
 
-This chart compares When2Call accuracy with estimated cost per million tasks. The hosted-model points use Artificial Analysis estimates. The Qwen point uses the conservative estimate based on the 9B Qwen fine-tunes. The horizontal axis is logarithmic because the costs span a wide range. The star marks our fine-tuned model. The other points are the decision models in the table above.[2](#ref-2)
-
-![When2Call accuracy versus estimated cost per million tasks. The star marks the fine-tuned Qwen model.](assets/when2call-cost-accuracy.png)
+![When2Call accuracy versus disclosed parameter count. Only models with a published size are plotted. The Qwen synthetic-continuation score uses the filtered test set; the original-data score uses the full test set.](assets/when2call-parameters-accuracy.png)
 
 ### Part Two: auto-research
 
@@ -128,13 +175,13 @@ The loop made it practical to explore many variants without manually writing eac
 
 I counted one experiment as a distinct candidate configuration or inference policy with a completed result. I deduplicated repeated records by experiment ID. I excluded validation and test confirmation screens, data-generation and merge jobs, and support records. These counts describe candidate configurations, not total run events. The ledger has no family field, so I grouped each candidate by the method it tested.
 
-| Experiment family | Experiments | What I tried |
-| --- | ---: | --- |
-| Learned classifiers and ranking models | 148 | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |
-| Qwen supervised fine-tuning and data mixtures | 231 | Compared training objectives and model sizes, then varied real and synthetic data sources, mixture ratios, data amounts, learning rates, and checkpoint continuations. |
-| Inference fusion, routing, and ensembles | 80 | Combined model predictions with fixed and adaptive fusion, voting, routing rules, and learned stackers. |
-| Retrieval-augmented policies | 56 | Tested dynamic retrieval and similarity-gated retrieval policies for When2Call decisions. |
-| **Total** | **515** | **Distinct completed candidate configurations.** |
+| Experiment family | What I tried |  |
+| --- | --- |  |
+| Learned classifiers and ranking models | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |  |
+| Qwen supervised fine-tuning and data mixtures | Compared training objectives and model sizes, then varied real and synthetic data sources, mixture ratios, data amounts, learning rates, and checkpoint continuations. |  |
+| Inference fusion, routing, and ensembles | Combined model predictions with fixed and adaptive fusion, voting, routing rules, and learned stackers. |  |
+| Retrieval-augmented policies | Tested dynamic retrieval and similarity-gated retrieval policies for When2Call decisions. |  |
+| **Total** | **Distinct completed candidate configurations.** |  |
 
 The full ledger has 809 distinct IDs whose latest status is completed. The remaining 294 are confirmation or evaluation screens, data-generation or merge jobs, and support records. The graph below has a narrower scope: it shows 70 completed evaluations on the full test set, not 70 independent methods.
 
