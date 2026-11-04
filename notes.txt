@@ -940,3 +940,7 @@ Corrected the comparison basis after review. Removed the hardware-runtime estima
 ## Replace cost comparison with parameter-size analysis
 
 Updated the When2Call results table to report disclosed model parameter counts with source links, and marked unavailable counts as “Not Found.” Replaced the cost-versus-accuracy chart with a parameter-count-versus-accuracy chart that includes only models with disclosed sizes. Added result takeaways about parameter coverage and the synthetic-data gain. Removed the old chart asset. Preserved the existing takeaway wording after restoring the prior Elephant 9B sentence.
+
+## Rename Qwen entries in the parameter chart
+
+Changed the two Qwen labels in the Results table and parameter chart to “SFT-Qwen (original + synthetic data)” and “SFT-Qwen (original data).” Removed the chart legend and placed those names beside their data points, without accuracy values in the labels.

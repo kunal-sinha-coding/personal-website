@@ -111,13 +111,13 @@ Training code and evaluation records are in the [post-training repository](https
 | Jev 1.14 | 80.84% | Not Found |
 | Jev 1.13 | 80.66% | Not Found |
 | Mercury Decide | 79.26% | Not Found |
-| **Fine-tuned Qwen, synthetic continuation** | **77.45%** filtered / 74.12% full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
+| **SFT-Qwen (original + synthetic data)** | **77.45%** filtered / 74.12% full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | d1 | 77.42% | Not Found |
 | Decider v1.1 27B | 76.48% | [27B](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b) |
 | Decider Flash v1.2 | 74.41% | [4B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
 | GPT-6 Luna (Decisions) | 74.06% | Not Found |
 | Clef | 70.96% | [27B](https://blog.cloudflare.com/clef-decision-models/) |
-| **Fine-tuned Qwen, original data only** | **70.24%** full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
+| **SFT-Qwen (original data)** | **70.24%** full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | Clef-Flash | 64.36% | [9B](https://blog.cloudflare.com/clef-decision-models/) |
 | Clef-Omni | 62.05% | [30B total (3B active)](https://developers.cloudflare.com/workers-ai/models/clef-omni/) |
 
