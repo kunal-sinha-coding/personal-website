@@ -956,3 +956,5 @@ Changed the original-data Qwen point label to use the same red as the synthetic-
 ## Fix Part Two experiment table formatting
 
 Removed the empty third column from the Part Two experiment table. The table now has two properly formatted columns, with its existing row text unchanged.
+
+Correction: The prior commit added this note but did not change the table. This commit applies the two-column formatting fix.

@@ -173,13 +173,13 @@ The loop made it practical to explore many variants without manually writing eac
 
 I counted one experiment as a distinct candidate configuration or inference policy with a completed result. I deduplicated repeated records by experiment ID. I excluded validation and test confirmation screens, data-generation and merge jobs, and support records. These counts describe candidate configurations, not total run events. The ledger has no family field, so I grouped each candidate by the method it tested.
 
-| Experiment family | What I tried |  |
-| --- | --- |  |
-| Learned classifiers and ranking models | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |  |
-| Qwen supervised fine-tuning and data mixtures | Compared training objectives and model sizes, then varied real and synthetic data sources, mixture ratios, data amounts, learning rates, and checkpoint continuations. |  |
-| Inference fusion, routing, and ensembles | Combined model predictions with fixed and adaptive fusion, voting, routing rules, and learned stackers. |  |
-| Retrieval-augmented policies | Tested dynamic retrieval and similarity-gated retrieval policies for When2Call decisions. |  |
-| **Total** | **Distinct completed candidate configurations.** |  |
+| Experiment family | What I tried |
+| --- | --- |
+| Learned classifiers and ranking models | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |
+| Qwen supervised fine-tuning and data mixtures | Compared training objectives and model sizes, then varied real and synthetic data sources, mixture ratios, data amounts, learning rates, and checkpoint continuations. |
+| Inference fusion, routing, and ensembles | Combined model predictions with fixed and adaptive fusion, voting, routing rules, and learned stackers. |
+| Retrieval-augmented policies | Tested dynamic retrieval and similarity-gated retrieval policies for When2Call decisions. |
+| **Total** | **Distinct completed candidate configurations.** |
 
 The full ledger has 809 distinct IDs whose latest status is completed. The remaining 294 are confirmation or evaluation screens, data-generation or merge jobs, and support records. The graph below has a narrower scope: it shows 70 completed evaluations on the full test set, not 70 independent methods.
 
