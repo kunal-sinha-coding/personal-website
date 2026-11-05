@@ -116,7 +116,7 @@ Our methods are listed in bold in the table below.
 | Decider Flash v1.2 | 74.41% | [4B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
 | GPT-6 Luna (Decisions) | 74.06% | -- |
 | Clef | 70.96% | [27B](https://blog.cloudflare.com/clef-decision-models/) |
-| **SFT-Qwen (original data)** | **72.24%** full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
+| **SFT-Qwen (original data)** | **72.24%** | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | Clef-Flash | 64.36% | [9B](https://blog.cloudflare.com/clef-decision-models/) |
 | Clef-Omni | 62.05% | [30B total (3B active)](https://developers.cloudflare.com/workers-ai/models/clef-omni/) |
 
@@ -127,7 +127,7 @@ The main takeaways are:
   - It is an **order of magnitude smaller than GPT-6 Luna Decisions**, but its **accuracy is higher by 3.39 percentage points** (77.45% versus 74.06%).
   - It is **18 times smaller than Perplexity's Decider v1.1** (27B), but its **accuracy is higher by 0.97 percentage points** (77.45% versus 76.48%).
 - Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
-- The addition of **synthetic training data boosts accuracy by 5.21 percentage points** (77.45% versus 72.24%).
+- The addition of synthetic training data boosts accuracy by 5.21 percentage points (77.45% versus 72.24%).
 
 The chart below compares accuracy with published model size, includes only entries with disclosed parameter counts. The logarithmic horizontal axis shows total parameters; active parameter counts for the two mixture-of-experts models are noted in the table. The star marks our synthetic-continuation model and the diamond marks our original-data model.
 
