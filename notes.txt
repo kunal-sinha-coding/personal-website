@@ -1028,3 +1028,7 @@ Replaced the edited public research prompt with the complete 648 line auto-resea
 Commit name: Rename the decision model blog post.
 
 Changed the title to Building a cheap decision model with auto-research in the article heading, browser title, Open Graph title, Twitter title, and blog listing. Kept the existing URL. Validated the listing JSON and all four HTML title occurrences. Existing pending article body edits remain uncommitted.
+
+Commit name: Use collective wording in two blog descriptions.
+
+Committed the user's pending article edits that change I first tried to We first tried in the dataset discussion and I encountered to we encountered in the watchdog discussion. These were the only remaining changes across the three repositories.
