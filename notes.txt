@@ -966,3 +966,7 @@ Reformatted the synthetic dataset strategy as a numbered list with nested bullet
 Commit: Preserve current blog post edits
 
 Committed the existing local edits to the auto-research blog post and added its companion notes file. This publishes the user's in-progress draft changes before applying the separately requested bracketed editorial feedback.
+
+Commit: Address auto-research post feedback
+
+Replaced the Bitter Lesson link placeholder with a concise statement and Sutton's source link. Expanded the implementation section with the documented MacBook Pro, Codex Suite CLI, tmux, persistent researcher, experiment worker, prompt requirements, and watchdog and supervisor intervals. These edits address the bracketed feedback and make the method more reproducible without changing the reported results.
