@@ -983,3 +983,8 @@ Replaced the GPU details placeholder with a compact table transcribing the provi
 Commit name: Require task completion and persistent blocker recovery.
 
 Updated and synchronized AGENTS.md across post-training, skills, and personal-website. The instructions now require completion through implementation, verification, and delivery, continued diagnosis and alternative attempts after failures, prompt blocker reports, and continued independent work. An external blocker permits stopping only when progress requires specific input, access, or an external change after reasonable alternatives fail. This implements the user's instruction to persist until the full task is complete.
+
+
+Commit name: Label every record evaluation in the accuracy chart.
+
+Recovered the original plotting command from the November 2 Codex session after reviewing the unfinished November 5 chart request. Rebuilt the full test accuracy chart from the same 70 chronological ledger records. Every one of the 12 new maxima now shows its evaluation number and accuracy with staggered labels. Added an aggregate CSV snapshot and plotting script so the figure can be reproduced without session history or the training repository. Verified the record indices, full test size of 3652, and rendered label bounds and overlaps. The existing early gain of 17.94 percentage points corresponds to evaluation 6. Existing article draft edits were left untouched.
