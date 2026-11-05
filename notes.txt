@@ -974,3 +974,7 @@ Replaced the Bitter Lesson link placeholder with a concise statement and Sutton'
 Commit: Expand auto-research implementation details
 
 Reorganized the implementation section around the researcher prompt's research loop, evaluation, data and execution, and monitoring sections. Added the concrete project state, experiment, research, leaderboard, results, heartbeat, and watchdog log files. Explained the watchdog's process and heartbeat checks, queue advancement, Codex planning handoff, and the hard coded handoff message. Documented the supervisor and higher-level launcher, and corrected the earlier implication that recovery used tmux to restart or message the researcher.
+
+Commit: Add GPU environment table to auto-research post
+
+Replaced the GPU details placeholder with a compact table transcribing the provided pod specifications: RTX 2000 Ada GPU, six AMD EPYC 7352 vCPUs, 31 GB memory, and 50 GB container disk. No other blog content was changed.
