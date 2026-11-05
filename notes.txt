@@ -1008,3 +1008,7 @@ The user still saw evaluation prefixes after the chart label update. Downloaded 
 Commit name: Refine blog takeaways and research learnings.
 
 Committed the user's latest blog edits. Added emphasis to the model size and accuracy comparisons and the synthetic data gain. Replaced the Learnings section with four focused points about manual intervention, exploration and exploitation, context loss, and the effect of continuous experimentation on work. This publishes the requested article wording without additional editorial changes.
+
+Commit name: Clarify method highlighting and missing parameter counts.
+
+Replaced Not Found with -- in the model comparison table. Added a sentence directly above the table stating that our methods are listed in bold. These are the two wording changes requested by the user.

@@ -93,26 +93,28 @@ Training code and evaluation records are in the [post-training repository](https
 
 #### Results
 
+Our methods are listed in bold in the table below.
+
 | Model | Accuracy | Parameters |
 | --- | ---: | ---: |
 | [Elephant 9B](https://labs.baseten.co/articles/mammoth-1-and-elephant-1-frontier-decision-models) | 94.77% | [9B](https://www.baseten.co/library/elephant-1/) |
-| SubQ Snap 1.1 | 94.57% | Not Found |
+| SubQ Snap 1.1 | 94.57% | -- |
 | Drex Max | 93.98% | [27B](https://huggingface.co/nace-ai/drex-max-v1) |
-| d1-ultra | 92.58% | Not Found |
+| d1-ultra | 92.58% | -- |
 | Decider v1.2 | 87.70% | [27B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
 | Drex 2.0 | 86.15% | [35B total](https://huggingface.co/nace-ai/drex-max-v1); [3B active](https://console.nace.ai/docs/drex/reference/models) |
 | Drex 1.5 | 84.81% | [9B](https://huggingface.co/nace-ai/drex-v1.5) |
-| Celeris-1 Decision | 83.70% | Not Found |
-| GLiDE | 83.67% | Not Found |
+| Celeris-1 Decision | 83.70% | -- |
+| GLiDE | 83.67% | -- |
 | Microsoft-Decision-1 | 81.92% | [9B](https://commandline.microsoft.com/microsoft-decision-1-model-foundry/) |
-| Jev 1.14 | 80.84% | Not Found |
-| Jev 1.13 | 80.66% | Not Found |
-| Mercury Decide | 79.26% | Not Found |
+| Jev 1.14 | 80.84% | -- |
+| Jev 1.13 | 80.66% | -- |
+| Mercury Decide | 79.26% | -- |
 | **SFT-Qwen (original + synthetic data)** | **77.45%** | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
-| d1 | 77.42% | Not Found |
+| d1 | 77.42% | -- |
 | Decider v1.1 27B | 76.48% | [27B](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b) |
 | Decider Flash v1.2 | 74.41% | [4B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
-| GPT-6 Luna (Decisions) | 74.06% | Not Found |
+| GPT-6 Luna (Decisions) | 74.06% | -- |
 | Clef | 70.96% | [27B](https://blog.cloudflare.com/clef-decision-models/) |
 | **SFT-Qwen (original data)** | **70.24%** full | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | Clef-Flash | 64.36% | [9B](https://blog.cloudflare.com/clef-decision-models/) |
