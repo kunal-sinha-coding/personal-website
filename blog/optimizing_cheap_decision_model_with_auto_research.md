@@ -6,11 +6,9 @@ I was able to obtain these results more quickly after **building an auto-researc
 
 ### Part One: training a decision model
 
-#### Motivation
-
 Throughout multiple steps of the Agent loop, the Agent must decide whether to answer the user's request, call a tool, ask for missing information, or refuse the request. This decision occurs frequently enough that even a small per-turn cost can add up across a long horizon. As such, offloading this decision to a cheap model is an attractive option. This blog post focuses on squeezing the best performance out of one of the cheapest models.
 
-Supervised Fine-tuning (SFT) on open-source models is often used to match the performance of frontier models on specialized tasks at cheaper cost. SFT is especially attractive for decision models due to the ease of obtaining and learning from supervised labels here. The output only has a few discrete valid options. As such, producing the labels does not require as much effort, either in the form of labor cost from human data labelers or compute costs from synthetic dataset generation.
+Supervised Fine-tuning (SFT) on open-source models is a standard approach to match the performance of frontier models on specialized tasks at cheaper cost. SFT is especially attractive for decision models due to the ease of obtaining and learning from supervised labels here. The output only has a few discrete valid options. As such, producing the labels does not require as much effort, either in the form of labor cost from human data labelers or compute costs from synthetic dataset generation.
 
 #### Dataset
 
@@ -39,10 +37,10 @@ We trained on the 9,000-example `train_pref` split of the [When2Call dataset](ht
 
 When training on the original When2Call training dataset, our model quickly learned the data distribution. We split out the `train_pref` data into training data and a smaller held-out validation set, and after a single epoch of training, we achieved above 95% accuracy on both splits. However, the accuracy on the actual test data was lower at approximately 70%. These results together suggested that although the training setup was close to optimal, the underlying data came from a different distribution than the test set.
 
-I first tried introducing several existing open datasets to the training mixture. They did not improve test performance. Their examples differed from When2Call in format and decision boundaries, and therefore they did not provide the kind of additional signal the model needed. The open datasets we tested included [Glaive](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2), [BFCL](https://gorilla.cs.berkeley.edu/leaderboard), [APIGen-MT](https://huggingface.co/datasets/Salesforce/APIGen-MT-5k), and [ToolACE](https://huggingface.co/datasets/Team-ACE/ToolACE). None improved the full When2Call test score when mixed into training.
+I first tried introducing several existing open datasets to the training mixture. They did not improve test performance. Their examples differed from When2Call in format and decision boundaries, and therefore they did not provide the kind of additional signal the model needed. The open datasets we tested included [Glaive](https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2), [BFCL](https://gorilla.cs.berkeley.edu/leaderboard), [APIGen-MT](https://huggingface.co/datasets/Salesforce/APIGen-MT-5k), and [ToolACE](https://huggingface.co/datasets/Team-ACE/ToolACE).
 
-The failure of these datasets pushed me towards generating synthetic data. if we could not find an open-source dataset drawn from the correct distribution, why not create one ourselves? Although we tried various approaches to generating synthetic examples, we eventually landed on the following approach. We use GPT-6 Luna as our dataset generator model.
-1. Select an existing example from the dataset as a "source" example.
+The failure of these datasets pushed me towards generating synthetic data. If we could not find an open-source dataset drawn from the correct distribution, why not create one ourselves? We used GPT-6 Luna as our dataset generator model. Although we tried various approaches to generating synthetic examples, we eventually landed on the following approach:
+1. Select an existing example from the dataset to use as a source example.
    - The standard approach was to select uniformly at random.
    - Optionally: sort examples from highest to lowest with respect to the number of available tools in the example, then do selections in that order. Intuitively, this metric is likely a proxy for example difficulty.
 2. Feed the source example into the dataset generator LLM.
@@ -135,31 +133,29 @@ The chart below compares accuracy with published model size, includes only entri
 
 ### Part Two: auto-research
 
-#### Motivation
-
-The Bitter Lesson argues that methods that scale with computation tend to outperform methods that depend on hand-built human knowledge.[3](#ref-3) I see the same pressure in model research. If a coding agent can write and run experiments, a human who still has to implement every experiment becomes the limiting step.
-
-For this project, I used GPT-6 Luna at medium reasoning through Codex. The goal was to turn a broad research direction into a repeated loop of hypotheses, code changes, runs, and analysis. Each project should leave the loop easier to reuse on the next one.
+During the research process above, we found incredible gains in efficiency by building out a basic **auto-research** loop in Codex that would automate steps such as generating hypotheses, running experiments, and performing error analysis. Researchers must prioritize building out loops like these and iteratively improving upon them to continually minimize the number of manual interventions required. The north star is a fully autonomous loop that can design and train an optimal model for any given task. An even more ambitious goal, albeit one that is likely not yet feasible at this exact moment, is an Agent that can discover genuinely novel innovations in areas such as model architecture, training algorithms, harness engineering, inference optimization, and more. Do not fret over the feasibility of this approach today. The Bitter Lesson applies [INSERT HYPERLINK]. Build the loop now, even a rudimentary one, and allow its capabilities to grow exponentially as the frontier models scale. For this project, to keep costs low, we used GPT-6 Luna with medium reasoning.
 
 #### Design
 
-The loop had three parts:
+The loop consisted of three components:
 
-1. **Researcher.** The Codex session proposed and ran experiments, inspected aggregate results, and updated the research record.
+1. **Researcher.** The Codex session proposed experiments, ran them, analyzed errors, and then proposed new experiments iteratively.
    - It used a persistent prompt that defined the task, data restrictions, evaluation procedure, and required experiment records.
-   - I gave it a family of approaches to explore, then let it choose specific experiments within that family.
+   - I often manually intervened in the Codex session to suggest a family of approaches to explore (e.g "SFT", "GRPO", "RAG"), but the researcher was able to explore a wide range of experiments within the family.
 
 2. **Watchdog.** A background process checked that the declared experiment worker and research state remained active.
-   - It checked process state and the worker heartbeat on a short interval.
-   - If a declared worker exited or became stale, it recorded the condition and initiated recovery.
+   - It checked process state and the worker heartbeat on a short interval (one minute).
+   - If a declared worker exited or became stale, it recorded the condition and restarted the worker.
 
-3. **Supervisor.** A separate process kept the watchdog alive.
-   - It checked the watchdog process and heartbeat.
-   - If the watchdog stopped or became stale, it restarted the watchdog and recorded the restart.
+3. **Supervisor.** A separate process kept the watchdog itself alive.
+   - It checked the watchdog process state and heartbeat on a longer interval (thirty minutes).
+   - If the watchdog stopped or became stale, it recorded the condition and restarted the watchdog.
 
-The extra processes addressed a failure I saw in early runs. The research session often stopped after a few hours, sometimes after finishing a planned batch. It was not clear why it chose to stop. When no one was at the computer to prompt it to continue, the experiments remained idle. The watchdog and supervisor made worker recovery more reliable, while the research prompt told the session to keep planning when the experiment queue was empty.
+The watchdog was introduced to address a common failure I encountered throughout the research process: the researcher would stop iterating within a few hours. Specifically, the researcher would propose a batch of experiments, complete the experiments, and then decide not to proceed further. The reason for this behavior was unclear. One hypothesis is that the model would burn too many tokens exploring a tree of experiments. For each experiment, the researcher might queue a batch of new sub-experiments building upon the original, then further sub-sub-experiments building upon each of those, and so on and so forth. This process would saturate the context window, perhaps even multiple times after compaction, and the model would forget the outer instruction to continue iterating. The watchdog prevented this risk effectively because it relied on a mechanism that was deterministic and lived outside the session. The supervisor then served as a watchdog upon the watchdog. This component was introduced as intentional redundancy to fully eliminate the risk of premature stopping.
 
 #### Implementation
+
+[ADD MORE SPECIFIC DETAIL THROUGHOUT THIS SECTION]
 
 The researcher prompt set out the objective, source datasets, evaluation rules, and requirements for each experiment. It asked Codex to change one factor at a time where possible, record the configuration and result, and use validation for candidate selection. The prompt also required aggregate-only reporting for the hidden test set and prohibited saving individual test examples or predictions. Later synthetic-data runs followed a separately authorized rule that used aggregate test accuracy to decide whether to continue that branch. The full prompt is included in the appendix.
 

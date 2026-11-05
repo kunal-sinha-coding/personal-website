@@ -962,3 +962,7 @@ Correction: The prior commit added this note but did not change the table. This 
 ## Format the synthetic dataset generation list
 
 Reformatted the synthetic dataset strategy as a numbered list with nested bullet points and sub-bullet points. The list wording is unchanged.
+
+Commit: Preserve current blog post edits
+
+Committed the existing local edits to the auto-research blog post and added its companion notes file. This publishes the user's in-progress draft changes before applying the separately requested bracketed editorial feedback.
