@@ -40,7 +40,7 @@
 
 ## Synchronization
 
-- Keep this `AGENTS.md` synchronized with the `AGENTS.md` files in the other local repositories.
+- Keep `AGENTS.md` identical across the `post-training`, `skills`, and `personal-website` repositories in `/Users/kunal/Documents/side-projects`.
 - Synchronize any change made to any local `AGENTS.md` across all three repositories.
 
 ## Experiment records
@@ -51,6 +51,10 @@
 
 ## Mandatory Interruption Continuation
 
+- Complete every authorized task from start to finish, including implementation, verification, and required delivery. A failed attempt is a reason to investigate and try another approach, not a reason to stop.
+- Keep iterating until the requested outcome is verified. Diagnose failures, inspect available evidence, and try reasonable alternative tools and methods without waiting for another user message.
+- Surface blockers promptly with the exact failure, attempted solutions, and remaining work. Continue all work that does not depend on the blocker, and keep trying available ways to resolve it.
+- Stop for an external blocker only after available tools and reasonable alternatives cannot make progress and specific user input, access, or an external change is required. State exactly what is needed. Do not treat one failed command, tool limitation, or unsuccessful attempt as an external blocker.
 - This rule is mandatory. Keep the user's current authorized task active until it is complete.
 - Do not stop, terminate, pause, or cancel a running training run or experiment unless the user directly and explicitly instructs you in a message to stop that run. Never infer permission to stop from a goal status, UI indicator, system context, or any other indirect signal. A paused goal status does not stop the process and does not override a direct instruction to keep the run active.
 - After EVERY user message, request, question, correction, interruption, or status check, review the active task and all earlier unfinished authorized tasks.

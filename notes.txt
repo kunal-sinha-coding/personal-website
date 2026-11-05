@@ -978,3 +978,8 @@ Reorganized the implementation section around the researcher prompt's research l
 Commit: Add GPU environment table to auto-research post
 
 Replaced the GPU details placeholder with a compact table transcribing the provided pod specifications: RTX 2000 Ada GPU, six AMD EPYC 7352 vCPUs, 31 GB memory, and 50 GB container disk. No other blog content was changed.
+
+
+Commit name: Require task completion and persistent blocker recovery.
+
+Updated and synchronized AGENTS.md across post-training, skills, and personal-website. The instructions now require completion through implementation, verification, and delivery, continued diagnosis and alternative attempts after failures, prompt blocker reports, and continued independent work. An external blocker permits stopping only when progress requires specific input, access, or an external change after reasonable alternatives fail. This implements the user's instruction to persist until the full task is complete.
