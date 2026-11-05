@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- This page loads the article Markdown, renders its tables and diagrams, and typesets its equations. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -249,7 +250,8 @@
     });
 
     try {
-      const response = await fetch('./optimizing_cheap_decision_model_with_auto_research.md');
+      // Request fresh article content so updated image URLs take effect on reload.
+      const response = await fetch('./optimizing_cheap_decision_model_with_auto_research.md', { cache: 'no-store' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const markdown = await response.text();
       post.innerHTML = marked.parse(markdown, { gfm: true });

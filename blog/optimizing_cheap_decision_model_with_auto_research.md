@@ -205,7 +205,7 @@ Throughout the process, we evaluated on full test dataset of 3,652 examples. At 
 
 We display how the accuracy of the best performing method evolved across 70 evaluations.
 
-![Cumulative best accuracy across 70 chronological evaluations on the complete 3,652-example test set. Red markers show the 12 evaluations that set a new record.](assets/when2call-full-test-accuracy.png)
+![Cumulative best accuracy across 70 chronological evaluations on the complete 3,652-example test set. Red markers show the 12 evaluations that set a new record.](assets/when2call-full-test-accuracy.png?v=2815a341fc2e)
 
 A few takeaways:
 - The loop was able to boost accuracy by 22.67 percentage points, from 51.51% (1,881/3,652) to 74.18% (2,709/3,652)
