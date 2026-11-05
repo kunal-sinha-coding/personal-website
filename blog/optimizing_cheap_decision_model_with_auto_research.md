@@ -133,7 +133,9 @@ The chart below compares accuracy with published model size, includes only entri
 
 ### Part Two: auto-research
 
-During the research process above, we found incredible gains in efficiency by building out a basic **auto-research** loop in Codex that would automate steps such as generating hypotheses, running experiments, and performing error analysis. Researchers must prioritize building out loops like these and iteratively improving upon them to continually minimize the number of manual interventions required. The north star is a fully autonomous loop that can design and train an optimal model for any given task. An even more ambitious goal, albeit one that is likely not yet feasible at this exact moment, is an Agent that can discover genuinely novel innovations in areas such as model architecture, training algorithms, harness engineering, inference optimization, and more. Do not fret over the feasibility of this approach today. The Bitter Lesson applies here: methods that scale with computation tend to outperform methods that rely on human-designed knowledge ([Sutton, “The Bitter Lesson”](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)). Build the loop now, even a rudimentary one, and allow its capabilities to grow exponentially as the frontier models scale. For this project, to keep costs low, we used GPT-6 Luna with medium reasoning.
+During the research process above, we found incredible gains in efficiency by building out a basic **auto-research** loop in Codex that would automate steps such as generating hypotheses, running experiments, and performing error analysis. For this project, to keep costs low, we used GPT-6 Luna with medium reasoning.
+
+Researchers must prioritize building out loops like these and iteratively improving upon them to continually minimize the number of manual interventions required. The north star is a fully autonomous loop that can design and train an optimal model for any given task. An even more ambitious goal, albeit one that is likely not yet feasible at this exact moment, is an Agent that can discover genuinely novel innovations in areas such as model architecture, training algorithms, harness engineering, inference optimization, and more. Do not fret over the feasibility of this approach today. The Bitter Lesson applies here: methods that scale with computation tend to outperform methods that rely on human-designed knowledge ([Sutton, “The Bitter Lesson”](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)). Build the loop now, even a rudimentary one, and allow its capabilities to grow exponentially as the frontier models scale.
 
 #### Design
 
@@ -177,6 +179,8 @@ If the queue was exhausted, the watchdog marked the state in `logs/research_stat
 
 The supervisor was instantiated as a separate Python process. It monitored the watchdog PID and heartbeat, logged its checks, and restarted the watchdog process if it exited or became stale.
 
+Finally, we describe the details of our GPU setup below. We ran the auto-research loop on a cheap GPU rented from RunPod for merely $0.24 per hour.
+
 | Resource | Specification |
 | --- | --- |
 | GPU | 1× NVIDIA RTX 2000 Ada |
@@ -186,32 +190,29 @@ The supervisor was instantiated as a separate Python process. It monitored the w
 
 #### Results
 
-The auto-research loop allowed us to perform a wide variety of experiments quickly. In fact, we did not write any code manually throughout the research process. Across the complete test evaluations, performance moved from 51.51% in the first logged evaluation to 74.18% at the best full-set result. That number includes a broad sequence of encoder, Qwen, and synthetic-data work. It should not be read as a controlled measure of the auto-research loop alone. The model, data, and evaluation strategy all changed during the project.
+The auto-research loop allowed us to perform a wide variety of experiments quickly.
 
-
-I counted one experiment as a distinct candidate configuration or inference policy with a completed result. I deduplicated repeated records by experiment ID. I excluded validation and test confirmation screens, data-generation and merge jobs, and support records. These counts describe candidate configurations, not total run events. The ledger has no family field, so I grouped each candidate by the method it tested.
-
-| Experiment family | What I tried |
+| Experiment family | What we tried |
 | --- | --- |
-| Learned classifiers and ranking models | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |
+| Encoders and ranking models | Tested MiniLM and Jina models, classification and pairwise-ranking objectives, and input features such as tool schemas and required-argument cues. |
 | Qwen supervised fine-tuning and data mixtures | Compared training objectives and model sizes, then varied real and synthetic data sources, mixture ratios, data amounts, learning rates, and checkpoint continuations. |
 | Inference fusion, routing, and ensembles | Combined model predictions with fixed and adaptive fusion, voting, routing rules, and learned stackers. |
 | Retrieval-augmented policies | Tested dynamic retrieval and similarity-gated retrieval policies for When2Call decisions. |
-| **Total** | **Distinct completed candidate configurations.** |
 
-The full ledger has 809 distinct IDs whose latest status is completed. The remaining 294 are confirmation or evaluation screens, data-generation or merge jobs, and support records. The graph below has a narrower scope: it shows 70 completed evaluations on the full test set, not 70 independent methods.
+The auto-research loop ran 809 distinct experiments across the full session. However, most of these experiments were diagnostic tests conducted on a small sample of data and evaluated on only a held out validation set. We have 70 completed evaluations on the full test set. These were the methods that showed promise in the diagnostic experiment and were selected to scale up. 
 
+Throughout the process, we evaluated on full test dataset of 3,652 examples. At the end of the process, we choose to re-evaluate a select few methods to align more closely with Artificial Analysis's evaluation setup, removing the 229 ambiguous examples. This re-evaluation boosted the best performing method from 74.18% to the 77.45% reported in the results table earlier.
 
-I rebuilt this curve from the chronological experiment ledger. It includes 70 completed evaluations, each on all 3,652 test examples. The graph plots the best accuracy reached so far after each full-set evaluation. It is a step plot: the record increased on evaluations 1, 2, 3, 6, 8, 25, 28, 30, 35, 61, 64, and 70, and stayed flat on the other 58. The points are not interpolated between runs. The 76.2% unsupported-capability pilot used only 500 examples, so it is not included.
+We display how the accuracy of the best performing method evolved across 70 evaluations.
 
 ![Cumulative best accuracy across 70 chronological evaluations on the complete 3,652-example test set. Red markers show the 12 evaluations that set a new record.](assets/when2call-full-test-accuracy.png)
 
-The full-set sequence began with an encoder baseline, moved through fusion, Qwen training, and routing experiments, and ended with synthetic-data continuation. It reached 74.18% at evaluation 70. The earlier 76.2% score came from the 500-example screen. It did not set the full-set record.
-
-The synthetic-data phase showed the value and the limits of this process. The unsupported-capability pilot reached 76.2% on a 500-example screen, which justified a larger run under the then-current experiment rule. Other synthetic families did not produce the same signal. The larger experiments used the complete test set, and their best result was 74.18%. This demonstrates why a promising pilot needs a larger, consistently evaluated follow-up.
+A few takeaways:
+- The loop was able to boost accuracy by 22.67pp, from 51.51% (1,881/3,652) to 74.18% (2,709/3,652)
+- The bulk of the gains occurred early on: we went up by 17.94pp, from 51.51% (1,881/3,652) to 69.44% (2,536/3,652). 
+   - After this, we saw diminishing returns as the rate of improvement slowed to a plateau, presumably once the low-hanging fruit of improvements had been exhausted.
 
 #### Learnings
-
 
 - The system still depended on my direction. I usually chose the family of approaches to explore, such as synthetic data or ensembling. Once I chose a family, the researcher explored variants, wrote the code, ran the experiments, and reported the results. This made me more like a research lead assigning a direction to a junior researcher. A more autonomous system would propose and prioritize the broader families itself, so a person could give it a general goal and take a smaller role. Even in its current form, it reduced the work I had to do because I could give it a broad idea instead of specifying each experiment.
 - The choice of researcher model may have limited the results. I used GPT-6 Luna because it was affordable enough to run for long periods on my $20-per-month Codex Pro plan. When I tried the stronger Soul model, it used most of my remaining five-hour quota in about one to two hours. A stronger model might have proposed better experiment families or analyzed failures more efficiently, but leaving it in a continuous loop would have been expensive. A future system could use a cheap model for implementation and reserve a stronger model for brainstorming and error analysis. That could still cost more because error analysis requires reading a lot of context. Switching models may also reduce the benefit of prompt caching.

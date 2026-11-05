@@ -988,3 +988,7 @@ Updated and synchronized AGENTS.md across post-training, skills, and personal-we
 Commit name: Label every record evaluation in the accuracy chart.
 
 Recovered the original plotting command from the November 2 Codex session after reviewing the unfinished November 5 chart request. Rebuilt the full test accuracy chart from the same 70 chronological ledger records. Every one of the 12 new maxima now shows its evaluation number and accuracy with staggered labels. Added an aggregate CSV snapshot and plotting script so the figure can be reproduced without session history or the training repository. Verified the record indices, full test size of 3652, and rendered label bounds and overlaps. The existing early gain of 17.94 percentage points corresponds to evaluation 6. Existing article draft edits were left untouched.
+
+Commit name: Update auto-research blog wording and results summary.
+
+Committed the user's recent article edits. These split the Part Two introduction, add the RunPod hourly cost, simplify the experiment summary and table, explain the filtered evaluation, and state the overall and early accuracy gains. This preserves the requested draft wording and publishes the pending changes after the chart label update.
