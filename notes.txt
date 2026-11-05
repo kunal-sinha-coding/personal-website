@@ -996,3 +996,7 @@ Committed the user's recent article edits. These split the Part Two introduction
 Commit name: Simplify chart labels and use inline source links.
 
 Changed all twelve full test chart labels to show accuracy percentages only and removed the evaluation label explanation. Updated the plotting source and regenerated the image with the same evaluation data. Replaced the numbered When2Call citation with an inline paper link, put the Bitter Lesson hyperlink on the phrase itself, and removed the References section. Preserved source access through inline links, including the Elephant article link in the results table. This follows the user's preference for direct hyperlinks and simpler chart labels. The plotting checks confirmed that all twelve labels fit without overlap.
+
+Commit name: Spell out percentage points in results takeaways.
+
+Committed the user's minor wording edits to the auto-research article. Replaced the two occurrences of pp with percentage points in the accuracy takeaways to make the units explicit. The reported values are unchanged.
