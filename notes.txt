@@ -1024,3 +1024,7 @@ Removed the word full after the original data baseline accuracy in the results t
 Commit name: Publish the exact final research and synthetic prompts.
 
 Replaced the edited public research prompt with the complete 648 line auto-research-prompt.md, copied verbatim from post-training commit 54d5aaf00c3ba5da27f2e789cfc58a4ed793b003. Replaced the earlier synthetic pilot summary with the final paired boundary generator's exact LABEL_DEFINITIONS, PAIR_FORMAT, UNSUPPORTED_FORMAT, JUDGE_FORMAT, generation_prompt, and make_judge_prompt source from b4ca9ac98da95c6fbf4946c620d739354fccfc5e. Included the exact imported LABELS definition and the JSON and typing imports so the builders preserve dynamic context construction and structured output requirements. This generator produced the final 983 row tool rich expansion with 306 accepted pairs and 371 unsupported requests. Added direct source hyperlinks and verified exact equality with the saved prompt and extracted source segments. Included the user's pending wording edit from greater solution to better solution. No experiments or API calls were run.
+
+Commit name: Rename the decision model blog post.
+
+Changed the title to Building a cheap decision model with auto-research in the article heading, browser title, Open Graph title, Twitter title, and blog listing. Kept the existing URL. Validated the listing JSON and all four HTML title occurrences. Existing pending article body edits remain uncommitted.

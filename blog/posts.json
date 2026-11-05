@@ -1,7 +1,7 @@
 [
   {
     "slug": "optimizing_cheap_decision_model_with_auto_research",
-    "title": "Optimizing a cheap decision model with auto research",
+    "title": "Building a cheap decision model with auto-research",
     "date": "November 1, 2026",
     "summary": "I fine-tuned a 1.5B Qwen model to outperform larger decision models, using an auto research loop to help with the research process.",
     "published": true
