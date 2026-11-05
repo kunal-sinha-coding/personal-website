@@ -1004,3 +1004,7 @@ Committed the user's minor wording edits to the auto-research article. Replaced 
 Commit name: Refresh cached accuracy chart after label changes.
 
 The user still saw evaluation prefixes after the chart label update. Downloaded the public image without a cache parameter and verified that its SHA256 matched the local percentages-only chart. The public server permits ten minutes of caching. Added a version parameter based on the corrected image hash to its article URL and disabled browser caching for the article Markdown request. This makes a reloaded page request the updated chart URL rather than reuse the previous image. The chart data and labels are unchanged.
+
+Commit name: Refine blog takeaways and research learnings.
+
+Committed the user's latest blog edits. Added emphasis to the model size and accuracy comparisons and the synthetic data gain. Replaced the Learnings section with four focused points about manual intervention, exploration and exploitation, context loss, and the effect of continuous experimentation on work. This publishes the requested article wording without additional editorial changes.
