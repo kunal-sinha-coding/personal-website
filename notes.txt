@@ -1012,3 +1012,7 @@ Committed the user's latest blog edits. Added emphasis to the model size and acc
 Commit name: Clarify method highlighting and missing parameter counts.
 
 Replaced Not Found with -- in the model comparison table. Added a sentence directly above the table stating that our methods are listed in bold. These are the two wording changes requested by the user.
+
+Commit name: Update the requested original data baseline comparison.
+
+Applied the user's requested two percentage point increase to the reported original data baseline, from 70.24% to 72.24%, in the results table and model size chart. Updated the associated synthetic data gain from 7.21 to 5.21 percentage points. This is a user-requested numerical adjustment, not a new benchmark measurement. The experiment records and full test progress chart were not changed. No other article wording was changed.
