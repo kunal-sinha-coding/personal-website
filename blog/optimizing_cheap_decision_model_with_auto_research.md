@@ -14,7 +14,7 @@ Supervised Fine-tuning (SFT) on open-source models is a standard approach to mat
 
 **Original Dataset:**
 
-When2Call measures whether a model selects the correct action when deciding whether or not to invoke tool calls. Each example describes a conversation and available tools. The model chooses among four responses: answer directly (`direct`), call a tool (`tool_call`), ask for more information (`request_info`), or say that it cannot answer with the available tools (`cannot_answer`).[1](#ref-1)
+[When2Call](https://aclanthology.org/2025.naacl-long.174/) measures whether a model selects the correct action when deciding whether or not to invoke tool calls. Each example describes a conversation and available tools. The model chooses among four responses: answer directly (`direct`), call a tool (`tool_call`), ask for more information (`request_info`), or say that it cannot answer with the available tools (`cannot_answer`).
 
 A simplified example is as follows:
 
@@ -95,7 +95,7 @@ Training code and evaluation records are in the [post-training repository](https
 
 | Model | Accuracy | Parameters |
 | --- | ---: | ---: |
-| Elephant 9B | 94.77% | [9B](https://www.baseten.co/library/elephant-1/) |
+| [Elephant 9B](https://labs.baseten.co/articles/mammoth-1-and-elephant-1-frontier-decision-models) | 94.77% | [9B](https://www.baseten.co/library/elephant-1/) |
 | SubQ Snap 1.1 | 94.57% | Not Found |
 | Drex Max | 93.98% | [27B](https://huggingface.co/nace-ai/drex-max-v1) |
 | d1-ultra | 92.58% | Not Found |
@@ -135,7 +135,7 @@ The chart below compares accuracy with published model size, includes only entri
 
 During the research process above, we found incredible gains in efficiency by building out a basic **auto-research** loop in Codex that would automate steps such as generating hypotheses, running experiments, and performing error analysis. For this project, to keep costs low, we used GPT-6 Luna with medium reasoning.
 
-Researchers must prioritize building out loops like these and iteratively improving upon them to continually minimize the number of manual interventions required. The north star is a fully autonomous loop that can design and train an optimal model for any given task. An even more ambitious goal, albeit one that is likely not yet feasible at this exact moment, is an Agent that can discover genuinely novel innovations in areas such as model architecture, training algorithms, harness engineering, inference optimization, and more. Do not fret over the feasibility of this approach today. The Bitter Lesson applies here: methods that scale with computation tend to outperform methods that rely on human-designed knowledge ([Sutton, “The Bitter Lesson”](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)). Build the loop now, even a rudimentary one, and allow its capabilities to grow exponentially as the frontier models scale.
+Researchers must prioritize building out loops like these and iteratively improving upon them to continually minimize the number of manual interventions required. The north star is a fully autonomous loop that can design and train an optimal model for any given task. An even more ambitious goal, albeit one that is likely not yet feasible at this exact moment, is an Agent that can discover genuinely novel innovations in areas such as model architecture, training algorithms, harness engineering, inference optimization, and more. Do not fret over the feasibility of this approach today. The [Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) applies here: methods that scale with computation tend to outperform methods that rely on human-designed knowledge. Build the loop now, even a rudimentary one, and allow its capabilities to grow exponentially as the frontier models scale.
 
 #### Design
 
@@ -221,24 +221,6 @@ A few takeaways:
 - Long sessions caused context loss. I kept the researcher in one session so it could use the history of prior experiments, but after about a day it sometimes forgot earlier guidance. One option is to rely on longer context windows as models improve. Another is to start a new session when the context grows and let it search saved transcripts from earlier sessions. My setup used Codex CLI and Tmux, which made it possible to start and control new sessions from the terminal.
 - The researcher had access to internet search through Exa, but it rarely used it unless I asked. A research agent should review relevant work and the current state of the art during brainstorming because that can provide useful ideas for experiments.
 - The researcher was better at recommending familiar approaches than proposing novel ones. Asking it to be creative was not enough. A future loop could add an adversarial idea-generation or critique stage, while judging ideas by whether they suggest useful experiments rather than whether they sound unusual.
-
-#### References
-
-<a id="ref-1"></a>
-
-1. Hayley Ross, Ameya Sunil Mahabaleshwarkar, and Yoshi Suhara. [“When2Call: When (not) to Call Tools.” NAACL 2025.](https://aclanthology.org/2025.naacl-long.174/)
-
-<a id="ref-2"></a>
-
-2. [Artificial Analysis, When2Call Benchmark and methodology.](https://artificialanalysis.ai/evaluations/when2call)
-
-<a id="ref-3"></a>
-
-3. Rich Sutton. [“The Bitter Lesson.”](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)
-
-<a id="ref-4"></a>
-
-4. Base Labs, [“Mammoth-1 and Elephant-1: frontier decision models.”](https://labs.baseten.co/articles/mammoth-1-and-elephant-1-frontier-decision-models); Cloudflare, [“Introducing Clef: our open-source decision models.”](https://blog.cloudflare.com/clef-decision-models/); Perplexity, [pplx-decider-v1.1-27b model card](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b).
 
 #### Appendix
 

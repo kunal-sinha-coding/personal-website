@@ -1,5 +1,5 @@
 """Read the saved chronological aggregate evaluations and plot their running maximum.
-Mark each new maximum with its evaluation number and accuracy, then check that
+Mark each new maximum with its accuracy, then check that
 all labels fit without overlap and save the PNG beside the source data.
 Run this file with Python and Matplotlib to rebuild the blog figure.
 """
@@ -44,7 +44,7 @@ positions = [(8, 12), (12, -40), (8, 22), (26, -44), (42, 20),
 labels = []
 for (index, accuracy), (dx, dy) in zip(improvements, positions):
     label = ax.annotate(
-        f'{index}: {accuracy:.2f}%', (index, accuracy), xytext=(dx, dy),
+        f'{accuracy:.2f}%', (index, accuracy), xytext=(dx, dy),
         textcoords='offset points', ha='right' if dx < 0 else 'left',
         va='bottom' if dy > 0 else 'top', fontsize=9,
         bbox={'facecolor': 'white', 'edgecolor': 'none', 'alpha': 0.9, 'pad': 2},
@@ -52,7 +52,7 @@ for (index, accuracy), (dx, dy) in zip(improvements, positions):
     )
     labels.append(label)
 
-# Set the axis range and explain the meaning of the numeric labels.
+# Set the axis range and describe the evaluation count and accuracy.
 ax.set_xlim(0, 72)
 ax.set_ylim(50, 77)
 ax.set_xticks([1, 10, 20, 30, 40, 50, 60, 70])
@@ -61,7 +61,6 @@ ax.set_ylabel('Best accuracy so far (%)')
 ax.set_title('Cumulative best accuracy on the full When2Call test set')
 ax.grid(True, linestyle=':', alpha=0.35)
 ax.legend(loc='lower right', frameon=True, fontsize=9)
-fig.supxlabel('Each label shows the evaluation number and its record accuracy.', fontsize=9)
 
 # Check the rendered text bounds before saving the figure.
 fig.canvas.draw()

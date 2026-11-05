@@ -992,3 +992,7 @@ Recovered the original plotting command from the November 2 Codex session after 
 Commit name: Update auto-research blog wording and results summary.
 
 Committed the user's recent article edits. These split the Part Two introduction, add the RunPod hourly cost, simplify the experiment summary and table, explain the filtered evaluation, and state the overall and early accuracy gains. This preserves the requested draft wording and publishes the pending changes after the chart label update.
+
+Commit name: Simplify chart labels and use inline source links.
+
+Changed all twelve full test chart labels to show accuracy percentages only and removed the evaluation label explanation. Updated the plotting source and regenerated the image with the same evaluation data. Replaced the numbered When2Call citation with an inline paper link, put the Bitter Lesson hyperlink on the phrase itself, and removed the References section. Preserved source access through inline links, including the Elephant article link in the results table. This follows the user's preference for direct hyperlinks and simpler chart labels. The plotting checks confirmed that all twelve labels fit without overlap.
