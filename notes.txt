@@ -1045,3 +1045,7 @@ Sorted the latest blog post's results table from lowest to highest accuracy and 
 Commit name: Explain Qwen action selection at inference.
 
 Added a short implementation note after the Qwen training steps. It explains that Qwen uses its causal language model output rather than a separate classification head, scores the four next-token action labels at the end of the prompt, and selects the highest-scoring label. Verified this description against the Qwen trainer and evaluator.
+
+Commit name: Use model-size accuracy chart for social preview.
+
+Changed the article's Open Graph and Twitter preview image from the cost-versus-accuracy chart to the model-size-versus-accuracy chart. Updated both alt text values to describe the selected chart.
