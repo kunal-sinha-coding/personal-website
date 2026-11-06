@@ -128,7 +128,7 @@ The main takeaways are:
   - It is **18 times smaller than Clef** (27B), but its **accuracy is higher by 6.49 percentage points** (77.45% versus 70.96%).
   - It is an **order of magnitude smaller than GPT-6 Luna Decisions**, but its **accuracy is higher by 3.39 percentage points** (77.45% versus 74.06%).
   - It is **18 times smaller than Perplexity's Decider v1.1** (27B), but its **accuracy is higher by 0.97 percentage points** (77.45% versus 76.48%).
-- Our model does not beat every larger model. Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
+- A variety of larger models still beat our model, however. For example, Baseten's Elephant 9B is six times larger and reaches 94.77% accuracy, 17.32 percentage points higher than our model.
 - The addition of synthetic training data boosts accuracy by 5.21 percentage points (77.45% versus 72.24%).
 
 The chart below compares accuracy with published model size, includes only entries with disclosed parameter counts. The logarithmic horizontal axis shows total parameters; active parameter counts for the two mixture-of-experts models are noted in the table. The star marks our synthetic-continuation model and the diamond marks our original-data model.

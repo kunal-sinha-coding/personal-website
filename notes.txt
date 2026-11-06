@@ -1053,3 +1053,7 @@ Changed the article's Open Graph and Twitter preview image from the cost-versus-
 Commit name: Reposition Qwen inference note and refresh site introduction.
 
 Moved the Qwen inference explanation to follow the training hyperparameters so it sits beside the training implementation context. Rewrote the site introduction to reflect the updated description of the blog and current Fieldguide work, and tightened the Stanford research list.
+
+Commit name: Reword larger-model accuracy takeaway.
+
+Updated the results takeaway to say that several larger models exceed the Qwen model's accuracy and retained Elephant 9B as the example.
