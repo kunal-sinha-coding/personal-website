@@ -1041,3 +1041,7 @@ Reversed all 22 model rows in the latest blog post results table while preservin
 Commit name: Sort decision model results and feature the cost-accuracy chart.
 
 Sorted the latest blog post's results table from lowest to highest accuracy and removed the Elephant 9B name hyperlink while retaining its parameter source link. Restored the prior When2Call cost-versus-accuracy chart and set both Open Graph and Twitter image metadata to it, with descriptive alt text. In the auto-research appendix, removed the session-specific user direction sections while retaining the generic research prompt verbatim, and clarified that this is the sole exception to the source prompt copy.
+
+Commit name: Explain Qwen action selection at inference.
+
+Added a short implementation note after the Qwen training steps. It explains that Qwen uses its causal language model output rather than a separate classification head, scores the four next-token action labels at the end of the prompt, and selects the highest-scoring label. Verified this description against the Qwen trainer and evaluator.
