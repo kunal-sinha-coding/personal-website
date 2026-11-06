@@ -99,8 +99,8 @@ Our methods are listed in bold in the table below. Unknown parameter counts are 
 | --- | ---: | ---: |
 | Clef-Omni | 62.05% | [30B total (3B active)](https://developers.cloudflare.com/workers-ai/models/clef-omni/) |
 | Clef-Flash | 64.36% | [9B](https://blog.cloudflare.com/clef-decision-models/) |
-| **SFT-Qwen (original data)** | **72.24%** | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | Clef | 70.96% | [27B](https://blog.cloudflare.com/clef-decision-models/) |
+| **SFT-Qwen (original data)** | **72.24%** | [1.5B](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) |
 | GPT-6 Luna (Decisions) | 74.06% | -- |
 | Decider Flash v1.2 | 74.41% | [4B](https://vercel.com/changelog/perplexity-decider-v1-2-models-now-available-on-ai-gateway) |
 | Decider v1.1 27B | 76.48% | [27B](https://huggingface.co/perplexity-ai/pplx-decider-v1.1-27b) |
@@ -118,7 +118,7 @@ Our methods are listed in bold in the table below. Unknown parameter counts are 
 | d1-ultra | 92.58% | -- |
 | Drex Max | 93.98% | [27B](https://huggingface.co/nace-ai/drex-max-v1) |
 | SubQ Snap 1.1 | 94.57% | -- |
-| [Elephant 9B](https://labs.baseten.co/articles/mammoth-1-and-elephant-1-frontier-decision-models) | 94.77% | [9B](https://www.baseten.co/library/elephant-1/) |
+| Elephant 9B | 94.77% | [9B](https://www.baseten.co/library/elephant-1/) |
 
 The main takeaways are:
 
@@ -292,55 +292,10 @@ def make_judge_prompt(job: dict[str, Any], item: dict[str, Any]) -> str:
 
 ##### Prompts for auto-research loop
 
-The following is the complete final [saved research prompt](https://github.com/kunal-sinha-coding/post-training/blob/54d5aaf00c3ba5da27f2e789cfc58a4ed793b003/auto-research-prompt.md), copied verbatim.
+The following is the [saved research prompt](https://github.com/kunal-sinha-coding/post-training/blob/54d5aaf00c3ba5da27f2e789cfc58a4ed793b003/auto-research-prompt.md), copied verbatim except for the session-specific user-guidance sections at the top.
 
 ```text
 # Autonomous Research Agent — When2Call Optimization
-
-## Latest user direction — synthetic-data pilots
-
-This section supersedes all earlier augmentation directions when they conflict.
-
-
-## Current user direction — aggregate test reporting and clean-validation selection
-
-The evaluator may use hidden test labels internally to compute aggregate accuracy and macro F1 for reporting. Do not use test labels or test-derived metrics to choose experiments, checkpoints, data mixtures, hyperparameters, prompts, or ensemble rules. Use clean held-out validation and predeclared training diagnostics for candidate selection. The leaderboard may rank aggregate test scores for reporting only. Never inspect, print, save, or use individual test examples, labels, predictions, or correctness outcomes. Do not compute test confusion matrices, per-class metrics, error lists, or test-derived features. Record aggregate test accuracy, macro F1, row count, and runtime. Build follow-up experiments from checkpoints selected by clean validation. Change one data factor at a time where practical, and keep hyperparameters fixed unless training diagnostics justify a change.
-
-The user clarified that the small pilot sets are for rapid signal checks. Start from the already trained Qwen checkpoint and continue training on only each synthetic pilot. Never replay the 9,000 original preference examples for a pilot.
-
-The user stopped and cleared the tool-order, schema-key-order, neutral request-context, and paraphrase work. Do not resume or queue those approaches.
-
-The current objective is to generate genuinely new synthetic When2Call examples. The examples must resemble the `train_pref` data in format, tool schemas, and task complexity, but they must introduce new scenarios and useful decision-boundary signal. Do not make paraphrases or small edits of source questions. Use only `train_pref` rows as source anchors. Never load test examples or labels for generation.
-
-Begin with several small, distinct pilots. Current pilot strategies are new tool-call requests on an existing tool set, requests that omit a required tool argument, requests for unsupported capabilities, and tool-call requests over composed tool sets. Start with small pilot examples, then generate 500 to 1,000 accepted examples per useful strategy with GPT-6 Luna through the Responses API. Use asynchronous requests with a semaphore so generation proceeds concurrently. Run a separate model label check on each candidate and apply structural checks before saving it. Cache every result, record usage and spend, and keep the cumulative API generation spend below $10. The current generation command has a $1 cap.
-
-Start each pilot from the already trained Qwen checkpoint `outputs/qwen-when2call-fullpool-base-seed20261055/epoch-02`. Continue training on only that pilot’s accepted synthetic examples. Do not reload or replay the 9,000 original preference examples. Run one short epoch per pilot. Compare the checkpoint before and after on the same fixed clean validation sample of at most 500 rows and the complete aggregate black-box test set. Measure training performance on at most 500 rows from the synthetic pilot. Report accuracy and macro F1 for each measurement. Use clean held-out validation to select these pilots. Record full aggregate test accuracy and macro F1 for reporting only. Keep the test set black box at the example level. Never inspect or save individual test examples, labels, predictions, or correctness. Run full aggregate test evaluation at every scheduled pilot checkpoint.
-
-The user explicitly updated the current synthetic-data rule: use 500 to 1,000 accepted synthetic examples per strategy, continue the best trained Qwen checkpoint on synthetic rows only, and evaluate the complete black-box test after each epoch. For these declared synthetic pilots only, evaluate the full aggregate black-box test each epoch, continue while aggregate test accuracy improves, and stop at the first epoch without an improvement. Report training and clean-validation metrics as well. Do not save or inspect per-example test labels, predictions, or correctness. Record that aggregate test accuracy controlled continuation under the user's explicit instruction.
-
-Apply the existing broader-search rule: probe distinct ideas broadly, then explore a promising branch more deeply, then return to the wider search when it stops improving. Keep one GPU training worker active at a time. API generation may use concurrent requests within the semaphore limit.
-
-## Current user direction — 2026-10-26
-
-This section supersedes older user-direction sections below when they conflict.
-
-Run the following fresh-base Qwen 1.5B SFT experiments in order:
-
-1. Train on the fixed 738-row BFCL training partition only for one epoch. Evaluate training, clean held-out validation, and aggregate-only black-box test metrics at the epoch end.
-2. Train on all 9,000 When2Call `train_pref` rows for two epochs. Skip held-out validation for this run. Evaluate a fixed random sample of at most 500 training rows after each epoch.
-3. Train on all 9,000 When2Call `train_pref` rows plus all 922 labeled BFCL rows for two epochs. Skip held-out validation for this run. Evaluate a fixed random sample of at most 500 training rows after each epoch.
-
-Report training accuracy and macro F1, held-out validation accuracy and macro F1 when validation is evaluated, and aggregate-only black-box test accuracy and macro F1 at every evaluation. Evaluate no more than 500 training rows or 500 held-out validation rows per checkpoint. Use a deterministic random or stratified random sample when a split is larger. Always evaluate the complete black-box test set. Never inspect or save individual official test labels or correctness.
-
-The three experiments above use their explicitly requested fixed epoch counts. For later experiments, evaluate at every epoch and use clean held-out validation to rank and select candidates. Clean validation and training metrics remain required diagnostics. Record full aggregate black-box test metrics for reporting only. Never inspect individual test examples, labels, predictions, or correctness.
-
-After the currently queued encoder-fusion evaluation, continue open-ended research across data, training, modeling, and inference. Do not restrict exploration to synthetic data. Review the recorded results and training diagnostics before choosing a direction. Form distinct, evidence-based hypotheses, then start with useful low-cost tests and deepen branches that improve clean validation. Consider changes to data composition, objectives, checkpoint continuation, decoding, and ensembling when the evidence supports them. Keep training hyperparameters fixed unless recorded diagnostics justify a change. Use clean validation for candidate selection. Aggregate black-box test metrics are report-only and must not select candidates. The total OpenAI API data-generation spend authorized from 2026-10-26 onward is $10. Track cumulative spend in `logs/research_state.json` and never exceed the cap. Use subagent-generated data if the API budget is exhausted.
-
-If a later instruction requires complete training, clean-validation, and aggregate test evidence for a completed run, queue any missing measurement before starting new training. Keep such follow-up measurements separate from new experiments. Aggregate test scores are for reporting only and must not select candidates. Individual test examples, labels, predictions, and correctness remain hidden.
-
-## Legacy user direction
-
-Older sections in this prompt describe earlier phases of the project. Do not revive their queues, pause reasons, model comparisons, continuation rules, or data priorities when they conflict with the current direction above.
 
 ## Mission
 
@@ -361,16 +316,6 @@ Use breadth-first exploration when entering a new research family. Start with a 
 Do not repeat an experiment only with a different random seed. Do not queue seed-only replications or stability runs, including a second sample, split, or initialization seed. A seed change by itself is not a new hypothesis. Explore substantive changes to data, model, representation, prompt, retrieval, or inference strategy instead. Run another seed only when the user explicitly requests it.
 
 Queue visibility is mandatory. After every user message that gives research guidance, answer the user and print the complete current worker queue, in execution order, including the active command and every pending command. After every queue update, print the complete resulting queue to the user in the same response. If the queue is empty, state explicitly that it is empty and state whether a worker is active or whether the system is awaiting Codex planning. Do not summarize or omit commands. This rule applies before and after any queue mutation so the user can verify the exact state.
-
-## Current user direction for the October 25 restart
-
-The user clarified that the next research must combine the best existing trained encoder and LLM approaches. Do not start by training a fresh encoder or including a weaker RPO model. Reuse Qwen2.5 1.5B SFT as the LLM member. Compare the best single Jina checkpoint at seed 20261048 and the existing three-Jina approach at seeds 20261065, 20261061, and 20261048.
-
-Preserve the existing three-Jina weighted logit combination with weights 0.35625, 0.1375, and 0.50625. Treat that complete approach as one encoder expert. Compare equal probability averaging and minimum entropy gating between the encoder expert and Qwen SFT. Freeze all four combinations before one shared aggregate-only test pass. Reuse each model forward pass to measure the baselines and combined methods. Do not run separate standalone model jobs for this comparison.
-
-The old Jina encoders saw all preference rows before the later validation split. Do not claim that preference partition is clean validation for these frozen encoders. Do not fit weights, a router, or calibration parameters on those labels. The first comparison uses fixed rules and requires no fitted parameters. Record the validation limitation explicitly. Investigate a genuinely unseen validation source before any later learned combination.
-
-Preserve the output index order learned by the saved Qwen adapters. Their prompt text describes a different order from their historical training targets. Define all new macro F1 values consistently across four classes and report the present-class diagnostic separately. Do not compare historical encoder and Qwen macro F1 values without accounting for their different absent-class conventions.
 
 ## 1. Hard Constraints
 

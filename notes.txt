@@ -1037,3 +1037,7 @@ Committed the user's pending article edits that change I first tried to We first
 Commit name: Reverse blog results table and explain unknown parameter counts.
 
 Reversed all 22 model rows in the latest blog post results table while preserving the header and each row's values. Added a sentence beside the bold-methods note explaining that unknown parameter counts are shown as --. These changes follow the user's requested table order and clarification.
+
+Commit name: Sort decision model results and feature the cost-accuracy chart.
+
+Sorted the latest blog post's results table from lowest to highest accuracy and removed the Elephant 9B name hyperlink while retaining its parameter source link. Restored the prior When2Call cost-versus-accuracy chart and set both Open Graph and Twitter image metadata to it, with descriptive alt text. In the auto-research appendix, removed the session-specific user direction sections while retaining the generic research prompt verbatim, and clarified that this is the sole exception to the source prompt copy.
