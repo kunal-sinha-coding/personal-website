@@ -1057,3 +1057,7 @@ Moved the Qwen inference explanation to follow the training hyperparameters so i
 Commit name: Reword larger-model accuracy takeaway.
 
 Updated the results takeaway to say that several larger models exceed the Qwen model's accuracy and retained Elephant 9B as the example.
+
+Commit name: Clarify Open Graph and X card metadata.
+
+Added the requested Open Graph and Twitter Card metadata comments and descriptions to the article head. Kept the published article URL and pointed both image tags to the public model-size-versus-accuracy chart instead of the `https://github.io` placeholder.
