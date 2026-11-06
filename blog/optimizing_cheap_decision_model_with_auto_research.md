@@ -73,8 +73,6 @@ The highest performing experiment involved multiple epochs of fine-tuning on dif
 4. Train for 1 epoch on another fresh pool of 983 synthetic examples.
    a. Synthetic dataset generation process was the same as above.
 
-At inference, Qwen does not use a separate classification head. The prompt ends with `Action label:`, and the evaluator compares the model's next-token scores for the four allowed letter labels, A through D, then selects the highest-scoring one. That letter identifies the predicted action category.
-
 The original-data baseline and synthetic continuation used these hyperparameters:
 
 | Setting | Value |
@@ -92,6 +90,8 @@ The original-data baseline and synthetic continuation used these hyperparameters
 | Clean validation sample | Up to 500 examples |
 
 Training code and evaluation records are in the [post-training repository](https://github.com/kunal-sinha-coding/post-training).
+
+For inference, Qwen does not use a separate classification head. The prompt ends with `Action label:`, and the evaluator compares the model's next-token scores for the four allowed letter labels, A through D, then selects the highest-scoring one. That letter identifies the predicted action category.
 
 #### Results
 

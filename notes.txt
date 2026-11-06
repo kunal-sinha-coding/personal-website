@@ -1049,3 +1049,7 @@ Added a short implementation note after the Qwen training steps. It explains tha
 Commit name: Use model-size accuracy chart for social preview.
 
 Changed the article's Open Graph and Twitter preview image from the cost-versus-accuracy chart to the model-size-versus-accuracy chart. Updated both alt text values to describe the selected chart.
+
+Commit name: Reposition Qwen inference note and refresh site introduction.
+
+Moved the Qwen inference explanation to follow the training hyperparameters so it sits beside the training implementation context. Rewrote the site introduction to reflect the updated description of the blog and current Fieldguide work, and tightened the Stanford research list.
